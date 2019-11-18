@@ -8,8 +8,9 @@ namespace KFBase {
 
   class KFParticle : public ccgo::TargetChiSquare {
   public:
-    KFParticle(const std::string&, const long&);
+    KFParticle(const std::string&, const long&, double = 0);
     virtual ~KFParticle();
+    double getMass() const;
     const Eigen::Vector4d& getInitialMoment() const;
     const Eigen::Vector4d& getFinalMoment() const;
     virtual double calcMomentumComponent(const Eigen::VectorXd&,
@@ -23,6 +24,8 @@ namespace KFBase {
   protected:
     Eigen::Vector4d _initialMoment;
     Eigen::Vector4d _finalMoment;
+  private:
+    double _mass;
   };
 }
 #endif

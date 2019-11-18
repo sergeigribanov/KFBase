@@ -1,10 +1,14 @@
 #include <KFParticle.hpp>
 
-KFBase::KFParticle::KFParticle(const std::string& name, const long& n):
-  ccgo::TargetChiSquare(name, n) {
+KFBase::KFParticle::KFParticle(const std::string& name, const long& n, double mass):
+  ccgo::TargetChiSquare(name, n), _mass(mass) {
 }
 
 KFBase::KFParticle:: ~KFParticle() {
+}
+
+double KFBase::KFParticle::getMass() const {
+  return _mass;
 }
 
 const Eigen::Vector4d& KFBase::KFParticle::getInitialMoment() const {
