@@ -11,24 +11,24 @@ double KFBase::KFParticle::getMass() const {
   return _mass;
 }
 
-const Eigen::Vector4d& KFBase::KFParticle::getInitialMoment() const {
-  return _initialMoment;
+const Eigen::Vector4d& KFBase::KFParticle::getInitialMomentum() const {
+  return _initialMomentum;
 }
 
-const Eigen::Vector4d& KFBase::KFParticle::getFinalMoment() const {
-  return _finalMoment;
+const Eigen::Vector4d& KFBase::KFParticle::getFinalMomentum() const {
+  return _finalMomentum;
 }
 
 void KFBase::KFParticle::onFitBegin(const Eigen::VectorXd& x) {
-  for (int i = KFMOMENT_X; i < KFMOMENT_E; ++i) {
-    _initialMoment(i) = calcMomentumComponent(x.block(getBeginIndex(), 0, getN(), 1),
+  for (int i = KFMOMENT_X; i <= KFMOMENT_E; ++i) {
+    _initialMomentum(i) = calcMomentumComponent(x,
 					    static_cast<KFBase::KFMOMENT_COMPONENT>(i));
   }
 }
 
 void KFBase::KFParticle::onFitEnd(const Eigen::VectorXd& x) {
-  for (int i = KFMOMENT_X; i < KFMOMENT_E; ++i) {
-    _finalMoment(i) = calcMomentumComponent(x.block(getBeginIndex(), 0, getN(), 1),
-					  static_cast<KFBase::KFMOMENT_COMPONENT>(i));
+  for (int i = KFMOMENT_X; i <= KFMOMENT_E; ++i) {
+    _finalMomentum(i) = calcMomentumComponent(x,
+					    static_cast<KFBase::KFMOMENT_COMPONENT>(i));
   }
 }

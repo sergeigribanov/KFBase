@@ -1,3 +1,4 @@
+#include <iostream>
 #include "KFParticle.hpp"
 #include "KFMomentumConstraint.hpp"
 
@@ -33,7 +34,7 @@ double KFBase::KFMomentumConstraint::h(const Eigen::VectorXd& x) const {
 }
 
 Eigen::VectorXd KFBase::KFMomentumConstraint::dh(const Eigen::VectorXd& x) const {
-  Eigen::VectorXd result;
+  Eigen::VectorXd result = Eigen::VectorXd::Zero(x.size());
   for (const auto& el : _targets) {
     if (el.second->isEnabled()) {
       result += static_cast<const KFBase::KFParticle*>(el.second)->calcDMomentumComponent(x, _component);
@@ -43,7 +44,7 @@ Eigen::VectorXd KFBase::KFMomentumConstraint::dh(const Eigen::VectorXd& x) const
 }
 
 Eigen::MatrixXd KFBase::KFMomentumConstraint::d2h(const Eigen::VectorXd& x) const {
-  Eigen::MatrixXd result;
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
   for (const auto& el : _targets) {
     if (el.second->isEnabled()) {
       result += static_cast<const KFBase::KFParticle*>(el.second)->calcD2MomentumComponent(x, _component);

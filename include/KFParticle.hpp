@@ -11,8 +11,8 @@ namespace KFBase {
     KFParticle(const std::string&, const long&, double = 0);
     virtual ~KFParticle();
     double getMass() const;
-    const Eigen::Vector4d& getInitialMoment() const;
-    const Eigen::Vector4d& getFinalMoment() const;
+    const Eigen::Vector4d& getInitialMomentum() const;
+    const Eigen::Vector4d& getFinalMomentum() const;
     virtual double calcMomentumComponent(const Eigen::VectorXd&,
 				       KFMOMENT_COMPONENT) const = 0;
     virtual Eigen::VectorXd calcDMomentumComponent(const Eigen::VectorXd&,
@@ -22,8 +22,8 @@ namespace KFBase {
     virtual void onFitBegin(const Eigen::VectorXd&) override final;
     virtual void onFitEnd(const Eigen::VectorXd&) override final;
   protected:
-    Eigen::Vector4d _initialMoment;
-    Eigen::Vector4d _finalMoment;
+    Eigen::Vector4d _initialMomentum;
+    Eigen::Vector4d _finalMomentum;
   private:
     double _mass;
   };
