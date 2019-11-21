@@ -16,6 +16,9 @@ if (NOT CCGO_DIR)
     message(FATAL_ERROR "CCGO_DIR option is not set")
   endif()
 endif()
+list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
+find_package(ROOT REQUIRED COMPONENTS RIO Net Core)
+include(${ROOT_USE_FILE})
 file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 file(GLOB HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp)
 add_library(kfbase SHARED ${SOURCES})
@@ -26,7 +29,8 @@ target_include_directories(kfbase
   ${EIGEN3_INCLUDE_DIR}
   ${CCGO_DIR}/include)
 target_link_libraries(kfbase
-  ${CCGO_DIR}/lib/libccgo.so)
+  ${CCGO_DIR}/lib/libccgo.so
+  ${ROOT_LIBRARIES})
 set(PUBLIC_HEADERS ${HEADERS})
 set_target_properties(kfbase
   PROPERTIES

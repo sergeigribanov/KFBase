@@ -11,24 +11,24 @@ double KFBase::KFParticle::getMass() const {
   return _mass;
 }
 
-const Eigen::Vector4d& KFBase::KFParticle::getInitialMomentum() const {
+const TLorentzVector& KFBase::KFParticle::getInitialMomentum() const {
   return _initialMomentum;
 }
 
-const Eigen::Vector4d& KFBase::KFParticle::getFinalMomentum() const {
+const TLorentzVector& KFBase::KFParticle::getFinalMomentum() const {
   return _finalMomentum;
 }
 
 void KFBase::KFParticle::onFitBegin(const Eigen::VectorXd& x) {
   for (int i = KFMOMENT_X; i <= KFMOMENT_E; ++i) {
-    _initialMomentum(i) = calcMomentumComponent(x,
-					    static_cast<KFBase::KFMOMENT_COMPONENT>(i));
+    _initialMomentum[i] = calcMomentumComponent(x,
+						static_cast<KFBase::KFMOMENT_COMPONENT>(i));
   }
 }
 
 void KFBase::KFParticle::onFitEnd(const Eigen::VectorXd& x) {
   for (int i = KFMOMENT_X; i <= KFMOMENT_E; ++i) {
-    _finalMomentum(i) = calcMomentumComponent(x,
-					    static_cast<KFBase::KFMOMENT_COMPONENT>(i));
+    _finalMomentum[i] = calcMomentumComponent(x,
+					      static_cast<KFBase::KFMOMENT_COMPONENT>(i));
   }
 }

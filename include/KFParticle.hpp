@@ -2,6 +2,7 @@
 #define __KFBASE_KFParticle_HPP__
 #include <Eigen/Dense>
 #include <TargetChiSquare.hpp>
+#include <TLorentzVector.h>
 
 namespace KFBase {
   enum KFMOMENT_COMPONENT {KFMOMENT_X = 0, KFMOMENT_Y = 1, KFMOMENT_Z = 2, KFMOMENT_E = 3};
@@ -11,8 +12,8 @@ namespace KFBase {
     KFParticle(const std::string&, const long&, double = 0);
     virtual ~KFParticle();
     double getMass() const;
-    const Eigen::Vector4d& getInitialMomentum() const;
-    const Eigen::Vector4d& getFinalMomentum() const;
+    const TLorentzVector& getInitialMomentum() const;
+    const TLorentzVector& getFinalMomentum() const;
     virtual double calcMomentumComponent(const Eigen::VectorXd&,
 				       KFMOMENT_COMPONENT) const = 0;
     virtual Eigen::VectorXd calcDMomentumComponent(const Eigen::VectorXd&,
@@ -22,8 +23,8 @@ namespace KFBase {
     virtual void onFitBegin(const Eigen::VectorXd&) override final;
     virtual void onFitEnd(const Eigen::VectorXd&) override final;
   protected:
-    Eigen::Vector4d _initialMomentum;
-    Eigen::Vector4d _finalMomentum;
+    TLorentzVector _initialMomentum;
+    TLorentzVector _finalMomentum;
   private:
     double _mass;
   };
