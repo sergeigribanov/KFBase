@@ -1,7 +1,7 @@
 #ifndef __KFBASE_KFParticle_HPP__
 #define __KFBASE_KFParticle_HPP__
 #include <Eigen/Dense>
-#include <TargetChiSquare.hpp>
+#include <ccgo/TargetChiSquare.hpp>
 #include <TLorentzVector.h>
 
 namespace KFBase {

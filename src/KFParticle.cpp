@@ -1,4 +1,4 @@
-#include <KFParticle.hpp>
+#include "KFParticle.hpp"
 
 KFBase::KFParticle::KFParticle(const std::string& name, const long& n, double mass):
   ccgo::TargetChiSquare(name, n), _mass(mass) {

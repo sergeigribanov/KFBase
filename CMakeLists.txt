@@ -37,4 +37,4 @@ set_target_properties(kfbase
   PUBLIC_HEADER "${PUBLIC_HEADERS}")
 install(TARGETS kfbase
   LIBRARY DESTINATION lib
-  PUBLIC_HEADER DESTINATION include)
+  PUBLIC_HEADER DESTINATION include/KFBase)

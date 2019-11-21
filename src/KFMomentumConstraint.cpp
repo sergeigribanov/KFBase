@@ -1,5 +1,3 @@
-#include <iostream>
-#include "KFParticle.hpp"
 #include "KFMomentumConstraint.hpp"
 
 KFBase::KFMomentumConstraint::KFMomentumConstraint(const std::string& name,

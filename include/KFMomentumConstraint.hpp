@@ -1,6 +1,7 @@
 #ifndef __KFBASE_KFMomentumConstraint_HPP__
 #define __KFBASE_KFMomentumConstraint_HPP__
-#include <Constraint.hpp>
+#include <ccgo/Constraint.hpp>
+#include "KFParticle.hpp"
 
 namespace KFBase {
   class KFMomentumConstraint : public ccgo::Constraint {
