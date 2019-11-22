@@ -49,8 +49,8 @@ const TLorentzVector& KFBase::Hypothesis::getFinalMomentum
 TLorentzVector KFBase::Hypothesis::getInitialMomentum
 (const std::vector<std::string>& particleNames) const {
   TLorentzVector result;
-  for (const auto& el : _particles) {
-    result += el.second->getInitialMomentum();
+  for (const auto& name : particleNames) {
+    result += _particles.at(name)->getInitialMomentum();
   }
   return result;
 }
@@ -58,8 +58,8 @@ TLorentzVector KFBase::Hypothesis::getInitialMomentum
 TLorentzVector KFBase::Hypothesis::getFinalMomentum
 (const std::vector<std::string>& particleNames) const {
   TLorentzVector result;
-  for (const auto& el : _particles) {
-    result += el.second->getFinalMomentum();
+  for (const auto& name : particleNames) {
+    result += _particles.at(name)->getFinalMomentum();
   }
   return result;
 }
