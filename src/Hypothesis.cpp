@@ -11,6 +11,9 @@ KFBase::Hypothesis::~Hypothesis() {
   for (auto& el : _constraints) {
     delete el.second;
   }
+  for (auto& el : _commonParams) {
+    delete el.second;
+  }
 }
 
 int KFBase::Hypothesis::getErrorCode() const {
@@ -94,6 +97,14 @@ void KFBase::Hypothesis::disableConstraint(const std::string& name) {
   _opt.disableConstraint(name);
 }
 
+void KFBase::Hypothesis::enableCommonParams(const std::string& name) {
+  _opt.enableCommonParams(name);
+}
+
+void KFBase::Hypothesis::disableCommonParams(const std::string& name) {
+  _opt.disableCommonParams(name);
+}
+
 void KFBase::Hypothesis::addParticle(KFBase::Particle* particle) {
   _particles.insert(std::make_pair(particle->getName(), particle));
   _opt.addTarget(particle);
@@ -102,6 +113,11 @@ void KFBase::Hypothesis::addParticle(KFBase::Particle* particle) {
 void KFBase::Hypothesis::addConstraint(ccgo::Constraint* constraint) {
   _constraints.insert(std::make_pair(constraint->getName(), constraint));
   _opt.addConstraint(constraint);
+}
+
+void KFBase::Hypothesis::addCommonParams(ccgo::CommonParams* commonParams) {
+  _commonParams.insert(std::make_pair(commonParams->getName(), commonParams));
+  _opt.addCommonParams(commonParams);
 }
 
 void KFBase::Hypothesis::addParticleToConstraint(const std::string& particleName,

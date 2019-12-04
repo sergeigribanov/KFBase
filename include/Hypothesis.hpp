@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <ccgo/Optimizer.hpp>
 #include <ccgo/Constraint.hpp>
+#include <ccgo/CommonParams.hpp>
 #include <TLorentzVector.h>
 #include "Particle.hpp"
 
@@ -25,16 +26,20 @@ namespace KFBase {
     void disableParticle(const std::string&);
     void enableConstraint(const std::string&);
     void disableConstraint(const std::string&);
+    void enableCommonParams(const std::string&);
+    void disableCommonParams(const std::string&);
     void setInitialParticleParams(const std::string&, const Eigen::VectorXd&);
     void setParticleInverseErrorMatrix(const std::string&, const Eigen::MatrixXd&);
     void optimize();
   protected:
     void addParticle(Particle*);
     void addConstraint(ccgo::Constraint*);
+    void addCommonParams(ccgo::CommonParams*);
     void addParticleToConstraint(const std::string&, const std::string&);
   private:
     std::unordered_map<std::string, Particle*> _particles;
     std::unordered_map<std::string, ccgo::Constraint*> _constraints;
+    std::unordered_map<std::string, ccgo::CommonParams*> _commonParams;
     ccgo::Optimizer _opt;
   };
 }

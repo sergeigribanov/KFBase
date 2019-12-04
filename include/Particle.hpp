@@ -25,7 +25,7 @@ namespace KFBase {
     virtual Eigen::MatrixXd calcD2MomentumComponent(const Eigen::VectorXd&,
 						    MOMENT_COMPONENT) const = 0;
     virtual double calcVertexComponent(const Eigen::VectorXd&,
-				       VERTEX_COMPONENT) const =0;
+				       VERTEX_COMPONENT) const = 0;
     virtual Eigen::VectorXd calcDVertexComponent(const Eigen::VectorXd&,
 						 VERTEX_COMPONENT) const = 0;
     virtual Eigen::MatrixXd calcD2VertexComponent(const Eigen::VectorXd&,
