@@ -1,7 +1,8 @@
 #include "Particle.hpp"
 
-KFBase::Particle::Particle(const std::string& name, const long& n, double mass):
-  ccgo::TargetChiSquare(name, n), _mass(mass) {
+KFBase::Particle::Particle(const std::string& name, const long& n,
+			   double mass, double charge):
+  ccgo::TargetChiSquare(name, n), _mass(mass), _charge(charge) {
 }
 
 KFBase::Particle:: ~Particle() {
@@ -9,6 +10,10 @@ KFBase::Particle:: ~Particle() {
 
 double KFBase::Particle::getMass() const {
   return _mass;
+}
+
+double KFBase::Particle::getCharge() const {
+  return _charge;
 }
 
 const TLorentzVector& KFBase::Particle::getInitialMomentum() const {

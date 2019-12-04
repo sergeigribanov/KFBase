@@ -11,9 +11,10 @@ namespace KFBase {
 
   class Particle : public ccgo::TargetChiSquare {
   public:
-    Particle(const std::string&, const long&, double = 0);
+    Particle(const std::string&, const long&, double = 0, double = 0);
     virtual ~Particle();
     double getMass() const;
+    double getCharge() const;
     const TLorentzVector& getInitialMomentum() const;
     const TLorentzVector& getFinalMomentum() const;
     const TVector3& getInitialVertex() const;
@@ -39,6 +40,7 @@ namespace KFBase {
     TVector3 _finalVertex;
   private:
     double _mass;
+    double _charge;
   };
 }
 #endif
