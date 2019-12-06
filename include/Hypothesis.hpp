@@ -18,6 +18,8 @@ namespace KFBase {
     double getChiSquare(const std::vector<std::string>&) const;
     const Eigen::VectorXd& getInitialParameters(const std::string&) const;
     const Eigen::VectorXd& getFinalParameters(const std::string&) const;
+    const Eigen::VectorXd& getInitialCommonParameters(const std::string&) const;
+    const Eigen::VectorXd& getFinalCommonParameters(const std::string&) const;
     const TLorentzVector& getInitialMomentum(const std::string&) const;
     const TLorentzVector& getFinalMomentum(const std::string&) const;
     TLorentzVector getInitialMomentum(const std::vector<std::string>&) const;
@@ -29,17 +31,19 @@ namespace KFBase {
     void enableCommonParams(const std::string&);
     void disableCommonParams(const std::string&);
     void setInitialParticleParams(const std::string&, const Eigen::VectorXd&);
+    void setInitialCommonParams(const std::string&, const Eigen::VectorXd&);
     void setParticleInverseErrorMatrix(const std::string&, const Eigen::MatrixXd&);
     void optimize();
   protected:
     void addParticle(Particle*);
     void addConstraint(ccgo::Constraint*);
     void addCommonParams(ccgo::CommonParams*);
+    void addConstant(const std::string&, double);
     void addParticleToConstraint(const std::string&, const std::string&);
   private:
     std::unordered_map<std::string, Particle*> _particles;
     std::unordered_map<std::string, ccgo::Constraint*> _constraints;
-    std::unordered_map<std::string, ccgo::CommonParams*> _commonParams;
+    std::unordered_map<std::string, ccgo::CommonParams*> _commonParams;  
     ccgo::Optimizer _opt;
   };
 }

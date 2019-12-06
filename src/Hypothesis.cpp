@@ -39,6 +39,23 @@ const Eigen::VectorXd& KFBase::Hypothesis::getFinalParameters
   return _particles.at(particleName)->getFinalParameters();
 }
 
+const Eigen::VectorXd&
+KFBase::Hypothesis::getInitialCommonParameters
+(const std::string& name) const {
+  return _opt.getCommonParameters(name)->getInitialParameters();
+}
+
+const Eigen::VectorXd&
+KFBase::Hypothesis::getFinalCommonParameters
+(const std::string& name) const {
+  return _opt.getCommonParameters(name)->getFinalParameters();
+}
+
+void KFBase::Hypothesis::setInitialCommonParams
+(const std::string& name, const Eigen::VectorXd& params) {
+  _opt.setCommonParameters(name, params);
+}
+
 const TLorentzVector& KFBase::Hypothesis::getInitialMomentum
 (const std::string& particleName) const {
   return _particles.at(particleName)->getInitialMomentum();
@@ -118,6 +135,10 @@ void KFBase::Hypothesis::addConstraint(ccgo::Constraint* constraint) {
 void KFBase::Hypothesis::addCommonParams(ccgo::CommonParams* commonParams) {
   _commonParams.insert(std::make_pair(commonParams->getName(), commonParams));
   _opt.addCommonParams(commonParams);
+}
+
+void KFBase::Hypothesis::addConstant(const std::string& name, double value) {
+  _opt.setConstant(name, value);
 }
 
 void KFBase::Hypothesis::addParticleToConstraint(const std::string& particleName,
