@@ -11,7 +11,7 @@
 namespace KFBase {
   class Hypothesis {
   public:
-    Hypothesis();
+    Hypothesis(long = 20, double = 1.e-3);
     virtual ~Hypothesis();
     int getErrorCode() const;
     double getChiSquare() const;

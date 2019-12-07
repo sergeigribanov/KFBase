@@ -1,7 +1,8 @@
 #include <utility>
 #include "Hypothesis.hpp"
 
-KFBase::Hypothesis::Hypothesis() {
+KFBase::Hypothesis::Hypothesis(long nIter, double tolerance) :
+  _opt(nIter, tolerance) {
 }
 
 KFBase::Hypothesis::~Hypothesis() {
