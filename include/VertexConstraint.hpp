@@ -1,10 +1,10 @@
 #ifndef __KFBASE_VERTEXCONSTRAINT_HPP__
 #define __KFBASE_VERTEXCONSTRAINT_HPP__
-#include <ccgo/LagrangeConstraint.hpp>
+#include <ccgo/EqualityLagrangeConstraint.hpp>
 #include "Particle.hpp"
 
 namespace KFBase {
-  class VertexConstraint : public ccgo::LagrangeConstraint {
+  class VertexConstraint : public ccgo::EqualityLagrangeConstraint {
   public:
     VertexConstraint(const std::string&, VERTEX_COMPONENT);
     virtual ~VertexConstraint();

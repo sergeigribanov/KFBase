@@ -1,10 +1,10 @@
 #ifndef __KFBASE_MOMENTUMCONSTRAINT_HPP__
 #define __KFBASE_MOMENTUMCONSTRAINT_HPP__
-#include <ccgo/LagrangeConstraint.hpp>
+#include <ccgo/EqualityLagrangeConstraint.hpp>
 #include "Particle.hpp"
 
 namespace KFBase {
-  class MomentumConstraint : public ccgo::LagrangeConstraint {
+  class MomentumConstraint : public ccgo::EqualityLagrangeConstraint {
   public:
     MomentumConstraint(const std::string&, MOMENT_COMPONENT, double = 0);
     virtual ~MomentumConstraint();

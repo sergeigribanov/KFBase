@@ -3,7 +3,7 @@
 KFBase::MomentumConstraint::MomentumConstraint(const std::string& name,
 					       KFBase::MOMENT_COMPONENT component,
 					       double targetValue):
-  ccgo::LagrangeConstraint(name), _component(component), _targetValue(targetValue) {
+  ccgo::EqualityLagrangeConstraint(name), _component(component), _targetValue(targetValue) {
 }
 
 KFBase::MomentumConstraint::~MomentumConstraint() {

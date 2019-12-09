@@ -1,10 +1,10 @@
 #ifndef __KFBASE_MASSCONSTRAINT_HPP__
 #define __KFBASE_MASSCONSTRAINT_HPP__
-#include <ccgo/LagrangeConstraint.hpp>
+#include <ccgo/EqualityLagrangeConstraint.hpp>
 #include "Particle.hpp"
 
 namespace KFBase {
-  class MassConstraint : public ccgo::LagrangeConstraint {
+  class MassConstraint : public ccgo::EqualityLagrangeConstraint {
   public:
     MassConstraint(const std::string&, double);
     virtual ~MassConstraint();

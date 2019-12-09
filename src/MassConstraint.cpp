@@ -3,7 +3,7 @@
 
 KFBase::MassConstraint::MassConstraint
 (const std::string& name, double targetValue) :
-  ccgo::LagrangeConstraint(name),
+  ccgo::EqualityLagrangeConstraint(name),
   _targetValue(targetValue) {
 }
 

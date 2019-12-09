@@ -2,7 +2,7 @@
 
 KFBase::VertexConstraint::VertexConstraint
 (const std::string& name, KFBase::VERTEX_COMPONENT component) :
-  ccgo::LagrangeConstraint(name), _component(component) {
+  ccgo::EqualityLagrangeConstraint(name), _component(component) {
 }
 
 KFBase::VertexConstraint::~VertexConstraint() {
