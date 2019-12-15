@@ -40,7 +40,6 @@ namespace KFBase {
     void addCommonParams(ccgo::CommonParams*);
     void addConstant(const std::string&, double);
     void addParticleToConstraint(const std::string&, const std::string&);
-  private:
     std::unordered_map<std::string, Particle*> _particles;
     std::unordered_map<std::string, ccgo::Constraint*> _constraints;
     std::unordered_map<std::string, ccgo::CommonParams*> _commonParams;  
