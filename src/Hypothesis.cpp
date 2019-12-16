@@ -26,7 +26,7 @@ double KFBase::Hypothesis::getChiSquare() const {
 }
 
 double KFBase::Hypothesis::getChiSquare
-(const std::vector<std::string>& particleNames) const {
+(const std::set<std::string>& particleNames) const {
   return _opt.getTargetValue(particleNames);
 }
 
@@ -68,7 +68,7 @@ const TLorentzVector& KFBase::Hypothesis::getFinalMomentum
 }
 
 TLorentzVector KFBase::Hypothesis::getInitialMomentum
-(const std::vector<std::string>& particleNames) const {
+(const std::set<std::string>& particleNames) const {
   TLorentzVector result;
   for (const auto& name : particleNames) {
     result += _particles.at(name)->getInitialMomentum();
@@ -77,7 +77,7 @@ TLorentzVector KFBase::Hypothesis::getInitialMomentum
 }
 
 TLorentzVector KFBase::Hypothesis::getFinalMomentum
-(const std::vector<std::string>& particleNames) const {
+(const std::set<std::string>& particleNames) const {
   TLorentzVector result;
   for (const auto& name : particleNames) {
     result += _particles.at(name)->getFinalMomentum();

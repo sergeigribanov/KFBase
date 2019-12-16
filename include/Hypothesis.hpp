@@ -1,6 +1,7 @@
 #ifndef __KFBASE_HYPOTHESIS_HPP__
 #define __KFBASE_HYPOTHESIS_HPP__
 #include <string>
+#include <set>
 #include <unordered_map>
 #include <ccgo/Optimizer.hpp>
 #include <ccgo/Constraint.hpp>
@@ -15,15 +16,15 @@ namespace KFBase {
     virtual ~Hypothesis();
     int getErrorCode() const;
     double getChiSquare() const;
-    double getChiSquare(const std::vector<std::string>&) const;
+    double getChiSquare(const std::set<std::string>&) const;
     const Eigen::VectorXd& getInitialParameters(const std::string&) const;
     const Eigen::VectorXd& getFinalParameters(const std::string&) const;
     const Eigen::VectorXd& getInitialCommonParameters(const std::string&) const;
     const Eigen::VectorXd& getFinalCommonParameters(const std::string&) const;
     const TLorentzVector& getInitialMomentum(const std::string&) const;
     const TLorentzVector& getFinalMomentum(const std::string&) const;
-    TLorentzVector getInitialMomentum(const std::vector<std::string>&) const;
-    TLorentzVector getFinalMomentum(const std::vector<std::string>&) const;
+    TLorentzVector getInitialMomentum(const std::set<std::string>&) const;
+    TLorentzVector getFinalMomentum(const std::set<std::string>&) const;
     void enableParticle(const std::string&);
     void disableParticle(const std::string&);
     void enableConstraint(const std::string&);
