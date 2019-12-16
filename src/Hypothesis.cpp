@@ -1,9 +1,9 @@
-#include <utility>
 #include "Hypothesis.hpp"
 
-KFBase::Hypothesis::Hypothesis(long nIter, double tolerance) :
-  _opt(nIter, tolerance) {
-}
+#include <utility>
+
+KFBase::Hypothesis::Hypothesis(long nIter, double tolerance)
+    : _opt(nIter, tolerance) {}
 
 KFBase::Hypothesis::~Hypothesis() {
   for (auto& el : _particles) {
@@ -17,58 +17,54 @@ KFBase::Hypothesis::~Hypothesis() {
   }
 }
 
-int KFBase::Hypothesis::getErrorCode() const {
-  return _opt.getErrorCode();
-}
+int KFBase::Hypothesis::getErrorCode() const { return _opt.getErrorCode(); }
 
 double KFBase::Hypothesis::getChiSquare() const {
   return _opt.getTargetValue();
 }
 
-double KFBase::Hypothesis::getChiSquare
-(const std::set<std::string>& particleNames) const {
+double KFBase::Hypothesis::getChiSquare(
+    const std::set<std::string>& particleNames) const {
   return _opt.getTargetValue(particleNames);
 }
 
-const Eigen::VectorXd& KFBase::Hypothesis::getInitialParameters
-(const std::string& particleName) const {
+const Eigen::VectorXd& KFBase::Hypothesis::getInitialParameters(
+    const std::string& particleName) const {
   return _particles.at(particleName)->getInitialParameters();
 }
 
-const Eigen::VectorXd& KFBase::Hypothesis::getFinalParameters
-(const std::string& particleName) const {
+const Eigen::VectorXd& KFBase::Hypothesis::getFinalParameters(
+    const std::string& particleName) const {
   return _particles.at(particleName)->getFinalParameters();
 }
 
-const Eigen::VectorXd&
-KFBase::Hypothesis::getInitialCommonParameters
-(const std::string& name) const {
+const Eigen::VectorXd& KFBase::Hypothesis::getInitialCommonParameters(
+    const std::string& name) const {
   return _opt.getCommonParameters(name)->getInitialParameters();
 }
 
-const Eigen::VectorXd&
-KFBase::Hypothesis::getFinalCommonParameters
-(const std::string& name) const {
+const Eigen::VectorXd& KFBase::Hypothesis::getFinalCommonParameters(
+    const std::string& name) const {
   return _opt.getCommonParameters(name)->getFinalParameters();
 }
 
-void KFBase::Hypothesis::setInitialCommonParams
-(const std::string& name, const Eigen::VectorXd& params) {
+void KFBase::Hypothesis::setInitialCommonParams(const std::string& name,
+                                                const Eigen::VectorXd& params) {
   _opt.setCommonParameters(name, params);
 }
 
-const TLorentzVector& KFBase::Hypothesis::getInitialMomentum
-(const std::string& particleName) const {
+const TLorentzVector& KFBase::Hypothesis::getInitialMomentum(
+    const std::string& particleName) const {
   return _particles.at(particleName)->getInitialMomentum();
 }
 
-const TLorentzVector& KFBase::Hypothesis::getFinalMomentum
-(const std::string& particleName) const {
+const TLorentzVector& KFBase::Hypothesis::getFinalMomentum(
+    const std::string& particleName) const {
   return _particles.at(particleName)->getFinalMomentum();
 }
 
-TLorentzVector KFBase::Hypothesis::getInitialMomentum
-(const std::set<std::string>& particleNames) const {
+TLorentzVector KFBase::Hypothesis::getInitialMomentum(
+    const std::set<std::string>& particleNames) const {
   TLorentzVector result;
   for (const auto& name : particleNames) {
     result += _particles.at(name)->getInitialMomentum();
@@ -76,8 +72,8 @@ TLorentzVector KFBase::Hypothesis::getInitialMomentum
   return result;
 }
 
-TLorentzVector KFBase::Hypothesis::getFinalMomentum
-(const std::set<std::string>& particleNames) const {
+TLorentzVector KFBase::Hypothesis::getFinalMomentum(
+    const std::set<std::string>& particleNames) const {
   TLorentzVector result;
   for (const auto& name : particleNames) {
     result += _particles.at(name)->getFinalMomentum();
@@ -85,19 +81,17 @@ TLorentzVector KFBase::Hypothesis::getFinalMomentum
   return result;
 }
 
-void KFBase::Hypothesis::setInitialParticleParams
-(const std::string& name, const Eigen::VectorXd& x) {
+void KFBase::Hypothesis::setInitialParticleParams(const std::string& name,
+                                                  const Eigen::VectorXd& x) {
   _particles.at(name)->setInitialParameters(x);
 }
 
-void KFBase::Hypothesis::setParticleInverseErrorMatrix
-(const std::string& name, const Eigen::MatrixXd& matrix) {
+void KFBase::Hypothesis::setParticleInverseErrorMatrix(
+    const std::string& name, const Eigen::MatrixXd& matrix) {
   _particles.at(name)->setInverseErrorMatrix(matrix);
 }
 
-void KFBase::Hypothesis::optimize() {
-  _opt.optimize();
-}
+void KFBase::Hypothesis::optimize() { _opt.optimize(); }
 
 void KFBase::Hypothesis::enableParticle(const std::string& name) {
   _opt.enableTarget(name);
@@ -142,7 +136,7 @@ void KFBase::Hypothesis::addConstant(const std::string& name, double value) {
   _opt.setConstant(name, value);
 }
 
-void KFBase::Hypothesis::addParticleToConstraint(const std::string& particleName,
-						 const std::string& constraintName) {
+void KFBase::Hypothesis::addParticleToConstraint(
+    const std::string& particleName, const std::string& constraintName) {
   _opt.addTargetToConstraint(particleName, constraintName);
 }

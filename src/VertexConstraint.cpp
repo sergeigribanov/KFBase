@@ -1,12 +1,10 @@
 #include "VertexConstraint.hpp"
 
-KFBase::VertexConstraint::VertexConstraint
-(const std::string& name, KFBase::VERTEX_COMPONENT component) :
-  ccgo::EqualityLagrangeConstraint(name), _component(component) {
-}
+KFBase::VertexConstraint::VertexConstraint(const std::string& name,
+                                           KFBase::VERTEX_COMPONENT component)
+    : ccgo::EqualityLagrangeConstraint(name), _component(component) {}
 
-KFBase::VertexConstraint::~VertexConstraint() {
-}
+KFBase::VertexConstraint::~VertexConstraint() {}
 
 KFBase::VERTEX_COMPONENT KFBase::VertexConstraint::getComponent() {
   return _component;
@@ -27,8 +25,8 @@ void KFBase::VertexConstraint::add(const ccgo::TargetFunction* obj) {
   }
 }
 
-void KFBase::VertexConstraint::setVertexCommonParams
-(const std::string& vertexName) {
+void KFBase::VertexConstraint::setVertexCommonParams(
+    const std::string& vertexName) {
   auto it = getCommonParameters()->find(vertexName);
   if (it == getCommonParameters()->end()) {
     // TO DO : exception
@@ -36,13 +34,13 @@ void KFBase::VertexConstraint::setVertexCommonParams
   _vertexComponent = it->second;
 }
 
-
 double KFBase::VertexConstraint::h(const Eigen::VectorXd& x) const {
   double result = 0;
   const auto it = getTargets().begin();
   if (it->second->isEnabled()) {
-    result += static_cast<const KFBase::Particle*>(it->second)->calcVertexComponent(x, _component) -
-      x(_vertexComponent->getBeginIndex());
+    result += static_cast<const KFBase::Particle*>(it->second)
+                  ->calcVertexComponent(x, _component) -
+              x(_vertexComponent->getBeginIndex());
   }
   return result;
 }
@@ -51,7 +49,8 @@ Eigen::VectorXd KFBase::VertexConstraint::dh(const Eigen::VectorXd& x) const {
   Eigen::VectorXd result = Eigen::VectorXd::Zero(x.size());
   const auto it = getTargets().begin();
   if (it->second->isEnabled()) {
-    result += static_cast<const KFBase::Particle*>(it->second)->calcDVertexComponent(x, _component);
+    result += static_cast<const KFBase::Particle*>(it->second)
+                  ->calcDVertexComponent(x, _component);
     result(_vertexComponent->getBeginIndex()) -= 1;
   }
   return result;
@@ -61,7 +60,8 @@ Eigen::MatrixXd KFBase::VertexConstraint::d2h(const Eigen::VectorXd& x) const {
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
   const auto it = getTargets().begin();
   if (it->second->isEnabled()) {
-    result += static_cast<const KFBase::Particle*>(it->second)->calcD2VertexComponent(x, _component);
+    result += static_cast<const KFBase::Particle*>(it->second)
+                  ->calcD2VertexComponent(x, _component);
   }
   return result;
 }

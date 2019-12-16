@@ -1,13 +1,13 @@
 #include "MomentumConstraint.hpp"
 
-KFBase::MomentumConstraint::MomentumConstraint(const std::string& name,
-					       KFBase::MOMENT_COMPONENT component,
-					       double targetValue):
-  ccgo::EqualityLagrangeConstraint(name), _component(component), _targetValue(targetValue) {
-}
+KFBase::MomentumConstraint::MomentumConstraint(
+    const std::string& name, KFBase::MOMENT_COMPONENT component,
+    double targetValue)
+    : ccgo::EqualityLagrangeConstraint(name),
+      _component(component),
+      _targetValue(targetValue) {}
 
-KFBase::MomentumConstraint::~MomentumConstraint() {
-}
+KFBase::MomentumConstraint::~MomentumConstraint() {}
 
 KFBase::MOMENT_COMPONENT KFBase::MomentumConstraint::getComponent() const {
   return _component;
@@ -26,7 +26,8 @@ double KFBase::MomentumConstraint::h(const Eigen::VectorXd& x) const {
   const auto& targets = getTargets();
   for (const auto& el : targets) {
     if (el.second->isEnabled()) {
-      result += static_cast<const KFBase::Particle*>(el.second)->calcMomentumComponent(x, _component);
+      result += static_cast<const KFBase::Particle*>(el.second)
+                    ->calcMomentumComponent(x, _component);
     }
   }
   return result;
@@ -37,18 +38,21 @@ Eigen::VectorXd KFBase::MomentumConstraint::dh(const Eigen::VectorXd& x) const {
   const auto& targets = getTargets();
   for (const auto& el : targets) {
     if (el.second->isEnabled()) {
-      result += static_cast<const KFBase::Particle*>(el.second)->calcDMomentumComponent(x, _component);
+      result += static_cast<const KFBase::Particle*>(el.second)
+                    ->calcDMomentumComponent(x, _component);
     }
   }
   return result;
 }
 
-Eigen::MatrixXd KFBase::MomentumConstraint::d2h(const Eigen::VectorXd& x) const {
+Eigen::MatrixXd KFBase::MomentumConstraint::d2h(
+    const Eigen::VectorXd& x) const {
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
   const auto& targets = getTargets();
   for (const auto& el : targets) {
     if (el.second->isEnabled()) {
-      result += static_cast<const KFBase::Particle*>(el.second)->calcD2MomentumComponent(x, _component);
+      result += static_cast<const KFBase::Particle*>(el.second)
+                    ->calcD2MomentumComponent(x, _component);
     }
   }
   return result;
