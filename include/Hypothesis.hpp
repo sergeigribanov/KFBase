@@ -27,6 +27,9 @@ class Hypothesis {
   const Eigen::VectorXd& getFinalCommonParameters(const std::string&) const;
   const TLorentzVector& getInitialMomentum(const std::string&) const;
   const TLorentzVector& getFinalMomentum(const std::string&) const;
+  bool isParticleEnabled(const std::string&) const;
+  bool isCommonParamContinerEnabled(const std::string&) const;
+  bool isConstraintEnabled(const std::string&) const;
   int getNumberOfEnabledParticles() const;
   int getNumberOfEnabledConstraints() const;
   int getNumberOfEnabledCommonParamContainers() const;

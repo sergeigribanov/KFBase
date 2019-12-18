@@ -151,7 +151,7 @@ void KFBase::Hypothesis::addParticleToConstraint(
 }
 
 int KFBase::Hypothesis::getNumberOfEnabledParticles() const {
-  return _opt.getNumberOfEnabledTargets();
+  return _opt.getNumberOfEnabledTargetFunctions();
 }
 
 int KFBase::Hypothesis::getNumberOfEnabledConstraints() const {
@@ -160,4 +160,16 @@ int KFBase::Hypothesis::getNumberOfEnabledConstraints() const {
 
 int KFBase::Hypothesis::getNumberOfEnabledCommonParamContainers() const {
   return _opt.getNumberOfEnabledCommonParamContainers();
+}
+
+bool KFBase::Hypothesis::isParticleEnabled(const std::string& particleName) const {
+  return _opt.isTargetFunctionEnabled(particleName);
+}
+
+bool KFBase::Hypothesis::isCommonParamContinerEnabled(const std::string& commonParamName) const {
+  return _opt.isCommonParamContainerEnabled(commonParamName);
+}
+
+bool KFBase::Hypothesis::isConstraintEnabled(const std::string& constraintName) const {
+  return _opt.isConstraintEnabled(constraintName);
 }
