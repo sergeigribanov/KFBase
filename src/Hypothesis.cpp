@@ -28,6 +28,10 @@ double KFBase::Hypothesis::getChiSquare(
   return _opt.getTargetValue(particleNames);
 }
 
+double KFBase::Hypothesis::getChiSquare(const std::string& particleName) const {
+  return _opt.getTargetValue(particleName);
+}
+
 const Eigen::VectorXd& KFBase::Hypothesis::getInitialParameters(
     const std::string& particleName) const {
   return _particles.at(particleName)->getInitialParameters();
@@ -36,6 +40,11 @@ const Eigen::VectorXd& KFBase::Hypothesis::getInitialParameters(
 const Eigen::VectorXd& KFBase::Hypothesis::getFinalParameters(
     const std::string& particleName) const {
   return _particles.at(particleName)->getFinalParameters();
+}
+
+const Eigen::MatrixXd& KFBase::Hypothesis::getInverseErrorMatrix(
+    const std::string& particleName) const {
+  return _particles.at(particleName)->getInverseErrorMatrix();
 }
 
 const Eigen::VectorXd& KFBase::Hypothesis::getInitialCommonParameters(
@@ -139,4 +148,16 @@ void KFBase::Hypothesis::addConstant(const std::string& name, double value) {
 void KFBase::Hypothesis::addParticleToConstraint(
     const std::string& particleName, const std::string& constraintName) {
   _opt.addTargetToConstraint(particleName, constraintName);
+}
+
+int KFBase::Hypothesis::getNumberOfEnabledParticles() const {
+  return _opt.getNumberOfEnabledTargets();
+}
+
+int KFBase::Hypothesis::getNumberOfEnabledConstraints() const {
+  return _opt.getNumberOfEnabledConstraints();
+}
+
+int KFBase::Hypothesis::getNumberOfEnabledCommonParamContainers() const {
+  return _opt.getNumberOfEnabledCommonParamContainers();
 }

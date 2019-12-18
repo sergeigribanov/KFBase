@@ -18,13 +18,18 @@ class Hypothesis {
   virtual ~Hypothesis();
   int getErrorCode() const;
   double getChiSquare() const;
+  double getChiSquare(const std::string&) const;
   double getChiSquare(const std::set<std::string>&) const;
   const Eigen::VectorXd& getInitialParameters(const std::string&) const;
   const Eigen::VectorXd& getFinalParameters(const std::string&) const;
+  const Eigen::MatrixXd& getInverseErrorMatrix(const std::string&) const;
   const Eigen::VectorXd& getInitialCommonParameters(const std::string&) const;
   const Eigen::VectorXd& getFinalCommonParameters(const std::string&) const;
   const TLorentzVector& getInitialMomentum(const std::string&) const;
   const TLorentzVector& getFinalMomentum(const std::string&) const;
+  int getNumberOfEnabledParticles() const;
+  int getNumberOfEnabledConstraints() const;
+  int getNumberOfEnabledCommonParamContainers() const;
   TLorentzVector getInitialMomentum(const std::set<std::string>&) const;
   TLorentzVector getFinalMomentum(const std::set<std::string>&) const;
   void enableParticle(const std::string&);
