@@ -1,6 +1,6 @@
 # KFBase
 
-A library contained abstract classes for kinemtaic fit.
+A library that contains abstract classes for kinemtaic fit.
 
 ## Dependencies
 
