@@ -1,3 +1,34 @@
+/*
+ * KFBase library
+ * See COPYRIGHT file at the top of the source tree.
+ *
+ * This product includes software developed by the
+ * CMD-3 collaboration (https://cmd.inp.nsk.su/).
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ */
+
+/**
+ * @file Hypothesis.cpp
+ *
+ * @brief Implementation of Hypothesis methods
+ *
+ * @ingroup KFBase
+ *
+ * @author Sergei Gribanov
+ * Contact: ssgribanov@gmail.com
+ *
+ */
+
 #include "Hypothesis.hpp"
 
 #include <utility>
@@ -162,14 +193,17 @@ int KFBase::Hypothesis::getNumberOfEnabledCommonParamContainers() const {
   return _opt.getNumberOfEnabledCommonParamContainers();
 }
 
-bool KFBase::Hypothesis::isParticleEnabled(const std::string& particleName) const {
+bool KFBase::Hypothesis::isParticleEnabled(
+    const std::string& particleName) const {
   return _opt.isTargetFunctionEnabled(particleName);
 }
 
-bool KFBase::Hypothesis::isCommonParamContinerEnabled(const std::string& commonParamName) const {
+bool KFBase::Hypothesis::isCommonParamContinerEnabled(
+    const std::string& commonParamName) const {
   return _opt.isCommonParamContainerEnabled(commonParamName);
 }
 
-bool KFBase::Hypothesis::isConstraintEnabled(const std::string& constraintName) const {
+bool KFBase::Hypothesis::isConstraintEnabled(
+    const std::string& constraintName) const {
   return _opt.isConstraintEnabled(constraintName);
 }
