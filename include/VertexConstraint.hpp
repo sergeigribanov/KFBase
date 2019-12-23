@@ -55,7 +55,7 @@ class VertexConstraint : public ccgo::EqualityLagrangeConstraint {
   VERTEX_COMPONENT getComponent();
   //! A vertex coordinate common parameter setter
   /*!
-   * @param vertexCoordinate (vertex component common parameter container)
+   * @param name (name common parameter container that represents a vertex coordinate)
    *
    * Vertex component common parameter container contains 1-dim vector that
    * represent one of vertex coordinates: x, y or z.

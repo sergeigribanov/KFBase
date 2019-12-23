@@ -57,8 +57,8 @@ void KFBase::VertexConstraint::add(const ccgo::TargetFunction* obj) {
 }
 
 void KFBase::VertexConstraint::setVertexCommonParams(
-    const std::string& vertexCoordinate) {
-  auto it = getCommonParameters()->find(vertexName);
+    const std::string& name) {
+  auto it = getCommonParameters()->find(name);
   if (it == getCommonParameters()->end()) {
     // TO DO : exception
   }
