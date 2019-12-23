@@ -1,14 +1,42 @@
+/*
+ * KFBase library
+ * See COPYRIGHT file at the top of the source tree.
+ *
+ * This product includes software developed by the
+ * CMD-3 collaboration (https://cmd.inp.nsk.su/).
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ */
+
+/**
+ * @file MassConstraint.cpp
+ *
+ * @brief Implementation of MassConstraint methods
+ *
+ * @ingroup KFBase
+ *
+ * @author Sergei Gribanov
+ * Contact: ssgribanov@gmail.com
+ *
+ */
+
 #include "MassConstraint.hpp"
 
 #include <vector>
 
-KFBase::MassConstraint::MassConstraint(const std::string& name,
-                                       double targetValue)
-    : ccgo::EqualityLagrangeConstraint(name), _targetValue(targetValue) {}
+KFBase::MassConstraint::MassConstraint(const std::string& name, double mass)
+    : ccgo::EqualityLagrangeConstraint(name, mass * mass) {}
 
 KFBase::MassConstraint::~MassConstraint() {}
-
-double KFBase::MassConstraint::getTargetValue() const { return _targetValue; }
 
 void KFBase::MassConstraint::add(const ccgo::TargetFunction* obj) {
   if (!dynamic_cast<const KFBase::Particle*>(obj)) {
@@ -23,7 +51,7 @@ void KFBase::MassConstraint::add(const ccgo::TargetFunction* obj) {
 }
 
 double KFBase::MassConstraint::h(const Eigen::VectorXd& x) const {
-  double result = -_targetValue * _targetValue;
+  double result = 0;
   const auto& targets = getTargets();
   std::vector<double> px;
   std::vector<double> py;

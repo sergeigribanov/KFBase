@@ -1,11 +1,41 @@
+/*
+ * KFBase library
+ * See COPYRIGHT file at the top of the source tree.
+ *
+ * This product includes software developed by the
+ * CMD-3 collaboration (https://cmd.inp.nsk.su/).
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ */
+
+/**
+ * @file MomentumConstraint.cpp
+ *
+ * @brief Implementation of MomentumConstraint methods
+ *
+ * @ingroup KFBase
+ *
+ * @author Sergei Gribanov
+ * Contact: ssgribanov@gmail.com
+ *
+ */
+
 #include "MomentumConstraint.hpp"
 
 KFBase::MomentumConstraint::MomentumConstraint(
     const std::string& name, KFBase::MOMENT_COMPONENT component,
-    double targetValue)
-    : ccgo::EqualityLagrangeConstraint(name),
-      _component(component),
-      _targetValue(targetValue) {}
+    double constraintValue)
+    : ccgo::EqualityLagrangeConstraint(name, constraintValue),
+      _component(component) {}
 
 KFBase::MomentumConstraint::~MomentumConstraint() {}
 
@@ -13,16 +43,8 @@ KFBase::MOMENT_COMPONENT KFBase::MomentumConstraint::getComponent() const {
   return _component;
 }
 
-double KFBase::MomentumConstraint::getTargetValue() const {
-  return _targetValue;
-}
-
-void KFBase::MomentumConstraint::setTargetValue(double value) {
-  _targetValue = value;
-}
-
 double KFBase::MomentumConstraint::h(const Eigen::VectorXd& x) const {
-  double result = -_targetValue;
+  double result = 0.;
   const auto& targets = getTargets();
   for (const auto& el : targets) {
     if (el.second->isEnabled()) {
