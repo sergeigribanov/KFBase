@@ -33,8 +33,10 @@
 
 #include <utility>
 
-KFBase::Hypothesis::Hypothesis(long nIter, double tolerance)
-    : _opt(nIter, tolerance) {}
+KFBase::Hypothesis::Hypothesis(long nIter, double tolerance,
+			       bool numericalDerivatives,
+			       double derivativeStep)
+  : _opt(nIter, tolerance, numericalDerivatives, derivativeStep) {}
 
 KFBase::Hypothesis::~Hypothesis() {
   for (auto& el : _particles) {
@@ -206,4 +208,44 @@ bool KFBase::Hypothesis::isCommonParamContinerEnabled(
 bool KFBase::Hypothesis::isConstraintEnabled(
     const std::string& constraintName) const {
   return _opt.isConstraintEnabled(constraintName);
+}
+
+long KFBase::Hypothesis::getMaxNumberOfIterations() const {
+  return _opt.getMaxNumberOfIterations();
+}
+
+double KFBase::Hypothesis::getTolerance() const {
+  return _opt.getTolerance();
+}
+
+bool KFBase::Hypothesis::isNumericalDerivatives() const {
+  return _opt.isNumericalDerivatives();
+}
+
+double KFBase::Hypothesis::getNumericalDerivativeStep() const {
+  return _opt.getNumericalDerivativeStep();
+}
+
+void KFBase::Hypothesis::setMaxNumberOfIterations(long nIter) {
+  _opt.setMaxNumberOfIterations(nIter);
+}
+
+void KFBase::Hypothesis::setTolerance(double tolerance) {
+  _opt.setTolerance(tolerance);
+}
+
+void KFBase::Hypothesis::enableNumericalDerivatives() {
+  _opt.enableNumericalDerivatives();
+}
+
+void KFBase::Hypothesis::disableNumericalDerivatives() {
+  _opt.disableNumericalDerivatives();
+}
+
+void KFBase::Hypothesis::setNumericalDerivativeStep(double step) {
+  _opt.setNumericalDerivativeStep(step);
+}
+
+void KFBase::Hypothesis::prepare() {
+  _opt.prepare();
 }

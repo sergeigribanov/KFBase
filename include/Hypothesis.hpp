@@ -55,7 +55,7 @@ class Hypothesis {
    *
    * @param tolerance (optimization tolreance)
    */
-  Hypothesis(long = 20, double = 1.e-3);
+  Hypothesis(long = 20, double = 1.e-3, bool = false, double = 1.e-5);
   //! A destructor
   virtual ~Hypothesis();
   //! A error code getter
@@ -158,6 +158,15 @@ class Hypothesis {
    * @param particleNames (set of particle names)
    */
   TLorentzVector getFinalMomentum(const std::set<std::string>&) const;
+  long getMaxNumberOfIterations() const;
+  double getTolerance() const;
+  bool isNumericalDerivatives() const;
+  double getNumericalDerivativeStep() const;
+  void setMaxNumberOfIterations(long);
+  void setTolerance(double);
+  void enableNumericalDerivatives();
+  void disableNumericalDerivatives();
+  void setNumericalDerivativeStep(double);
   //! A method used to enable particle by name
   /*!
    * @param name (particle name)
@@ -210,6 +219,7 @@ class Hypothesis {
    */
   void setParticleInverseErrorMatrix(const std::string&,
                                      const Eigen::MatrixXd&);
+  void prepare();
   //! A method that starts optimization
   void optimize();
 
