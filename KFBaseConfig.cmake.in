@@ -1,0 +1,6 @@
+@PACKAGE_INIT@
+
+include ( "${CMAKE_CURRENT_LIST_DIR}/KFBaseTargets.cmake" )
+set(KFBase_ROOT_DIR @CMAKE_INSTALL_PREFIX@)
+set(KFBase_INCLUDE_DIRS ${KFBase_ROOT_DIR}/include)
+set(KFBase_LIBRARIES ${KFBase_ROOT_DIR}/lib/libkfbase.so)
