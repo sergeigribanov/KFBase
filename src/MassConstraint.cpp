@@ -73,11 +73,16 @@ double KFBase::MassConstraint::h(const Eigen::VectorXd& x) const {
                        ->calcMomentumComponent(x, KFBase::MOMENT_E));
     }
   }
-  for (std::size_t i = 0; i + 1 < px.size(); ++i) {
-    result += pe[i] * pe[i] - px[i] * px[i] - py[i] * py[i] - pz[i] * pz[i];
-    for (std::size_t j = i + 1; j < px.size(); ++j) {
-      result +=
-          2 * (pe[i] * pe[j] - px[i] * px[j] - py[i] * py[j] - pz[i] * pz[j]);
+  // for (std::size_t i = 0; i + 1 < px.size(); ++i) {
+  //   result += pe[i] * pe[i] - px[i] * px[i] - py[i] * py[i] - pz[i] * pz[i];
+  //   for (std::size_t j = i + 1; j < px.size(); ++j) {
+  //     result +=
+  //         2 * (pe[i] * pe[j] - px[i] * px[j] - py[i] * py[j] - pz[i] * pz[j]);
+  //   }
+  // }
+  for (std::size_t i = 0; i < px.size(); ++i) {
+    for (std::size_t j = 0; j < px.size(); ++j) {
+      result += pe[i] * pe[j] - px[i] * px[j] - py[i] * py[j] - pz[i] * pz[j];
     }
   }
   return result;
@@ -122,12 +127,17 @@ Eigen::VectorXd KFBase::MassConstraint::dh(const Eigen::VectorXd& x) const {
                         ->calcDMomentumComponent(x, KFBase::MOMENT_E));
     }
   }
-  for (std::size_t i = 0; i + 1 < px.size(); ++i) {
-    result +=
-        2 * (pe[i] * dpe[i] - px[i] * dpx[i] - py[i] * dpy[i] - pz[i] * dpz[i]);
-    for (std::size_t j = i + 1; j < px.size(); ++j) {
-      result += 4 * (pe[i] * dpe[j] - px[i] * dpx[j] - py[i] * dpy[j] -
-                     pz[i] * dpz[j]);
+  // for (std::size_t i = 0; i + 1 < px.size(); ++i) {
+  //   result +=
+  //       2 * (pe[i] * dpe[i] - px[i] * dpx[i] - py[i] * dpy[i] - pz[i] * dpz[i]);
+  //   for (std::size_t j = i + 1; j < px.size(); ++j) {
+  //     result += 4 * (pe[i] * dpe[j] - px[i] * dpx[j] - py[i] * dpy[j] -
+  //                    pz[i] * dpz[j]);
+  //   }
+  // }
+  for (std::size_t i = 0; i < px.size(); ++i) {
+    for (std::size_t j = 0; j < px.size(); ++j) {
+      result += 2 * (pe[i] * dpe[j] - px[i] * dpx[j] - py[i] * dpy[j] - pz[i] * dpz[j]);
     }
   }
   return result;
@@ -188,25 +198,35 @@ Eigen::MatrixXd KFBase::MassConstraint::d2h(const Eigen::VectorXd& x) const {
                          ->calcD2MomentumComponent(x, KFBase::MOMENT_E));
     }
   }
-  for (std::size_t i = 0; i + 1 < px.size(); ++i) {
-    result += 2 * (pe[i] * d2pe[i] - px[i] * d2px[i] - py[i] * d2py[i] -
-                   pz[i] * d2pz[i]);
-    for (std::size_t s = 0; s + 1 < (std::size_t)x.size(); ++s) {
-      for (std::size_t p = s + 1; p < (std::size_t)x.size(); ++p) {
-        result(s, p) += 2 * (dpe[i](s) * dpe[i](p) - dpx[i](s) * dpx[i](p) -
-                             dpy[i](s) * dpy[i](p) - dpz[i](s) * dpz[i](p));
-        result(p, s) = result(s, p);
-      }
-    }
-    for (std::size_t j = i + 1; j < px.size(); ++j) {
-      result += 4 * (pe[i] * d2pe[j] - px[i] * d2px[j] - py[i] * d2py[j] -
-                     pz[i] * d2pz[j]);
-      for (std::size_t s = 0; s + 1 < (std::size_t)x.size(); ++s) {
-        for (std::size_t p = s + 1; p < (std::size_t)x.size(); ++p) {
-          result(s, p) += 4 * (dpe[i](s) * dpe[j](p) - dpx[i](s) * dpx[j](p) -
-                               dpy[i](s) * dpy[j](p) - dpz[i](s) * dpz[j](p));
-          result(p, s) = result(s, p);
-        }
+  // for (std::size_t i = 0; i + 1 < px.size(); ++i) {
+  //   result += 2 * (pe[i] * d2pe[i] - px[i] * d2px[i] - py[i] * d2py[i] -
+  //                  pz[i] * d2pz[i]);
+  //   for (std::size_t s = 0; s + 1 < (std::size_t)x.size(); ++s) {
+  //     for (std::size_t p = s + 1; p < (std::size_t)x.size(); ++p) {
+  //       result(s, p) += 2 * (dpe[i](s) * dpe[i](p) - dpx[i](s) * dpx[i](p) -
+  //                            dpy[i](s) * dpy[i](p) - dpz[i](s) * dpz[i](p));
+  //       result(p, s) = result(s, p);
+  //     }
+  //   }
+  //   for (std::size_t j = i + 1; j < px.size(); ++j) {
+  //     result += 4 * (pe[i] * d2pe[j] - px[i] * d2px[j] - py[i] * d2py[j] -
+  //                    pz[i] * d2pz[j]);
+  //     for (std::size_t s = 0; s + 1 < (std::size_t)x.size(); ++s) {
+  //       for (std::size_t p = s + 1; p < (std::size_t)x.size(); ++p) {
+  //         result(s, p) += 4 * (dpe[i](s) * dpe[j](p) - dpx[i](s) * dpx[j](p) -
+  //                              dpy[i](s) * dpy[j](p) - dpz[i](s) * dpz[j](p));
+  //         result(p, s) = result(s, p);
+  //       }
+  //     }
+  //   }
+  // }
+  for (std::size_t i = 0; i < px.size(); ++i) {
+    for (std::size_t j = 0; j < px.size(); ++j) {
+      result += 2 * (pe[i] * d2pe[j] - px[i] * d2px[j] - py[i] * d2py[j] - pz[i] * d2pz[j]);
+      for (std::size_t s = 0; s < (std::size_t)x.size(); ++s) {
+	for (std::size_t p = 0; p < (std::size_t)x.size(); ++p) {
+	  result(s, p) += 2 * (dpe[i](p) * dpe[j](s) - dpx[i](p) * dpx[j](s) - dpy[i](p) * dpy[j](s) - dpz[i](p) * dpz[j](s));
+	}
       }
     }
   }
