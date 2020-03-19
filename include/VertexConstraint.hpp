@@ -52,7 +52,7 @@ class VertexConstraint : public ccgo::EqualityLagrangeConstraint {
   //! A destructor
   virtual ~VertexConstraint();
   //! A constraint vertex component getter
-  VERTEX_COMPONENT getComponent();
+  VERTEX_COMPONENT getComponent() const;
   //! A vertex coordinate common parameter setter
   /*!
    * @param name (name common parameter container that represents a vertex coordinate)

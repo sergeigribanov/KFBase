@@ -37,7 +37,7 @@ KFBase::VertexConstraint::VertexConstraint(const std::string& name,
 
 KFBase::VertexConstraint::~VertexConstraint() {}
 
-KFBase::VERTEX_COMPONENT KFBase::VertexConstraint::getComponent() {
+KFBase::VERTEX_COMPONENT KFBase::VertexConstraint::getComponent() const {
   return _component;
 }
 
