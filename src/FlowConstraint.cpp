@@ -30,12 +30,13 @@
  */
 
 #include <cmath>
-#include <unsupported/Eigen/CXX11/Tensor>
+#include <iostream>
 #include "FlowConstraint.hpp"
 #include "Particle.hpp"
 
 KFBase::FlowConstraint::FlowConstraint(const std::string& name) :
-  ccgo::EqualityLagrangeConstraint(name), _a(1.e-5) {}
+  ccgo::EqualityLagrangeConstraint(name), _a(0.) {
+}
 
 KFBase::FlowConstraint::~FlowConstraint() {}
 
@@ -169,117 +170,83 @@ Eigen::MatrixXd KFBase::FlowConstraint::getDDeltaR(const Eigen::VectorXd& x) con
 }
 
 double KFBase::FlowConstraint::h(const Eigen::VectorXd& x) const {
+  Eigen::Tensor<double, 0> scalar;
+  Eigen::array<Eigen::IndexPair<int>, 1> ind00 = { Eigen::IndexPair<int>(0, 0) };
   Eigen::Tensor<double, 1> r = getDeltaR(x);
-  Eigen::array<ptrdiff_t, 1> index0({0});
-  Eigen::Tensor<double, 1> scalar;
-  scalar = r.convolve(r, index0);
+  scalar = r.contract(r, ind00);
   double mr = std::sqrt(scalar(0) + _a * _a);
   Eigen::Vector3d store_p = getMomentumSum(x);
   Eigen::TensorMap<Eigen::Tensor<double, 1>> p(store_p.data(), 3);
-  scalar = p.convolve(p, index0);
+  scalar = p.contract(p, ind00);
   double mp = std::sqrt(scalar(0));
-  r = r / mr;
   p = p / mp;
-  scalar = p.convolve(r, index0);
-  return (scalar(0) - 1);
+  scalar = p.contract(r, ind00);
+  return (scalar(0) - mr);
 }
 
 Eigen::VectorXd KFBase::FlowConstraint::dh(const Eigen::VectorXd& x) const {
+  Eigen::Tensor<double, 0> scalar;
+  Eigen::array<Eigen::IndexPair<int>, 1> ind00 = { Eigen::IndexPair<int>(0, 0) };
+  Eigen::array<Eigen::IndexPair<int>, 1> ind10 = { Eigen::IndexPair<int>(1, 0) };
   Eigen::Tensor<double, 1> r = getDeltaR(x);
-  Eigen::array<ptrdiff_t, 1> index0({0});
-  Eigen::Tensor<double, 1> scalar;
-  scalar = r.convolve(r, index0);
+  scalar = r.contract(r, ind00);
   double mr = std::sqrt(scalar(0) + _a * _a);
   Eigen::Vector3d store_p = getMomentumSum(x);
   Eigen::TensorMap<Eigen::Tensor<double, 1>> p(store_p.data(), 3);
-  scalar = p.convolve(p, index0);
+  scalar = p.contract(p, ind00);
   double mp = std::sqrt(scalar(0));
   Eigen::MatrixXd store_dp = getDMomentumSum(x);
   Eigen::TensorMap<Eigen::Tensor<double, 2>> dp(store_dp.data(), x.size(), 3);
   Eigen::MatrixXd store_dr = getDDeltaR(x);
   Eigen::TensorMap<Eigen::Tensor<double, 2>> dr(store_dr.data(), x.size(), 3);
   p = p / mp;
-  r = r / mr;
   dp = dp / mp;
-  dr = dr / mr;
-  Eigen::array<ptrdiff_t, 1> index1({1});
-  // pgradp = px / mp * grad_x(px) / mp + py / mp * grad_y(py) / mp +
-  // pz / mp * grad_z(pz) / mp
-  Eigen::Tensor<double, 1> pgradp = dp.convolve(p, index1);
-  // pgradp = rx / mr * grad_x(rx) / mr + ry / mr * grad_y(ry) / mr +
-  // rz / mr * grad_z(rz) / mr
-  Eigen::Tensor<double, 1> rgradr = dr.convolve(r, index1);
-  // eta = p / mp
-  // xi = r / mr
-  // qmu - parameter with a mu index
-  Eigen::array<Eigen::IndexPair<long>,0> empty_index_list = {};
-  Eigen::Tensor<double, 1> deta_dqmu = dp - pgradp.contract(p, empty_index_list);
-  Eigen::Tensor<double, 1> dxi_dqmu = dr - rgradr.contract(r, empty_index_list);
-  Eigen::Tensor<double, 1> tensor_result = deta_dqmu.convolve(r, index1) +
-    dxi_dqmu.convolve(p, index1);
+  scalar = p.contract(r, ind00);
+  double pr = scalar(0);
+  Eigen::Tensor<double, 1> tensor_result = dp.contract(r, ind10) -
+    pr * dp.contract(p, ind10) + dr.contract(p, ind10) - dr.contract(r, ind10) / mr;
   Eigen::VectorXd result = Eigen::Map<Eigen::VectorXd>(tensor_result.data(), x.size());
   return result;
 }
 
 Eigen::MatrixXd KFBase::FlowConstraint::d2h(const Eigen::VectorXd& x) const {
+  Eigen::Tensor<double, 0> scalar;
+  Eigen::array<Eigen::IndexPair<int>, 1> ind00 = { Eigen::IndexPair<int>(0, 0) };
+  Eigen::array<Eigen::IndexPair<int>, 1> ind10 = { Eigen::IndexPair<int>(1, 0) };
+  Eigen::array<Eigen::IndexPair<int>, 1> ind11 = { Eigen::IndexPair<int>(1, 1) };
+  Eigen::array<Eigen::IndexPair<int>, 1> ind20 = { Eigen::IndexPair<int>(2, 0) };
+  Eigen::array<Eigen::IndexPair<long>,0> empty_index_list = {};
   Eigen::Tensor<double, 1> r = getDeltaR(x);
-  Eigen::array<ptrdiff_t, 1> index0({0});
-  Eigen::Tensor<double, 1> scalar;
-  scalar = r.convolve(r, index0);
+  scalar =  r.contract(r, ind00);
   double mr = std::sqrt(scalar(0) + _a * _a);
   Eigen::Vector3d store_p = getMomentumSum(x);
   Eigen::TensorMap<Eigen::Tensor<double, 1>> p(store_p.data(), 3);
-  scalar = p.convolve(p, index0);
+  scalar = p.contract(p, ind00);
   double mp = std::sqrt(scalar(0));
   Eigen::MatrixXd store_dp = getDMomentumSum(x);
   Eigen::TensorMap<Eigen::Tensor<double, 2>> dp(store_dp.data(), x.size(), 3);
   Eigen::MatrixXd store_dr = getDDeltaR(x);
   Eigen::TensorMap<Eigen::Tensor<double, 2>> dr(store_dr.data(), x.size(), 3);
-  p = p / mp;
-  r = r / mr;
-  dp = dp / mp;
-  dr = dr / mr;
-  Eigen::array<ptrdiff_t, 1> index1({1});
-  // pgradp = px / mp * grad_x(px) / mp + py / mp * grad_y(py) / mp +
-  // pz / mp * grad_z(pz) / mp
-  Eigen::Tensor<double, 1> pgradp = dp.convolve(p, index1);
-  // pgradp = rx / mr * grad_x(rx) / mr + ry / mr * grad_y(ry) / mr +
-  // rz / mr * grad_z(rz) / mr
-  Eigen::Tensor<double, 1> rgradr = dr.convolve(r, index1);
-  // eta = p / mp
-  // xi = r / mr
-  // qmu - parameter with a mu index
-  Eigen::array<Eigen::IndexPair<long>,0> empty_index_list = {};
-  Eigen::Tensor<double, 1> deta_dqmu = dp - pgradp.contract(p, empty_index_list);
-  Eigen::Tensor<double, 1> dxi_dqmu = dr - rgradr.contract(r, empty_index_list);
   Eigen::MatrixXd store_d2p = getD2MomentumSum(x);
   Eigen::TensorMap<Eigen::Tensor<double, 3>> d2p(store_d2p.data(), x.size(), x.size(), 3);
+  p = p / mp;
+  dp = dp / mp;
   d2p = d2p / mp;
-  Eigen::array<ptrdiff_t, 1> index2({2});
-  Eigen::Tensor<double, 1> dp_r = dp.convolve(r, index1);
-  scalar = p.convolve(r, index0);
-  double p_r = scalar(0);
-  Eigen::array<Eigen::IndexPair<int>, 1> pd11 = { Eigen::IndexPair<int>(1, 1) };
-  // deta_dqmu_dqnu * xi
-  Eigen::Tensor<double, 2> deta_dqmu_dqnu_xi =
-    d2p.convolve(r, index2) -
-    dp_r.contract(pgradp, empty_index_list) -
-    pgradp.contract(dp_r, empty_index_list) +
-    p_r *
-    (3. * pgradp.contract(pgradp, empty_index_list) -
-     d2p.convolve(p, index2) -
-     dp.contract(dp, pd11));
-  // dxi_dqmu_dqnu * eta
-  Eigen::Tensor<double, 1> dr_p = dr.convolve(p, index1);
-  Eigen::Tensor<double, 2> dxi_dqmu_dqnu_eta =
-    -dr_p.contract(rgradr, empty_index_list) -
-    rgradr.contract(dr_p, empty_index_list) +
-    p_r *
-    (3. * rgradr.contract(rgradr, empty_index_list) -
-     dr.contract(dr, pd11));
-  Eigen::Tensor<double, 2> tensor_result = deta_dqmu_dqnu_xi +
-    dxi_dqmu_dqnu_eta + deta_dqmu.contract(dxi_dqmu, pd11) +
-    dxi_dqmu.contract(deta_dqmu, pd11);
+  scalar = p.contract(r, ind00);
+  double pr = scalar(0);
+  Eigen::Tensor<double, 1> pdp = dp.contract(p, ind10);
+  Eigen::Tensor<double, 1> pdr = dr.contract(p, ind10);
+  Eigen::Tensor<double, 1> rdr = dr.contract(r, ind10) / mr;
+  Eigen::Tensor<double, 2> part1 = d2p.contract(r, ind20) +
+    pr * (3. * pdp.contract(pdp, empty_index_list) - d2p.contract(p, ind20) -
+	  dp.contract(dp, ind11));
+  Eigen::Tensor<double, 2> part2 = dp.contract(dr, ind11) -
+    pdp.contract(pdr, empty_index_list);
+  Eigen::Tensor<double, 2> part3 = dr.contract(dp, ind11) -
+    pdr.contract(pdp, empty_index_list);
+  Eigen::Tensor<double, 2> part4 = rdr.contract(rdr, empty_index_list) / mr -
+    dr.contract(dr, ind11) / mr;
+  Eigen::Tensor<double, 2> tensor_result = part1 + part2 + part3 + part4;
   Eigen::MatrixXd result = Eigen::Map<Eigen::MatrixXd>(tensor_result.data(), x.size(), x.size());
   return result;
 }

@@ -32,11 +32,13 @@
 #ifndef __KFBASE_FLOWCONSTRAINT_HPP__
 #define __KFBASE_FLOWCONSTRAINT_HPP__
 
+#include <unsupported/Eigen/CXX11/Tensor>
 #include <ccgo/EqualityLagrangeConstraint.hpp>
 #include "VertexParticle.hpp"
 
 namespace KFBase {
   class FlowConstraint : public ccgo::EqualityLagrangeConstraint {
+  public:
     explicit FlowConstraint(const std::string&);
     virtual ~FlowConstraint();
     void setBeginVertexCommonParams(const std::string&,
