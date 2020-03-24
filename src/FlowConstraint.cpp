@@ -29,23 +29,21 @@
  *
  */
 
-#include <cmath>
-#include <iostream>
 #include "FlowConstraint.hpp"
 #include "Particle.hpp"
+#include <cmath>
+#include <iostream>
 
-KFBase::FlowConstraint::FlowConstraint(const std::string& name) :
-  ccgo::EqualityLagrangeConstraint(name), _a(0.) {
+KFBase::FlowConstraint::FlowConstraint(const std::string& name, KFBase::FLOW_COMPONENT component) :
+  ccgo::EqualityLagrangeConstraint(name),
+  _component(component) {
 }
 
 KFBase::FlowConstraint::~FlowConstraint() {}
 
-double KFBase::FlowConstraint::getRegularizationConstant() const {
-  return _a;
-}
-
-void KFBase::FlowConstraint::setRegularizationConstant(double a) {
-  _a = a;
+KFBase::FLOW_COMPONENT
+KFBase::FlowConstraint::getComponent() const {
+  return _component;
 }
 
 void KFBase::FlowConstraint::add(const ccgo::TargetFunction* obj) {
@@ -91,162 +89,314 @@ void KFBase::FlowConstraint::setEndVertexCommonParams(const std::string& xname,
   setVertex(false, zname, KFBase::VERTEX_Z);
 }
 
-Eigen::Vector3d KFBase::FlowConstraint::getMomentumSum
-(const Eigen::VectorXd& x) const {
-  Eigen::Vector3d result = Eigen::Vector3d::Zero();
+double KFBase::FlowConstraint::getMomentumSum
+(const Eigen::VectorXd& x, MOMENT_COMPONENT component) const {
+  double px = 0; // !!!
+  double py = 0; // !!!
+  double pz = 0; // !!!
+  double pi = 0;
   const auto& targets = getTargets();
   for (const auto& el : targets) {
     if (el.second->isEnabled()) {
       const auto& pt = static_cast<const KFBase::Particle*>(el.second);
-      result(0) += pt->calcMomentumComponent(x, KFBase::MOMENT_X);
-      result(1) += pt->calcMomentumComponent(x, KFBase::MOMENT_Y);
-      result(2) += pt->calcMomentumComponent(x, KFBase::MOMENT_Z);
+      px += pt->calcMomentumComponent(x, KFBase::MOMENT_X); // !!!
+      py += pt->calcMomentumComponent(x, KFBase::MOMENT_Y); // !!!
+      pz += pt->calcMomentumComponent(x, KFBase::MOMENT_Z); // !!!
     }
   }
-  return result;
+  switch (component) {
+  case KFBase::MOMENT_X:
+    pi = px;
+    break;
+  case KFBase::MOMENT_Y:
+    pi = py;
+    break;
+  case KFBase::MOMENT_Z:
+    pi = pz;
+    break;
+  default:
+    break;
+  }
+  double p = std::sqrt(px * px + py * py + pz * pz);
+  return pi / p; // !!!
 }
 
-Eigen::MatrixXd
+Eigen::VectorXd
 KFBase::FlowConstraint::getDMomentumSum
-(const Eigen::VectorXd& x) const {
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), 3);
+(const Eigen::VectorXd& x, MOMENT_COMPONENT component) const {
+  double px = 0; // !!!
+  double py = 0; // !!!
+  double pz = 0; // !!!
+  Eigen::VectorXd dpx = Eigen::VectorXd::Zero(x.size());
+  Eigen::VectorXd dpy = Eigen::VectorXd::Zero(x.size());
+  Eigen::VectorXd dpz = Eigen::VectorXd::Zero(x.size());
   const auto& targets = getTargets();
   for (const auto& el : targets) {
     if (el.second->isEnabled()) {
       const auto& pt = static_cast<const KFBase::Particle*>(el.second);
-      result.block(0, 0, x.size(), 1) +=  pt->calcDMomentumComponent(x, KFBase::MOMENT_X);
-      result.block(0, 1, x.size(), 1) +=  pt->calcDMomentumComponent(x, KFBase::MOMENT_Y);
-      result.block(0, 2, x.size(), 1) +=  pt->calcDMomentumComponent(x, KFBase::MOMENT_Z);
+      px += pt->calcMomentumComponent(x, KFBase::MOMENT_X); // !!!
+      py += pt->calcMomentumComponent(x, KFBase::MOMENT_Y); // !!!
+      pz += pt->calcMomentumComponent(x, KFBase::MOMENT_Z); // !!!
+      dpx +=  pt->calcDMomentumComponent(x, KFBase::MOMENT_X);
+      dpy +=  pt->calcDMomentumComponent(x, KFBase::MOMENT_Y);
+      dpz +=  pt->calcDMomentumComponent(x, KFBase::MOMENT_Z);
     }
   }
-  return result;
+  double pi =0;
+  Eigen::VectorXd dpi = Eigen::VectorXd::Zero(x.size());
+  switch (component) {
+  case KFBase::MOMENT_X:
+    pi = px;
+    dpi = dpx;
+    break;
+  case KFBase::MOMENT_Y:
+    pi = py;
+    dpi = dpy;
+    break;
+  case KFBase::MOMENT_Z:
+    pi = pz;
+    dpi = dpz;
+    break;
+  default:
+    break;
+  }
+  double p = std::sqrt(px * px + py * py + pz * pz);
+  return dpi / p - pi / p * (px / p * dpx / p +
+			     py / p * dpy / p +
+			     pz / p * dpz / p); // !!!
 }
 
 Eigen::MatrixXd
 KFBase::FlowConstraint::getD2MomentumSum
-(const Eigen::VectorXd& x) const {
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), 3 * x.size());
+(const Eigen::VectorXd& x, MOMENT_COMPONENT component) const {
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
+  double px = 0; // !!!
+  double py = 0; // !!!
+  double pz = 0; // !!!
+  double pi = 0;
+  Eigen::VectorXd dpx = Eigen::VectorXd::Zero(x.size());
+  Eigen::VectorXd dpy = Eigen::VectorXd::Zero(x.size());
+  Eigen::VectorXd dpz = Eigen::VectorXd::Zero(x.size());
+  Eigen::VectorXd dpi = Eigen::VectorXd::Zero(x.size());
+  Eigen::MatrixXd d2px = Eigen::MatrixXd::Zero(x.size(), x.size());
+  Eigen::MatrixXd d2py = Eigen::MatrixXd::Zero(x.size(), x.size());
+  Eigen::MatrixXd d2pz = Eigen::MatrixXd::Zero(x.size(), x.size());
+  Eigen::MatrixXd d2pi = Eigen::MatrixXd::Zero(x.size(), x.size());
   const auto& targets = getTargets();
   for (const auto& el : targets) {
     if (el.second->isEnabled()) {
       const auto& pt = static_cast<const KFBase::Particle*>(el.second);
-      result.block(0, 0, x.size(), x.size()) += pt->calcD2MomentumComponent(x, KFBase::MOMENT_X);
-      result.block(0, x.size(), x.size(), x.size()) += pt->calcD2MomentumComponent(x, KFBase::MOMENT_Y);
-      result.block(0, 2 * x.size(), x.size(), x.size()) += pt->calcD2MomentumComponent(x, KFBase::MOMENT_Z);
+      px += pt->calcMomentumComponent(x, KFBase::MOMENT_X); // !!!
+      py += pt->calcMomentumComponent(x, KFBase::MOMENT_Y); // !!!
+      pz += pt->calcMomentumComponent(x, KFBase::MOMENT_Z); // !!!
+      dpx +=  pt->calcDMomentumComponent(x, KFBase::MOMENT_X);
+      dpy +=  pt->calcDMomentumComponent(x, KFBase::MOMENT_Y);
+      dpz +=  pt->calcDMomentumComponent(x, KFBase::MOMENT_Z);
+      d2px += pt->calcD2MomentumComponent(x, KFBase::MOMENT_X);
+      d2py += pt->calcD2MomentumComponent(x, KFBase::MOMENT_Y);
+      d2pz += pt->calcD2MomentumComponent(x, KFBase::MOMENT_Z);
     }
   }
-  return result;
-}
+  switch (component) {
+  case KFBase::MOMENT_X:
+    pi = px;
+    dpi = dpx;
+    d2pi = d2px;
+    break;
+  case KFBase::MOMENT_Y:
+    pi = py;
+    dpi = dpy;
+    d2pi = d2py;
+    break;
+  case KFBase::MOMENT_Z:
+    pi = pz;
+    dpi = dpz;
+    d2pi = d2pz;
+    break;
+  default:
+    break;
+  }
+  double p = std::sqrt(px * px + py * py + pz * pz);
+  Eigen::VectorXd pgrad = px / p * dpx / p + py / p * dpy / p +
+    pz / p * dpz / p;
 
-Eigen::Tensor<double, 1> KFBase::FlowConstraint::getDeltaR(const Eigen::VectorXd& x) const {
-  long biX = _beginVertex[0]->getBeginIndex();
-  long biY = _beginVertex[1]->getBeginIndex();
-  long biZ = _beginVertex[2]->getBeginIndex();
-  long eiX = _endVertex[0]->getBeginIndex();
-  long eiY = _endVertex[1]->getBeginIndex();
-  long eiZ = _endVertex[2]->getBeginIndex();
-  Eigen::Tensor<double, 1> r(3);
-  r(0) = x(eiX) - x(biX);
-  r(1) = x(eiY) - x(biY);
-  r(2) = x(eiZ) - x(biZ);
-  return r;
-}
-
-Eigen::MatrixXd KFBase::FlowConstraint::getDDeltaR(const Eigen::VectorXd& x) const {
-  long biX = _beginVertex[0]->getBeginIndex();
-  long biY = _beginVertex[1]->getBeginIndex();
-  long biZ = _beginVertex[2]->getBeginIndex();
-  long eiX = _endVertex[0]->getBeginIndex();
-  long eiY = _endVertex[1]->getBeginIndex();
-  long eiZ = _endVertex[2]->getBeginIndex();
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), 3);
-  result(eiX, 0) = 1;
-  result(biX, 0) = -1;
-  result(eiY, 1) = 1;
-  result(biY, 1) = -1;
-  result(eiZ, 2) = 1;
-  result(biZ, 2) = -1;
+  result += d2pi / p;
+  for (long mu = 0; mu < x.size(); ++mu) {
+    for (long nu = 0; nu < x.size(); ++nu) {
+      result(mu, nu) -= dpi(mu) / p * pgrad(nu) + dpi(nu) / p * pgrad(mu);
+      result(mu, nu) += pi / p *
+	(3 * pgrad(mu) * pgrad(nu) -
+	 px / p * d2px(mu, nu) / p +
+	 py / p * d2py(mu, nu) / p +
+	 pz / p * d2pz(mu, nu) / p +
+	 dpx(mu) / p * dpx(nu) / p +
+	 dpy(mu) / p * dpy(nu) / p +
+	 dpz(mu) / p * dpz(nu) / p);
+    }
+  }
+  
   return result;
+  // return result / p; // !!!
 }
 
 double KFBase::FlowConstraint::h(const Eigen::VectorXd& x) const {
-  Eigen::Tensor<double, 0> scalar;
-  Eigen::array<Eigen::IndexPair<int>, 1> ind00 = { Eigen::IndexPair<int>(0, 0) };
-  Eigen::Tensor<double, 1> r = getDeltaR(x);
-  scalar = r.contract(r, ind00);
-  double mr = std::sqrt(scalar(0) + _a * _a);
-  Eigen::Vector3d store_p = getMomentumSum(x);
-  Eigen::TensorMap<Eigen::Tensor<double, 1>> p(store_p.data(), 3);
-  scalar = p.contract(p, ind00);
-  double mp = std::sqrt(scalar(0));
-  p = p / mp;
-  scalar = p.contract(r, ind00);
-  return (scalar(0) - mr);
+  double x1 = 0;
+  double x2 = 0;
+  double p1 = 0;
+  double p2 = 0;
+  switch (_component) {
+  case KFBase::FLOW_X:
+    x1 = x(_endVertex[1]->getBeginIndex()) -
+      x(_beginVertex[1]->getBeginIndex());
+    x2 = x(_endVertex[2]->getBeginIndex()) -
+      x(_beginVertex[2]->getBeginIndex());
+    p1 = getMomentumSum(x, KFBase::MOMENT_Y);
+    p2 = getMomentumSum(x, KFBase::MOMENT_Z);
+    break;
+  case KFBase::FLOW_Y:
+    x1 = x(_endVertex[2]->getBeginIndex()) -
+      x(_beginVertex[2]->getBeginIndex());
+    x2 = x(_endVertex[0]->getBeginIndex()) -
+      x(_beginVertex[0]->getBeginIndex());
+    p1 = getMomentumSum(x, KFBase::MOMENT_Z);
+    p2 = getMomentumSum(x, KFBase::MOMENT_X);
+    break;
+  case KFBase::FLOW_Z:
+    x1 = x(_endVertex[0]->getBeginIndex()) -
+      x(_beginVertex[0]->getBeginIndex());
+    x2 = x(_endVertex[1]->getBeginIndex()) -
+      x(_beginVertex[1]->getBeginIndex());
+    p1 = getMomentumSum(x, KFBase::MOMENT_X);
+    p2 = getMomentumSum(x, KFBase::MOMENT_Y);
+    break;
+  }
+  return x1 * p2 - x2 * p1;
 }
 
 Eigen::VectorXd KFBase::FlowConstraint::dh(const Eigen::VectorXd& x) const {
-  Eigen::Tensor<double, 0> scalar;
-  Eigen::array<Eigen::IndexPair<int>, 1> ind00 = { Eigen::IndexPair<int>(0, 0) };
-  Eigen::array<Eigen::IndexPair<int>, 1> ind10 = { Eigen::IndexPair<int>(1, 0) };
-  Eigen::Tensor<double, 1> r = getDeltaR(x);
-  scalar = r.contract(r, ind00);
-  double mr = std::sqrt(scalar(0) + _a * _a);
-  Eigen::Vector3d store_p = getMomentumSum(x);
-  Eigen::TensorMap<Eigen::Tensor<double, 1>> p(store_p.data(), 3);
-  scalar = p.contract(p, ind00);
-  double mp = std::sqrt(scalar(0));
-  Eigen::MatrixXd store_dp = getDMomentumSum(x);
-  Eigen::TensorMap<Eigen::Tensor<double, 2>> dp(store_dp.data(), x.size(), 3);
-  Eigen::MatrixXd store_dr = getDDeltaR(x);
-  Eigen::TensorMap<Eigen::Tensor<double, 2>> dr(store_dr.data(), x.size(), 3);
-  p = p / mp;
-  dp = dp / mp;
-  scalar = p.contract(r, ind00);
-  double pr = scalar(0);
-  Eigen::Tensor<double, 1> tensor_result = dp.contract(r, ind10) -
-    pr * dp.contract(p, ind10) + dr.contract(p, ind10) - dr.contract(r, ind10) / mr;
-  Eigen::VectorXd result = Eigen::Map<Eigen::VectorXd>(tensor_result.data(), x.size());
-  return result;
+  long ei1;
+  long ei2;
+  long bi1;
+  long bi2;
+  double x1;
+  double x2;
+  double p1;
+  double p2;
+  Eigen::VectorXd dx1 = Eigen::VectorXd::Zero(x.size());
+  Eigen::VectorXd dx2 = Eigen::VectorXd::Zero(x.size());
+  Eigen::VectorXd dp1 = Eigen::VectorXd::Zero(x.size());
+  Eigen::VectorXd dp2 = Eigen::VectorXd::Zero(x.size());
+  switch (_component) {
+  case KFBase::FLOW_X:
+    ei1 = _endVertex[1]->getBeginIndex();
+    bi1 = _beginVertex[1]->getBeginIndex();
+    ei2 = _endVertex[2]->getBeginIndex();
+    bi2 = _beginVertex[2]->getBeginIndex();
+    x1 = x(ei1) - x(bi1);
+    x2 = x(ei2) - x(bi2);
+    dx1(ei1) = 1;
+    dx1(bi1) = -1;
+    dx2(ei2) = 1;
+    dx2(bi2) = -1;
+    p1 = getMomentumSum(x, KFBase::MOMENT_Y);
+    p2 = getMomentumSum(x, KFBase::MOMENT_Z);
+    dp1 = getDMomentumSum(x, KFBase::MOMENT_Y);
+    dp2 = getDMomentumSum(x, KFBase::MOMENT_Z);
+    break;
+  case KFBase::FLOW_Y:
+    ei1 = _endVertex[2]->getBeginIndex();
+    bi1 = _beginVertex[2]->getBeginIndex();
+    ei2 = _endVertex[0]->getBeginIndex();
+    bi2 = _beginVertex[0]->getBeginIndex();
+    x1 = x(ei1) - x(bi1);
+    x2 = x(ei2) - x(bi2);
+    dx1(ei1) = 1;
+    dx1(bi1) = -1;
+    dx2(ei2) = 1;
+    dx2(bi2) = -1;
+    p1 = getMomentumSum(x, KFBase::MOMENT_Z);
+    p2 = getMomentumSum(x, KFBase::MOMENT_X);
+    dp1 = getDMomentumSum(x, KFBase::MOMENT_Z);
+    dp2 = getDMomentumSum(x, KFBase::MOMENT_X);
+    break;
+  case KFBase::FLOW_Z:
+    ei1 = _endVertex[0]->getBeginIndex();
+    bi1 = _beginVertex[0]->getBeginIndex();
+    ei2 = _endVertex[1]->getBeginIndex();
+    bi2 = _beginVertex[1]->getBeginIndex();
+    x1 = x(ei1) - x(bi1);
+    x2 = x(ei2) - x(bi2);
+    dx1(ei1) = 1;
+    dx1(bi1) = -1;
+    dx2(ei2) = 1;
+    dx2(bi2) = -1;
+    p1 = getMomentumSum(x, KFBase::MOMENT_X);
+    p2 = getMomentumSum(x, KFBase::MOMENT_Y);
+    dp1 = getDMomentumSum(x, KFBase::MOMENT_X);
+    dp2 = getDMomentumSum(x, KFBase::MOMENT_Y);
+    break;
+  }
+  return dx1 * p2 - dx2 * p1 + x1 * dp2 - x2 * dp1;
 }
 
 Eigen::MatrixXd KFBase::FlowConstraint::d2h(const Eigen::VectorXd& x) const {
-  Eigen::Tensor<double, 0> scalar;
-  Eigen::array<Eigen::IndexPair<int>, 1> ind00 = { Eigen::IndexPair<int>(0, 0) };
-  Eigen::array<Eigen::IndexPair<int>, 1> ind10 = { Eigen::IndexPair<int>(1, 0) };
-  Eigen::array<Eigen::IndexPair<int>, 1> ind11 = { Eigen::IndexPair<int>(1, 1) };
-  Eigen::array<Eigen::IndexPair<int>, 1> ind20 = { Eigen::IndexPair<int>(2, 0) };
-  Eigen::array<Eigen::IndexPair<long>,0> empty_index_list = {};
-  Eigen::Tensor<double, 1> r = getDeltaR(x);
-  scalar =  r.contract(r, ind00);
-  double mr = std::sqrt(scalar(0) + _a * _a);
-  Eigen::Vector3d store_p = getMomentumSum(x);
-  Eigen::TensorMap<Eigen::Tensor<double, 1>> p(store_p.data(), 3);
-  scalar = p.contract(p, ind00);
-  double mp = std::sqrt(scalar(0));
-  Eigen::MatrixXd store_dp = getDMomentumSum(x);
-  Eigen::TensorMap<Eigen::Tensor<double, 2>> dp(store_dp.data(), x.size(), 3);
-  Eigen::MatrixXd store_dr = getDDeltaR(x);
-  Eigen::TensorMap<Eigen::Tensor<double, 2>> dr(store_dr.data(), x.size(), 3);
-  Eigen::MatrixXd store_d2p = getD2MomentumSum(x);
-  Eigen::TensorMap<Eigen::Tensor<double, 3>> d2p(store_d2p.data(), x.size(), x.size(), 3);
-  p = p / mp;
-  dp = dp / mp;
-  d2p = d2p / mp;
-  scalar = p.contract(r, ind00);
-  double pr = scalar(0);
-  Eigen::Tensor<double, 1> pdp = dp.contract(p, ind10);
-  Eigen::Tensor<double, 1> pdr = dr.contract(p, ind10);
-  Eigen::Tensor<double, 1> rdr = dr.contract(r, ind10) / mr;
-  Eigen::Tensor<double, 2> part1 = d2p.contract(r, ind20) +
-    pr * (3. * pdp.contract(pdp, empty_index_list) - d2p.contract(p, ind20) -
-	  dp.contract(dp, ind11));
-  Eigen::Tensor<double, 2> part2 = dp.contract(dr, ind11) -
-    pdp.contract(pdr, empty_index_list);
-  Eigen::Tensor<double, 2> part3 = dr.contract(dp, ind11) -
-    pdr.contract(pdp, empty_index_list);
-  Eigen::Tensor<double, 2> part4 = rdr.contract(rdr, empty_index_list) / mr -
-    dr.contract(dr, ind11) / mr;
-  Eigen::Tensor<double, 2> tensor_result = part1 + part2 + part3 + part4;
-  Eigen::MatrixXd result = Eigen::Map<Eigen::MatrixXd>(tensor_result.data(), x.size(), x.size());
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
+  long ei1;
+  long ei2;
+  long bi1;
+  long bi2;
+  double x1 = 0;
+  double x2 = 0;
+  Eigen::VectorXd dp1;
+  Eigen::VectorXd dp2;
+  Eigen::MatrixXd d2p1;
+  Eigen::MatrixXd d2p2;
+  switch (_component) {
+  case KFBase::FLOW_X:
+    ei1 = _endVertex[1]->getBeginIndex();
+    bi1 = _beginVertex[1]->getBeginIndex();
+    ei2 = _endVertex[2]->getBeginIndex();
+    bi2 = _beginVertex[2]->getBeginIndex();
+    x1 = x(ei1) - x(bi1);
+    x2 = x(ei2) - x(bi2);
+    dp1 = getDMomentumSum(x, KFBase::MOMENT_Y);
+    dp2 = getDMomentumSum(x, KFBase::MOMENT_Z);  
+    d2p1 = getD2MomentumSum(x, KFBase::MOMENT_Y);
+    d2p2 = getD2MomentumSum(x, KFBase::MOMENT_Z);
+    break;
+  case KFBase::FLOW_Y:
+    ei1 = _endVertex[2]->getBeginIndex();
+    bi1 = _beginVertex[2]->getBeginIndex();
+    ei2 = _endVertex[0]->getBeginIndex();
+    bi2 = _beginVertex[0]->getBeginIndex();
+    x1 = x(ei1) - x(bi1);
+    x2 = x(ei2) - x(bi2);
+    dp1 = getDMomentumSum(x, KFBase::MOMENT_Z);
+    dp2 = getDMomentumSum(x, KFBase::MOMENT_X);  
+    d2p1 = getD2MomentumSum(x, KFBase::MOMENT_Z);
+    d2p2 = getD2MomentumSum(x, KFBase::MOMENT_X);
+    break;
+  case KFBase::FLOW_Z:
+    ei1 = _endVertex[0]->getBeginIndex();
+    bi1 = _beginVertex[0]->getBeginIndex();
+    ei2 = _endVertex[1]->getBeginIndex();
+    bi2 = _beginVertex[1]->getBeginIndex();
+    x1 = x(ei1) - x(bi1);
+    x2 = x(ei2) - x(bi2);
+    dp1 = getDMomentumSum(x, KFBase::MOMENT_X);
+    dp2 = getDMomentumSum(x, KFBase::MOMENT_Y);  
+    d2p1 = getD2MomentumSum(x, KFBase::MOMENT_X);
+    d2p2 = getD2MomentumSum(x, KFBase::MOMENT_Y);
+    break;
+  }
+  result.block(0, ei1, x.size(), 1) += dp2;
+  result.block(ei1, 0, 1, x.size()) += dp2.transpose();
+  result.block(0, bi1, x.size(), 1) -= dp2;
+  result.block(bi1, 0, 1, x.size()) -= dp2.transpose();
+  result.block(0, ei2, x.size(), 1) -= dp1;
+  result.block(ei2, 0, 1, x.size()) -= dp1.transpose();
+  result.block(0, bi2, x.size(), 1) += dp1;
+  result.block(bi2, 0, 1, x.size()) += dp1.transpose();
+  result += x1 * d2p2 - x2 * d2p1;
   return result;
 }

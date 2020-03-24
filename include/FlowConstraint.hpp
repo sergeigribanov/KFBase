@@ -32,15 +32,16 @@
 #ifndef __KFBASE_FLOWCONSTRAINT_HPP__
 #define __KFBASE_FLOWCONSTRAINT_HPP__
 
-#include <unsupported/Eigen/CXX11/Tensor>
 #include <ccgo/EqualityLagrangeConstraint.hpp>
 #include "VertexParticle.hpp"
 
 namespace KFBase {
+  enum FLOW_COMPONENT {FLOW_X = 0, FLOW_Y = 1, FLOW_Z = 2};
   class FlowConstraint : public ccgo::EqualityLagrangeConstraint {
   public:
-    explicit FlowConstraint(const std::string&);
+    FlowConstraint(const std::string&, FLOW_COMPONENT);
     virtual ~FlowConstraint();
+    FLOW_COMPONENT getComponent() const;
     void setBeginVertexCommonParams(const std::string&,
 				    const std::string&,
 				    const std::string&);
@@ -48,20 +49,17 @@ namespace KFBase {
 				  const std::string&,
 				  const std::string&);
     virtual void add(const ccgo::TargetFunction*) override final;
-    double getRegularizationConstant() const;
-    void setRegularizationConstant(double);
   protected:
     virtual double h(const Eigen::VectorXd&) const override final;
     virtual Eigen::VectorXd dh(const Eigen::VectorXd&) const override final;
     virtual Eigen::MatrixXd d2h(const Eigen::VectorXd&) const override final;
+
   private:
     void setVertex(bool, const std::string&, VERTEX_COMPONENT);
-    Eigen::Tensor<double, 1> getDeltaR(const Eigen::VectorXd&) const;
-    Eigen::MatrixXd getDDeltaR(const Eigen::VectorXd&) const;
-    Eigen::Vector3d getMomentumSum(const Eigen::VectorXd&) const;
-    Eigen::MatrixXd getDMomentumSum(const Eigen::VectorXd&) const;
-    Eigen::MatrixXd getD2MomentumSum(const Eigen::VectorXd&) const;
-    double _a;
+    double getMomentumSum(const Eigen::VectorXd&, MOMENT_COMPONENT) const;
+    Eigen::VectorXd getDMomentumSum(const Eigen::VectorXd&, MOMENT_COMPONENT) const;
+    Eigen::MatrixXd getD2MomentumSum(const Eigen::VectorXd&, MOMENT_COMPONENT) const;
+    FLOW_COMPONENT _component;
     ccgo::CommonParams* _beginVertex[4];
     ccgo::CommonParams* _endVertex[4];
   };
