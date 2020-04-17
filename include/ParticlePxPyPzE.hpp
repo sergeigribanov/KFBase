@@ -36,6 +36,7 @@
 
 namespace KFBase {
   class ParticlePxPyPzE : public Particle {
+  public:
     ParticlePxPyPzE(const std::string&, double);
     virtual ~ParticlePxPyPzE();
     virtual double calcMomentumComponent(

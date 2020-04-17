@@ -33,7 +33,14 @@
 #include "ParticleMassLessThetaPhiE.hpp"
 
 KFBase::ParticleMassLessThetaPhiE::ParticleMassLessThetaPhiE(const std::string& name) :
-  KFBase::Particle(name, 3, 0) {}
+  KFBase::Particle(name, 3, 0) {
+  setPeriod(1, 0, 2 * TMath::Pi());
+  setLowerLimit(1, -1000 * TMath::Pi());
+  setUpperLimit(1, 1000 * TMath::Pi());
+  setPeriod(2, 0, 2 * TMath::Pi());
+  setLowerLimit(2, -1000 * TMath::Pi());
+  setUpperLimit(2, 1000 * TMath::Pi());
+}
 
 KFBase::ParticleMassLessThetaPhiE::~ParticleMassLessThetaPhiE() {}
 

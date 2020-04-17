@@ -36,6 +36,7 @@
 
 namespace KFBase {
   class ParticleMassLessThetaPhiE : public Particle {
+  public:
     explicit ParticleMassLessThetaPhiE(const std::string&);
     virtual ~ParticleMassLessThetaPhiE();
     virtual double calcMomentumComponent(
