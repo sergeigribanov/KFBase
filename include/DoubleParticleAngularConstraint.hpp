@@ -33,8 +33,7 @@
 #define __KFBASE_DOUBLE_PARTICLE_ANGULAR_CONSTRAINT_HPP__
 
 #include <ccgo/NonLagrangeConstraint.hpp>
-
-#include "VertexParticle.hpp"
+#include "Particle.hpp"
 
 namespace KFBase {
 /**
@@ -51,8 +50,7 @@ class DoubleParticleAngularConstraint : public ccgo::NonLagrangeConstraint {
   DoubleParticleAngularConstraint(const std::string&);
   //! A destructor
   virtual ~DoubleParticleAngularConstraint();
-  virtual void add(const ccgo::TargetFunction*) override final;
-  
+  virtual void add(const ccgo::TargetFunction*) override final;  
  protected:
   virtual double h(const Eigen::VectorXd&) const override final;
   virtual Eigen::VectorXd dh(const Eigen::VectorXd&) const override final;
