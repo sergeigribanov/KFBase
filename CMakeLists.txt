@@ -14,7 +14,9 @@ include(${ROOT_USE_FILE})
 file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 file(GLOB HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp)
 add_library(kfbase SHARED ${SOURCES})
-set_property(TARGET kfbase PROPERTY CXX_STANDARD 11)
+if (NOT CXX_STANDARD)
+  set_property(TARGET kfbase PROPERTY CXX_STANDARD 11)
+endif()
 target_include_directories(kfbase
   PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
