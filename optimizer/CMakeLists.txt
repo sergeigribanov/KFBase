@@ -11,3 +11,8 @@ target_link_libraries(kfbase_newtonian_opt PUBLIC Eigen3::Eigen)
 set_target_properties(kfbase_newtonian_opt
   PROPERTIES
   PUBLIC_HEADER "${HEADERS}")
+
+install(TARGETS kfbase_newtonian_opt
+  EXPORT kfbaseTargets
+  LIBRARY DESTINATION lib/kfbase
+  PUBLIC_HEADER DESTINATION include/kfbase/newtonian_opt)
