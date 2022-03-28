@@ -2,7 +2,7 @@
 
 include("${CMAKE_CURRENT_LIST_DIR}/kfbaseTargets.cmake" )
 set(KFBASE_ROOT_DIR @CMAKE_INSTALL_PREFIX@)
-set(KFBASE_INCLUDE_DIRS ${KINFIT_ROOT_DIR}/include)
+set(KFBASE_INCLUDE_DIRS ${KFBASE_ROOT_DIR}/include)
 set(KFBASE_LIBRARIES
-  ${KINFIT_ROOT_DIR}/lib/kfbase/libkfbase_newtonian_opt.so
-  ${KINFIT_ROOT_DIR}/lib/kfbase/libkfbase_core.so)
+  ${KFBASE_ROOT_DIR}/lib/kfbase/libkfbase_newtonian_opt.so
+  ${KFBASE_ROOT_DIR}/lib/kfbase/libkfbase_core.so)
