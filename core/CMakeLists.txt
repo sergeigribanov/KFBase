@@ -2,7 +2,7 @@ file(GLOB HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/kfbase/core/*.hpp)
 file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
-find_package(ROOT REQUIRED COMPONENTS RIO Net Core)
+find_package(ROOT REQUIRED COMPONENTS RIO Net Core Eve EG Geom Ged RGL)
 include(${ROOT_USE_FILE})
 
 add_library(kfbase_core SHARED ${SOURCES})
