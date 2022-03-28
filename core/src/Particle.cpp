@@ -29,36 +29,39 @@
  *
  */
 
-#include "Particle.hpp"
+#include "kfbase/core/Particle.hpp"
 
-KFBase::Particle::Particle(const std::string& name, long n, double mass,
+namespace nopt = kfbase::newtonian_opt;
+namespace core = kfbase::core;
+
+core::Particle::Particle(const std::string& name, long n, double mass,
                            double charge)
-    : ccgo::TargetChiSquare(name, n), _mass(mass), _charge(charge) {}
+    : nopt::TargetChiSquare(name, n), _mass(mass), _charge(charge) {}
 
-KFBase::Particle::~Particle() {}
+core::Particle::~Particle() {}
 
-double KFBase::Particle::getMass() const { return _mass; }
+double core::Particle::getMass() const { return _mass; }
 
-double KFBase::Particle::getCharge() const { return _charge; }
+double core::Particle::getCharge() const { return _charge; }
 
-const TLorentzVector& KFBase::Particle::getInitialMomentum() const {
+const TLorentzVector& core::Particle::getInitialMomentum() const {
   return _initialMomentum;
 }
 
-const TLorentzVector& KFBase::Particle::getFinalMomentum() const {
+const TLorentzVector& core::Particle::getFinalMomentum() const {
   return _finalMomentum;
 }
 
-void KFBase::Particle::onFitBegin(const Eigen::VectorXd& x) {
-  for (int i = KFBase::MOMENT_X; i <= KFBase::MOMENT_E; ++i) {
+void core::Particle::onFitBegin(const Eigen::VectorXd& x) {
+  for (int i = core::MOMENT_X; i <= core::MOMENT_E; ++i) {
     _initialMomentum[i] =
-        calcMomentumComponent(x, static_cast<KFBase::MOMENT_COMPONENT>(i));
+        calcMomentumComponent(x, static_cast<core::MOMENT_COMPONENT>(i));
   }
 }
 
-void KFBase::Particle::onFitEnd(const Eigen::VectorXd& x) {
-  for (int i = KFBase::MOMENT_X; i <= KFBase::MOMENT_E; ++i) {
+void core::Particle::onFitEnd(const Eigen::VectorXd& x) {
+  for (int i = core::MOMENT_X; i <= core::MOMENT_E; ++i) {
     _finalMomentum[i] =
-        calcMomentumComponent(x, static_cast<KFBase::MOMENT_COMPONENT>(i));
+        calcMomentumComponent(x, static_cast<core::MOMENT_COMPONENT>(i));
   }
 }

@@ -32,20 +32,22 @@
 #ifndef __KFBASE_PARTICLE_PXPYPZE_HPP__
 #define __KFBASE_PARTICLE_PXPYPZE_HPP__
 
-#include "Particle.hpp"
+#include "kfbase/core/Particle.hpp"
 
-namespace KFBase {
-  class ParticlePxPyPzE : public Particle {
-  public:
-    ParticlePxPyPzE(const std::string&, double);
-    virtual ~ParticlePxPyPzE();
-    virtual double calcMomentumComponent(
-      const Eigen::VectorXd&, KFBase::MOMENT_COMPONENT) const override final;
-    virtual Eigen::VectorXd calcDMomentumComponent(
-      const Eigen::VectorXd&, KFBase::MOMENT_COMPONENT) const override final;
-    virtual Eigen::MatrixXd calcD2MomentumComponent(
-      const Eigen::VectorXd&, KFBase::MOMENT_COMPONENT) const override final;
-  };
-}
+namespace kfbase {
+  namespace core {
+    class ParticlePxPyPzE : public Particle {
+    public:
+      ParticlePxPyPzE(const std::string&, double);
+      virtual ~ParticlePxPyPzE();
+      virtual double calcMomentumComponent(
+                                           const Eigen::VectorXd&, kfbase::core::MOMENT_COMPONENT) const override final;
+      virtual Eigen::VectorXd calcDMomentumComponent(
+                                                     const Eigen::VectorXd&, kfbase::core::MOMENT_COMPONENT) const override final;
+      virtual Eigen::MatrixXd calcD2MomentumComponent(
+                                                      const Eigen::VectorXd&, kfbase::core::MOMENT_COMPONENT) const override final;
+    };
+  } // namespace core
+} // namespace kfbase
 
 #endif

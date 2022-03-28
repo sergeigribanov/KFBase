@@ -32,20 +32,22 @@
 #ifndef __KFBASE_PARTICLE_MASSLESS_THETAPHIE_HPP__
 #define __KFBASE_PARTICLE_MASSLESS_THETAPHIE_HPP__
 
-#include "Particle.hpp"
+#include "kfbase/core/Particle.hpp"
 
-namespace KFBase {
-  class ParticleMassLessThetaPhiE : public Particle {
-  public:
-    explicit ParticleMassLessThetaPhiE(const std::string&);
-    virtual ~ParticleMassLessThetaPhiE();
-    virtual double calcMomentumComponent(
-      const Eigen::VectorXd&, KFBase::MOMENT_COMPONENT) const override final;
-    virtual Eigen::VectorXd calcDMomentumComponent(
-      const Eigen::VectorXd&, KFBase::MOMENT_COMPONENT) const override final;
-    virtual Eigen::MatrixXd calcD2MomentumComponent(
-      const Eigen::VectorXd&, KFBase::MOMENT_COMPONENT) const override final;
-  };
-}
+namespace kfbase {
+  namespace core {
+    class ParticleMassLessThetaPhiE : public Particle {
+    public:
+      explicit ParticleMassLessThetaPhiE(const std::string&);
+      virtual ~ParticleMassLessThetaPhiE();
+      virtual double calcMomentumComponent(
+                                           const Eigen::VectorXd&, kfbase::core::MOMENT_COMPONENT) const override final;
+      virtual Eigen::VectorXd calcDMomentumComponent(
+                                                     const Eigen::VectorXd&, kfbase::core::MOMENT_COMPONENT) const override final;
+      virtual Eigen::MatrixXd calcD2MomentumComponent(
+                                                      const Eigen::VectorXd&, kfbase::core::MOMENT_COMPONENT) const override final;
+    };
+  } // namespace core
+} // namespace kfbase
 
 #endif

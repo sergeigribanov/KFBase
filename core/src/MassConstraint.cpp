@@ -29,17 +29,20 @@
  *
  */
 
-#include "MassConstraint.hpp"
+#include "kfbase/core/MassConstraint.hpp"
 
 #include <vector>
 
-KFBase::MassConstraint::MassConstraint(const std::string& name, double mass)
-    : ccgo::EqualityLagrangeConstraint(name, mass * mass) {}
+namespace nopt = kfbase::newtonian_opt;
+namespace core = kfbase::core;
 
-KFBase::MassConstraint::~MassConstraint() {}
+core::MassConstraint::MassConstraint(const std::string& name, double mass)
+    : nopt::EqualityLagrangeConstraint(name, mass * mass) {}
 
-void KFBase::MassConstraint::add(const ccgo::TargetFunction* obj) {
-  if (!dynamic_cast<const KFBase::Particle*>(obj)) {
+core::MassConstraint::~MassConstraint() {}
+
+void core::MassConstraint::add(const nopt::TargetFunction* obj) {
+  if (!dynamic_cast<const core::Particle*>(obj)) {
     // TODO: exception
   }
   auto& targets = getTargets();
@@ -50,7 +53,7 @@ void KFBase::MassConstraint::add(const ccgo::TargetFunction* obj) {
   }
 }
 
-double KFBase::MassConstraint::h(const Eigen::VectorXd& x) const {
+double core::MassConstraint::h(const Eigen::VectorXd& x) const {
   double result = 0;
   const auto& targets = getTargets();
   std::vector<double> px;
@@ -63,14 +66,14 @@ double KFBase::MassConstraint::h(const Eigen::VectorXd& x) const {
   pe.reserve(targets.size());
   for (const auto& el : targets) {
     if (el.second->isEnabled()) {
-      px.push_back(static_cast<const KFBase::Particle*>(el.second)
-                       ->calcMomentumComponent(x, KFBase::MOMENT_X));
-      py.push_back(static_cast<const KFBase::Particle*>(el.second)
-                       ->calcMomentumComponent(x, KFBase::MOMENT_Y));
-      pz.push_back(static_cast<const KFBase::Particle*>(el.second)
-                       ->calcMomentumComponent(x, KFBase::MOMENT_Z));
-      pe.push_back(static_cast<const KFBase::Particle*>(el.second)
-                       ->calcMomentumComponent(x, KFBase::MOMENT_E));
+      px.push_back(static_cast<const core::Particle*>(el.second)
+                       ->calcMomentumComponent(x, core::MOMENT_X));
+      py.push_back(static_cast<const core::Particle*>(el.second)
+                       ->calcMomentumComponent(x, core::MOMENT_Y));
+      pz.push_back(static_cast<const core::Particle*>(el.second)
+                       ->calcMomentumComponent(x, core::MOMENT_Z));
+      pe.push_back(static_cast<const core::Particle*>(el.second)
+                       ->calcMomentumComponent(x, core::MOMENT_E));
     }
   }
   // for (std::size_t i = 0; i + 1 < px.size(); ++i) {
@@ -88,7 +91,7 @@ double KFBase::MassConstraint::h(const Eigen::VectorXd& x) const {
   return result;
 }
 
-Eigen::VectorXd KFBase::MassConstraint::dh(const Eigen::VectorXd& x) const {
+Eigen::VectorXd core::MassConstraint::dh(const Eigen::VectorXd& x) const {
   Eigen::VectorXd result = Eigen::VectorXd::Zero(x.size());
   const auto& targets = getTargets();
   std::vector<double> px;
@@ -109,22 +112,22 @@ Eigen::VectorXd KFBase::MassConstraint::dh(const Eigen::VectorXd& x) const {
   dpe.reserve(targets.size());
   for (const auto& el : targets) {
     if (el.second->isEnabled()) {
-      px.push_back(static_cast<const KFBase::Particle*>(el.second)
-                       ->calcMomentumComponent(x, KFBase::MOMENT_X));
-      py.push_back(static_cast<const KFBase::Particle*>(el.second)
-                       ->calcMomentumComponent(x, KFBase::MOMENT_Y));
-      pz.push_back(static_cast<const KFBase::Particle*>(el.second)
-                       ->calcMomentumComponent(x, KFBase::MOMENT_Z));
-      pe.push_back(static_cast<const KFBase::Particle*>(el.second)
-                       ->calcMomentumComponent(x, KFBase::MOMENT_E));
-      dpx.push_back(static_cast<const KFBase::Particle*>(el.second)
-                        ->calcDMomentumComponent(x, KFBase::MOMENT_X));
-      dpy.push_back(static_cast<const KFBase::Particle*>(el.second)
-                        ->calcDMomentumComponent(x, KFBase::MOMENT_Y));
-      dpz.push_back(static_cast<const KFBase::Particle*>(el.second)
-                        ->calcDMomentumComponent(x, KFBase::MOMENT_Z));
-      dpe.push_back(static_cast<const KFBase::Particle*>(el.second)
-                        ->calcDMomentumComponent(x, KFBase::MOMENT_E));
+      px.push_back(static_cast<const core::Particle*>(el.second)
+                       ->calcMomentumComponent(x, core::MOMENT_X));
+      py.push_back(static_cast<const core::Particle*>(el.second)
+                       ->calcMomentumComponent(x, core::MOMENT_Y));
+      pz.push_back(static_cast<const core::Particle*>(el.second)
+                       ->calcMomentumComponent(x, core::MOMENT_Z));
+      pe.push_back(static_cast<const core::Particle*>(el.second)
+                       ->calcMomentumComponent(x, core::MOMENT_E));
+      dpx.push_back(static_cast<const core::Particle*>(el.second)
+                        ->calcDMomentumComponent(x, core::MOMENT_X));
+      dpy.push_back(static_cast<const core::Particle*>(el.second)
+                        ->calcDMomentumComponent(x, core::MOMENT_Y));
+      dpz.push_back(static_cast<const core::Particle*>(el.second)
+                        ->calcDMomentumComponent(x, core::MOMENT_Z));
+      dpe.push_back(static_cast<const core::Particle*>(el.second)
+                        ->calcDMomentumComponent(x, core::MOMENT_E));
     }
   }
   // for (std::size_t i = 0; i + 1 < px.size(); ++i) {
@@ -143,7 +146,7 @@ Eigen::VectorXd KFBase::MassConstraint::dh(const Eigen::VectorXd& x) const {
   return result;
 }
 
-Eigen::MatrixXd KFBase::MassConstraint::d2h(const Eigen::VectorXd& x) const {
+Eigen::MatrixXd core::MassConstraint::d2h(const Eigen::VectorXd& x) const {
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
   const auto& targets = getTargets();
   std::vector<double> px;
@@ -172,30 +175,30 @@ Eigen::MatrixXd KFBase::MassConstraint::d2h(const Eigen::VectorXd& x) const {
   d2pe.reserve(targets.size());
   for (const auto& el : targets) {
     if (el.second->isEnabled()) {
-      px.push_back(static_cast<const KFBase::Particle*>(el.second)
-                       ->calcMomentumComponent(x, KFBase::MOMENT_X));
-      py.push_back(static_cast<const KFBase::Particle*>(el.second)
-                       ->calcMomentumComponent(x, KFBase::MOMENT_Y));
-      pz.push_back(static_cast<const KFBase::Particle*>(el.second)
-                       ->calcMomentumComponent(x, KFBase::MOMENT_Z));
-      pe.push_back(static_cast<const KFBase::Particle*>(el.second)
-                       ->calcMomentumComponent(x, KFBase::MOMENT_E));
-      dpx.push_back(static_cast<const KFBase::Particle*>(el.second)
-                        ->calcDMomentumComponent(x, KFBase::MOMENT_X));
-      dpy.push_back(static_cast<const KFBase::Particle*>(el.second)
-                        ->calcDMomentumComponent(x, KFBase::MOMENT_Y));
-      dpz.push_back(static_cast<const KFBase::Particle*>(el.second)
-                        ->calcDMomentumComponent(x, KFBase::MOMENT_Z));
-      dpe.push_back(static_cast<const KFBase::Particle*>(el.second)
-                        ->calcDMomentumComponent(x, KFBase::MOMENT_E));
-      d2px.push_back(static_cast<const KFBase::Particle*>(el.second)
-                         ->calcD2MomentumComponent(x, KFBase::MOMENT_X));
-      d2py.push_back(static_cast<const KFBase::Particle*>(el.second)
-                         ->calcD2MomentumComponent(x, KFBase::MOMENT_Y));
-      d2pz.push_back(static_cast<const KFBase::Particle*>(el.second)
-                         ->calcD2MomentumComponent(x, KFBase::MOMENT_Z));
-      d2pe.push_back(static_cast<const KFBase::Particle*>(el.second)
-                         ->calcD2MomentumComponent(x, KFBase::MOMENT_E));
+      px.push_back(static_cast<const core::Particle*>(el.second)
+                       ->calcMomentumComponent(x, core::MOMENT_X));
+      py.push_back(static_cast<const core::Particle*>(el.second)
+                       ->calcMomentumComponent(x, core::MOMENT_Y));
+      pz.push_back(static_cast<const core::Particle*>(el.second)
+                       ->calcMomentumComponent(x, core::MOMENT_Z));
+      pe.push_back(static_cast<const core::Particle*>(el.second)
+                       ->calcMomentumComponent(x, core::MOMENT_E));
+      dpx.push_back(static_cast<const core::Particle*>(el.second)
+                        ->calcDMomentumComponent(x, core::MOMENT_X));
+      dpy.push_back(static_cast<const core::Particle*>(el.second)
+                        ->calcDMomentumComponent(x, core::MOMENT_Y));
+      dpz.push_back(static_cast<const core::Particle*>(el.second)
+                        ->calcDMomentumComponent(x, core::MOMENT_Z));
+      dpe.push_back(static_cast<const core::Particle*>(el.second)
+                        ->calcDMomentumComponent(x, core::MOMENT_E));
+      d2px.push_back(static_cast<const core::Particle*>(el.second)
+                         ->calcD2MomentumComponent(x, core::MOMENT_X));
+      d2py.push_back(static_cast<const core::Particle*>(el.second)
+                         ->calcD2MomentumComponent(x, core::MOMENT_Y));
+      d2pz.push_back(static_cast<const core::Particle*>(el.second)
+                         ->calcD2MomentumComponent(x, core::MOMENT_Z));
+      d2pe.push_back(static_cast<const core::Particle*>(el.second)
+                         ->calcD2MomentumComponent(x, core::MOMENT_E));
     }
   }
   // for (std::size_t i = 0; i + 1 < px.size(); ++i) {

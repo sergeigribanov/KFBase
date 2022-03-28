@@ -29,23 +29,25 @@
  *
  */
 
-#include "TargetFunction.hpp"
+#include "kfbase/newtonian_opt/TargetFunction.hpp"
 
 #include <iostream>
 #include <utility>
 
-ccgo::TargetFunction::TargetFunction(const std::string& name, long n)
+namespace nopt = kfbase::newtonian_opt;
+
+nopt::TargetFunction::TargetFunction(const std::string& name, long n)
     : Function(), ParamContainer(n), Switch(name) {}
 
-ccgo::TargetFunction::~TargetFunction() {}
+nopt::TargetFunction::~TargetFunction() {}
 
-double ccgo::TargetFunction::getTargetValue() const { return f(_xFinal, true); }
+double nopt::TargetFunction::getTargetValue() const { return f(_xFinal, true); }
 
-double ccgo::TargetFunction::getTargetValue(const Eigen::VectorXd& x) const {
+double nopt::TargetFunction::getTargetValue(const Eigen::VectorXd& x) const {
   return f(x.segment(getBeginIndex(), getN()));
 }
 
-void ccgo::TargetFunction::updateIndices() {
+void nopt::TargetFunction::updateIndices() {
   removeIndices();
   addIndices(0, getN());
 }

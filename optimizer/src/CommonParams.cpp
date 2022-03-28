@@ -29,9 +29,11 @@
  *
  */
 
-#include "CommonParams.hpp"
+#include "kfbase/newtonian_opt/CommonParams.hpp"
 
-ccgo::CommonParams::CommonParams(const std::string& name, long n)
-    : ccgo::ParamContainer(n), ccgo::Switch(name) {}
+namespace nopt = kfbase::newtonian_opt;
 
-ccgo::CommonParams::~CommonParams() {}
+nopt::CommonParams::CommonParams(const std::string& name, long n)
+  : nopt::ParamContainer(n), nopt::Switch(name) {}
+
+nopt::CommonParams::~CommonParams() {}

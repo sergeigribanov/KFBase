@@ -29,15 +29,18 @@
  *
  */
 
-#include "DoubleParticleAngularConstraint.hpp"
+#include "kfbase/core/DoubleParticleAngularConstraint.hpp"
 
-KFBase::DoubleParticleAngularConstraint::DoubleParticleAngularConstraint(const std::string& name)
-    : ccgo::NonLagrangeConstraint(name) {}
+namespace nopt = kfbase::newtonian_opt;
+namespace core = kfbase::core;
 
-KFBase::DoubleParticleAngularConstraint::~DoubleParticleAngularConstraint() {}
+core::DoubleParticleAngularConstraint::DoubleParticleAngularConstraint(const std::string& name)
+    : nopt::NonLagrangeConstraint(name) {}
 
-void KFBase::DoubleParticleAngularConstraint::add(const ccgo::TargetFunction* obj) {
-  if (!dynamic_cast<const KFBase::Particle*>(obj)) {
+core::DoubleParticleAngularConstraint::~DoubleParticleAngularConstraint() {}
+
+void core::DoubleParticleAngularConstraint::add(const nopt::TargetFunction* obj) {
+  if (!dynamic_cast<const core::Particle*>(obj)) {
     // TODO: exception
   }
   auto& targets = getTargets();
@@ -48,7 +51,7 @@ void KFBase::DoubleParticleAngularConstraint::add(const ccgo::TargetFunction* ob
   }
 }
 
-double KFBase::DoubleParticleAngularConstraint::h(const Eigen::VectorXd& x) const {
+double core::DoubleParticleAngularConstraint::h(const Eigen::VectorXd& x) const {
   const auto& targets = getTargets();
   auto it1 = targets.begin();
   auto it2 = targets.begin();
@@ -58,25 +61,25 @@ double KFBase::DoubleParticleAngularConstraint::h(const Eigen::VectorXd& x) cons
   }
   Eigen::Vector3d p1;
   Eigen::Vector3d p2;
-  p1(0) = static_cast<const KFBase::Particle*>(it1->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_X);
-  p1(1) = static_cast<const KFBase::Particle*>(it1->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_Y);
-  p1(2) = static_cast<const KFBase::Particle*>(it1->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_Z);
-  p2(0) = static_cast<const KFBase::Particle*>(it2->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_X);
-  p2(1) = static_cast<const KFBase::Particle*>(it2->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_Y);
-  p2(2) = static_cast<const KFBase::Particle*>(it2->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_Z);
+  p1(0) = static_cast<const core::Particle*>(it1->second)
+          ->calcMomentumComponent(x, core::MOMENT_X);
+  p1(1) = static_cast<const core::Particle*>(it1->second)
+          ->calcMomentumComponent(x, core::MOMENT_Y);
+  p1(2) = static_cast<const core::Particle*>(it1->second)
+          ->calcMomentumComponent(x, core::MOMENT_Z);
+  p2(0) = static_cast<const core::Particle*>(it2->second)
+          ->calcMomentumComponent(x, core::MOMENT_X);
+  p2(1) = static_cast<const core::Particle*>(it2->second)
+          ->calcMomentumComponent(x, core::MOMENT_Y);
+  p2(2) = static_cast<const core::Particle*>(it2->second)
+          ->calcMomentumComponent(x, core::MOMENT_Z);
   const double q = p1.dot(p2);
   const double t = std::sqrt(p1.dot(p1) * p2.dot(p2));
   const double aCos = std::acos(q / t);
   return aCos * aCos;
 }
 
-Eigen::VectorXd KFBase::DoubleParticleAngularConstraint::dh(const Eigen::VectorXd& x) const {
+Eigen::VectorXd core::DoubleParticleAngularConstraint::dh(const Eigen::VectorXd& x) const {
   const auto& targets = getTargets();
   auto it1 = targets.begin();
   auto it2 = targets.begin();
@@ -86,36 +89,36 @@ Eigen::VectorXd KFBase::DoubleParticleAngularConstraint::dh(const Eigen::VectorX
   }
   Eigen::Vector3d p1;
   Eigen::Vector3d p2;
-  p1(0) = static_cast<const KFBase::Particle*>(it1->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_X);
-  p1(1) = static_cast<const KFBase::Particle*>(it1->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_Y);
-  p1(2) = static_cast<const KFBase::Particle*>(it1->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_Z);
-  p2(0) = static_cast<const KFBase::Particle*>(it2->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_X);
-  p2(1) = static_cast<const KFBase::Particle*>(it2->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_Y);
-  p2(2) = static_cast<const KFBase::Particle*>(it2->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_Z);
+  p1(0) = static_cast<const core::Particle*>(it1->second)
+          ->calcMomentumComponent(x, core::MOMENT_X);
+  p1(1) = static_cast<const core::Particle*>(it1->second)
+          ->calcMomentumComponent(x, core::MOMENT_Y);
+  p1(2) = static_cast<const core::Particle*>(it1->second)
+          ->calcMomentumComponent(x, core::MOMENT_Z);
+  p2(0) = static_cast<const core::Particle*>(it2->second)
+          ->calcMomentumComponent(x, core::MOMENT_X);
+  p2(1) = static_cast<const core::Particle*>(it2->second)
+          ->calcMomentumComponent(x, core::MOMENT_Y);
+  p2(2) = static_cast<const core::Particle*>(it2->second)
+          ->calcMomentumComponent(x, core::MOMENT_Z);
   const double q = p1.dot(p2);
   const double p1s = p1.dot(p1);
   const double p2s = p2.dot(p2);
   const double t = std::sqrt(p1s * p2s);
   Eigen::MatrixXd dp1 = Eigen::MatrixXd::Zero(x.size(), 3);
   Eigen::MatrixXd dp2 = Eigen::MatrixXd::Zero(x.size(), 3);
-  dp1.col(0) = static_cast<const KFBase::Particle*>(it1->second)
-              ->calcDMomentumComponent(x, KFBase::MOMENT_X);
-  dp1.col(1) = static_cast<const KFBase::Particle*>(it1->second)
-              ->calcDMomentumComponent(x, KFBase::MOMENT_Y);
-  dp1.col(2) = static_cast<const KFBase::Particle*>(it1->second)
-              ->calcDMomentumComponent(x, KFBase::MOMENT_Z);
-  dp2.col(0) = static_cast<const KFBase::Particle*>(it2->second)
-              ->calcDMomentumComponent(x, KFBase::MOMENT_X);
-  dp2.col(1) = static_cast<const KFBase::Particle*>(it2->second)
-              ->calcDMomentumComponent(x, KFBase::MOMENT_Y);
-  dp2.col(2) = static_cast<const KFBase::Particle*>(it2->second)
-              ->calcDMomentumComponent(x, KFBase::MOMENT_Z);
+  dp1.col(0) = static_cast<const core::Particle*>(it1->second)
+              ->calcDMomentumComponent(x, core::MOMENT_X);
+  dp1.col(1) = static_cast<const core::Particle*>(it1->second)
+              ->calcDMomentumComponent(x, core::MOMENT_Y);
+  dp1.col(2) = static_cast<const core::Particle*>(it1->second)
+              ->calcDMomentumComponent(x, core::MOMENT_Z);
+  dp2.col(0) = static_cast<const core::Particle*>(it2->second)
+              ->calcDMomentumComponent(x, core::MOMENT_X);
+  dp2.col(1) = static_cast<const core::Particle*>(it2->second)
+              ->calcDMomentumComponent(x, core::MOMENT_Y);
+  dp2.col(2) = static_cast<const core::Particle*>(it2->second)
+              ->calcDMomentumComponent(x, core::MOMENT_Z);
   const double eta = q / t;
   Eigen::VectorXd dq = dp1 * p2 + dp2 * p1;
   Eigen::VectorXd dt = (dp1 * p1 * p2s + dp2 * p2 * p1s) / t;
@@ -125,7 +128,7 @@ Eigen::VectorXd KFBase::DoubleParticleAngularConstraint::dh(const Eigen::VectorX
   return 2. * aCos * daCos;
 }
 
-Eigen::MatrixXd KFBase::DoubleParticleAngularConstraint::d2h(const Eigen::VectorXd& x) const {
+Eigen::MatrixXd core::DoubleParticleAngularConstraint::d2h(const Eigen::VectorXd& x) const {
   const auto& targets = getTargets();
   auto it1 = targets.begin();
   auto it2 = targets.begin();
@@ -135,36 +138,36 @@ Eigen::MatrixXd KFBase::DoubleParticleAngularConstraint::d2h(const Eigen::Vector
   }
   Eigen::Vector3d p1;
   Eigen::Vector3d p2;
-  p1(0) = static_cast<const KFBase::Particle*>(it1->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_X);
-  p1(1) = static_cast<const KFBase::Particle*>(it1->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_Y);
-  p1(2) = static_cast<const KFBase::Particle*>(it1->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_Z);
-  p2(0) = static_cast<const KFBase::Particle*>(it2->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_X);
-  p2(1) = static_cast<const KFBase::Particle*>(it2->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_Y);
-  p2(2) = static_cast<const KFBase::Particle*>(it2->second)
-          ->calcMomentumComponent(x, KFBase::MOMENT_Z);
+  p1(0) = static_cast<const core::Particle*>(it1->second)
+          ->calcMomentumComponent(x, core::MOMENT_X);
+  p1(1) = static_cast<const core::Particle*>(it1->second)
+          ->calcMomentumComponent(x, core::MOMENT_Y);
+  p1(2) = static_cast<const core::Particle*>(it1->second)
+          ->calcMomentumComponent(x, core::MOMENT_Z);
+  p2(0) = static_cast<const core::Particle*>(it2->second)
+          ->calcMomentumComponent(x, core::MOMENT_X);
+  p2(1) = static_cast<const core::Particle*>(it2->second)
+          ->calcMomentumComponent(x, core::MOMENT_Y);
+  p2(2) = static_cast<const core::Particle*>(it2->second)
+          ->calcMomentumComponent(x, core::MOMENT_Z);
   const double q = p1.dot(p2);
   const double p1s = p1.dot(p1);
   const double p2s = p2.dot(p2);
   const double t = std::sqrt(p1s * p2s);
   Eigen::MatrixXd dp1 = Eigen::MatrixXd::Zero(x.size(), 3);
   Eigen::MatrixXd dp2 = Eigen::MatrixXd::Zero(x.size(), 3);
-  dp1.col(0) = static_cast<const KFBase::Particle*>(it1->second)
-              ->calcDMomentumComponent(x, KFBase::MOMENT_X);
-  dp1.col(1) = static_cast<const KFBase::Particle*>(it1->second)
-              ->calcDMomentumComponent(x, KFBase::MOMENT_Y);
-  dp1.col(2) = static_cast<const KFBase::Particle*>(it1->second)
-              ->calcDMomentumComponent(x, KFBase::MOMENT_Z);
-  dp2.col(0) = static_cast<const KFBase::Particle*>(it2->second)
-              ->calcDMomentumComponent(x, KFBase::MOMENT_X);
-  dp2.col(1) = static_cast<const KFBase::Particle*>(it2->second)
-              ->calcDMomentumComponent(x, KFBase::MOMENT_Y);
-  dp2.col(2) = static_cast<const KFBase::Particle*>(it2->second)
-              ->calcDMomentumComponent(x, KFBase::MOMENT_Z);
+  dp1.col(0) = static_cast<const core::Particle*>(it1->second)
+              ->calcDMomentumComponent(x, core::MOMENT_X);
+  dp1.col(1) = static_cast<const core::Particle*>(it1->second)
+              ->calcDMomentumComponent(x, core::MOMENT_Y);
+  dp1.col(2) = static_cast<const core::Particle*>(it1->second)
+              ->calcDMomentumComponent(x, core::MOMENT_Z);
+  dp2.col(0) = static_cast<const core::Particle*>(it2->second)
+              ->calcDMomentumComponent(x, core::MOMENT_X);
+  dp2.col(1) = static_cast<const core::Particle*>(it2->second)
+              ->calcDMomentumComponent(x, core::MOMENT_Y);
+  dp2.col(2) = static_cast<const core::Particle*>(it2->second)
+              ->calcDMomentumComponent(x, core::MOMENT_Z);
   const double eta = q / t;
   Eigen::VectorXd dq = dp1 * p2 + dp2 * p1;
   Eigen::VectorXd dTmpP1s = dp1 * p1;
@@ -172,19 +175,19 @@ Eigen::MatrixXd KFBase::DoubleParticleAngularConstraint::d2h(const Eigen::Vector
   Eigen::VectorXd dt = (dTmpP1s * p2s + dTmpP2s * p1s) / t;
   Eigen::VectorXd deta = (dq - eta * dt) / t;
   std::vector<Eigen::MatrixXd> d2p1(3);
-  d2p1[0] = static_cast<const KFBase::Particle*>(it1->second)
-            ->calcD2MomentumComponent(x, KFBase::MOMENT_X);
-  d2p1[1] = static_cast<const KFBase::Particle*>(it1->second)
-            ->calcD2MomentumComponent(x, KFBase::MOMENT_Y);
-  d2p1[2] = static_cast<const KFBase::Particle*>(it1->second)
-            ->calcD2MomentumComponent(x, KFBase::MOMENT_Z);
+  d2p1[0] = static_cast<const core::Particle*>(it1->second)
+            ->calcD2MomentumComponent(x, core::MOMENT_X);
+  d2p1[1] = static_cast<const core::Particle*>(it1->second)
+            ->calcD2MomentumComponent(x, core::MOMENT_Y);
+  d2p1[2] = static_cast<const core::Particle*>(it1->second)
+            ->calcD2MomentumComponent(x, core::MOMENT_Z);
   std::vector<Eigen::MatrixXd> d2p2(3);
-  d2p2[0] = static_cast<const KFBase::Particle*>(it2->second)
-            ->calcD2MomentumComponent(x, KFBase::MOMENT_X);
-  d2p2[1] = static_cast<const KFBase::Particle*>(it2->second)
-            ->calcD2MomentumComponent(x, KFBase::MOMENT_Y);
-  d2p2[2] = static_cast<const KFBase::Particle*>(it2->second)
-            ->calcD2MomentumComponent(x, KFBase::MOMENT_Z);
+  d2p2[0] = static_cast<const core::Particle*>(it2->second)
+            ->calcD2MomentumComponent(x, core::MOMENT_X);
+  d2p2[1] = static_cast<const core::Particle*>(it2->second)
+            ->calcD2MomentumComponent(x, core::MOMENT_Y);
+  d2p2[2] = static_cast<const core::Particle*>(it2->second)
+            ->calcD2MomentumComponent(x, core::MOMENT_Z);
   Eigen::MatrixXd d2q = Eigen::MatrixXd::Zero(x.size(), x.size());
   Eigen::MatrixXd d2t = Eigen::MatrixXd::Zero(x.size(), x.size());
   for (long j = 0; j < x.size(); ++j) {

@@ -29,34 +29,36 @@
  *
  */
 
-#include "Function.hpp"
+#include "kfbase/newtonian_opt/Function.hpp"
 
 #include <iostream>
 
-ccgo::Function::Function() {}
+namespace nopt = kfbase::newtonian_opt;
 
-ccgo::Function::~Function() {}
+nopt::Function::Function() {}
 
-std::unordered_map<std::string, ccgo::CommonParams*>*
-ccgo::Function::getCommonParameters() const {
+nopt::Function::~Function() {}
+
+std::unordered_map<std::string, nopt::CommonParams*>*
+nopt::Function::getCommonParameters() const {
   return _commonParams;
 }
 
-void ccgo::Function::setCommonParameters(
+void nopt::Function::setCommonParameters(
     std::unordered_map<std::string, CommonParams*>* params) {
   _commonParams = params;
 }
 
-void ccgo::Function::setConstants(
+void nopt::Function::setConstants(
     std::unordered_map<std::string, double>* constants) {
   _constants = constants;
 }
 
-std::unordered_map<std::string, double>* ccgo::Function::getConstants() const {
+std::unordered_map<std::string, double>* nopt::Function::getConstants() const {
   return _constants;
 }
 
-Eigen::VectorXd ccgo::Function::dfNumerical(const Eigen::VectorXd& x, double h) const {
+Eigen::VectorXd nopt::Function::dfNumerical(const Eigen::VectorXd& x, double h) const {
   Eigen::VectorXd result = Eigen::VectorXd::Zero(x.size());
   Eigen::VectorXd vh = Eigen::VectorXd::Zero(x.size());
   for (const auto& index : getIndices()) {
@@ -67,7 +69,7 @@ Eigen::VectorXd ccgo::Function::dfNumerical(const Eigen::VectorXd& x, double h) 
   return result;
 }
 
-Eigen::MatrixXd ccgo::Function::d2fNumerical(const Eigen::VectorXd& x, double h) const {
+Eigen::MatrixXd nopt::Function::d2fNumerical(const Eigen::VectorXd& x, double h) const {
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
   Eigen::VectorXd vh0 = Eigen::VectorXd::Zero(x.size());
   Eigen::VectorXd vh1 = Eigen::VectorXd::Zero(x.size());
@@ -89,31 +91,31 @@ Eigen::MatrixXd ccgo::Function::d2fNumerical(const Eigen::VectorXd& x, double h)
   return result;
 }
 
-const std::unordered_set<long>& ccgo::Function::getIndices() const {
+const std::unordered_set<long>& nopt::Function::getIndices() const {
   return _indices;
 }
 
-void ccgo::Function::addIndex(long index) { _indices.insert(index); }
+void nopt::Function::addIndex(long index) { _indices.insert(index); }
 
-void ccgo::Function::addIndices(long firstIndex, long n) {
+void nopt::Function::addIndices(long firstIndex, long n) {
   long endIndex = firstIndex + n;
   for (long index = firstIndex; index < endIndex; ++index) {
     _indices.insert(index);
   }
 }
 
-void ccgo::Function::removeIndex(long index) { _indices.erase(index); }
+void nopt::Function::removeIndex(long index) { _indices.erase(index); }
 
-void ccgo::Function::removeIndices(long beginIndex, long n) {
+void nopt::Function::removeIndices(long beginIndex, long n) {
   long endIndex = beginIndex + n;
   for (long index = beginIndex; index < endIndex; ++index) {
     _indices.erase(index);
   }
 }
 
-void ccgo::Function::removeIndices() { _indices.clear(); }
+void nopt::Function::removeIndices() { _indices.clear(); }
 
-void ccgo::Function::includeUsedCommonParameter(const std::string& name) {
+void nopt::Function::includeUsedCommonParameter(const std::string& name) {
   const auto& it = _commonParams->find(name);
   if (it != _commonParams->end()) {
     _usedCommonParams.insert(name);
@@ -122,7 +124,7 @@ void ccgo::Function::includeUsedCommonParameter(const std::string& name) {
   }
 }
 
-void ccgo::Function::excludeUsedCommonParameter(const std::string& name) {
+void nopt::Function::excludeUsedCommonParameter(const std::string& name) {
   const auto& it = _commonParams->find(name);
   if (it != _commonParams->end()) {
     _usedCommonParams.erase(name);
@@ -131,25 +133,25 @@ void ccgo::Function::excludeUsedCommonParameter(const std::string& name) {
   }
 }
 
-const std::unordered_set<std::string>& ccgo::Function::getUsedCommonParameters()
+const std::unordered_set<std::string>& nopt::Function::getUsedCommonParameters()
     const {
   return _usedCommonParams;
 }
 
-void ccgo::Function::updateValue(const Eigen::VectorXd& x) {
+void nopt::Function::updateValue(const Eigen::VectorXd& x) {
   _cur_f = this->f(x, true);
   _cur_df = this->df(x, true);
   _cur_d2f = this->d2f(x, true);
 }
 
-double ccgo::Function::getCurF() const {
+double nopt::Function::getCurF() const {
   return _cur_f;
 }
 
-const Eigen::VectorXd& ccgo::Function::getCurDF() const {
+const Eigen::VectorXd& nopt::Function::getCurDF() const {
   return _cur_df;
 }
 
-const Eigen::MatrixXd& ccgo::Function::getCurD2F() const {
+const Eigen::MatrixXd& nopt::Function::getCurD2F() const {
   return _cur_d2f;
 }

@@ -29,21 +29,23 @@
  *
  */
 
-#include "TargetChiSquare.hpp"
+#include "kfbase/newtonian_opt/TargetChiSquare.hpp"
 
 #include <iostream>
 
-ccgo::TargetChiSquare::TargetChiSquare(const std::string& name, long n)
+namespace nopt = kfbase::newtonian_opt;
+
+nopt::TargetChiSquare::TargetChiSquare(const std::string& name, long n)
     : TargetFunction(name, n),
       _inverseErrorMatrix(Eigen::MatrixXd::Zero(n, n)) {}
 
-ccgo::TargetChiSquare::~TargetChiSquare() {}
+nopt::TargetChiSquare::~TargetChiSquare() {}
 
-const Eigen::MatrixXd& ccgo::TargetChiSquare::getInverseErrorMatrix() const {
+const Eigen::MatrixXd& nopt::TargetChiSquare::getInverseErrorMatrix() const {
   return _inverseErrorMatrix;
 }
 
-double ccgo::TargetChiSquare::f(const Eigen::VectorXd& x, bool recalc) const {
+double nopt::TargetChiSquare::f(const Eigen::VectorXd& x, bool recalc) const {
   if (!recalc) {
     return getCurF();
   }
@@ -51,7 +53,7 @@ double ccgo::TargetChiSquare::f(const Eigen::VectorXd& x, bool recalc) const {
   return dx.transpose() * _inverseErrorMatrix * dx;
 }
 
-Eigen::VectorXd ccgo::TargetChiSquare::df(const Eigen::VectorXd& x, bool recalc) const {
+Eigen::VectorXd nopt::TargetChiSquare::df(const Eigen::VectorXd& x, bool recalc) const {
   if (!recalc) {
     return getCurDF();
   }
@@ -59,7 +61,7 @@ Eigen::VectorXd ccgo::TargetChiSquare::df(const Eigen::VectorXd& x, bool recalc)
   return 2 * _inverseErrorMatrix * dx;
 }
 
-Eigen::MatrixXd ccgo::TargetChiSquare::d2f(const Eigen::VectorXd& x, bool recalc) const {
+Eigen::MatrixXd nopt::TargetChiSquare::d2f(const Eigen::VectorXd& x, bool recalc) const {
   if (!recalc) {
     return getCurD2F();
   }
@@ -67,7 +69,7 @@ Eigen::MatrixXd ccgo::TargetChiSquare::d2f(const Eigen::VectorXd& x, bool recalc
   return 2 * _inverseErrorMatrix;
 }
 
-void ccgo::TargetChiSquare::setInverseErrorMatrix(
+void nopt::TargetChiSquare::setInverseErrorMatrix(
     const Eigen::MatrixXd& matrix) {
   if (matrix.rows() == matrix.cols() && matrix.rows() == getN()) {
     _inverseErrorMatrix = matrix;
@@ -77,6 +79,6 @@ void ccgo::TargetChiSquare::setInverseErrorMatrix(
   }
 }
 
-void ccgo::TargetChiSquare::onFitBegin(const Eigen::VectorXd&) {}
+void nopt::TargetChiSquare::onFitBegin(const Eigen::VectorXd&) {}
 
-void ccgo::TargetChiSquare::onFitEnd(const Eigen::VectorXd&) {}
+void nopt::TargetChiSquare::onFitEnd(const Eigen::VectorXd&) {}

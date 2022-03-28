@@ -5,12 +5,10 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 find_package(Eigen3 REQUIRED NO_MODULE)
-list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
-find_package(ROOT REQUIRED COMPONENTS RIO Net Core)
-include(${ROOT_USE_FILE})
 
+include(GNUInstallDirs)
 add_subdirectory(optimizer)
-
+add_subdirectory(core)
 
 
 # file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)

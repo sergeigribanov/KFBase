@@ -29,37 +29,39 @@
  *
  */
 
-#include "EqualityLagrangeConstraint.hpp"
+#include "kfbase/newtonian_opt/EqualityLagrangeConstraint.hpp"
 #include <cmath>
 #include <iostream>
 #include <utility>
 
-ccgo::EqualityLagrangeConstraint::EqualityLagrangeConstraint(
+namespace nopt = kfbase::newtonian_opt;
+
+nopt::EqualityLagrangeConstraint::EqualityLagrangeConstraint(
     const std::string& name, double constraintValue)
-    : ccgo::LagrangeConstraint(name), _constraintValue(constraintValue) {}
+    : nopt::LagrangeConstraint(name), _constraintValue(constraintValue) {}
 
-ccgo::EqualityLagrangeConstraint::~EqualityLagrangeConstraint() {}
+nopt::EqualityLagrangeConstraint::~EqualityLagrangeConstraint() {}
 
-double ccgo::EqualityLagrangeConstraint::f(const Eigen::VectorXd& x, bool recalc) const {
+double nopt::EqualityLagrangeConstraint::f(const Eigen::VectorXd& x, bool recalc) const {
   if (!recalc) {
     return getCurF();
   }
   return x(getLambdaIndex()) * (h(x) - _constraintValue);
 }
 
-double ccgo::EqualityLagrangeConstraint::calcResidual(const Eigen::VectorXd& x) const {
+double nopt::EqualityLagrangeConstraint::calcResidual(const Eigen::VectorXd& x) const {
   return std::fabs(h(x) - _constraintValue);
 }
 
-double ccgo::EqualityLagrangeConstraint::getConstraintValue() const {
+double nopt::EqualityLagrangeConstraint::getConstraintValue() const {
   return _constraintValue;
 }
 
-void ccgo::EqualityLagrangeConstraint::setConstraintValue(double value) {
+void nopt::EqualityLagrangeConstraint::setConstraintValue(double value) {
   _constraintValue = value;
 }
 
-Eigen::VectorXd ccgo::EqualityLagrangeConstraint::df(
+Eigen::VectorXd nopt::EqualityLagrangeConstraint::df(
 						     const Eigen::VectorXd& x, bool recalc) const {
   if (!recalc) {
     return getCurDF();
@@ -70,7 +72,7 @@ Eigen::VectorXd ccgo::EqualityLagrangeConstraint::df(
   return result;
 }
 
-Eigen::MatrixXd ccgo::EqualityLagrangeConstraint::d2f(
+Eigen::MatrixXd nopt::EqualityLagrangeConstraint::d2f(
 						      const Eigen::VectorXd& x, bool recalc) const {
   if (!recalc) {
     return getCurD2F();

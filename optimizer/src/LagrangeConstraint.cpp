@@ -29,36 +29,38 @@
  *
  */
 
-#include "LagrangeConstraint.hpp"
+#include "kfbase/newtonian_opt/LagrangeConstraint.hpp"
 
 #include <utility>
 
-ccgo::LagrangeConstraint::LagrangeConstraint(const std::string& name)
-  : ccgo::Constraint(name), _lambdaInitial(0), _lambdaFinal(0) {}
+namespace nopt = kfbase::newtonian_opt;
 
-ccgo::LagrangeConstraint::~LagrangeConstraint() {}
+nopt::LagrangeConstraint::LagrangeConstraint(const std::string& name)
+  : nopt::Constraint(name), _lambdaInitial(0), _lambdaFinal(0) {}
 
-long ccgo::LagrangeConstraint::getLambdaIndex() const { return _lambdaIndex; }
+nopt::LagrangeConstraint::~LagrangeConstraint() {}
 
-void ccgo::LagrangeConstraint::setLambdaIndex(long index) {
+long nopt::LagrangeConstraint::getLambdaIndex() const { return _lambdaIndex; }
+
+void nopt::LagrangeConstraint::setLambdaIndex(long index) {
   _lambdaIndex = index;
 }
 
-double ccgo::LagrangeConstraint::getLambdaInitial() const {
+double nopt::LagrangeConstraint::getLambdaInitial() const {
   return _lambdaInitial;
 }
 
-double ccgo::LagrangeConstraint::getLambdaFinal() const { return _lambdaFinal; }
+double nopt::LagrangeConstraint::getLambdaFinal() const { return _lambdaFinal; }
 
-void ccgo::LagrangeConstraint::setLambdaInitial(double lambda) {
+void nopt::LagrangeConstraint::setLambdaInitial(double lambda) {
   _lambdaInitial = lambda;
 }
 
-void ccgo::LagrangeConstraint::setLambdaFinal(const Eigen::VectorXd& x) {
+void nopt::LagrangeConstraint::setLambdaFinal(const Eigen::VectorXd& x) {
   _lambdaFinal = x(getLambdaIndex());
 }
 
-void ccgo::LagrangeConstraint::updateIndices() {
+void nopt::LagrangeConstraint::updateIndices() {
   removeIndices();
   addIndex(getLambdaIndex());
   for (const auto& el : getTargets()) {

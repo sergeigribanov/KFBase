@@ -29,20 +29,23 @@
  *
  */
 
-#include "VertexConstraint.hpp"
+#include "kfbase/core/VertexConstraint.hpp"
 
-KFBase::VertexConstraint::VertexConstraint(const std::string& name,
-                                           KFBase::VERTEX_COMPONENT component)
-    : ccgo::EqualityLagrangeConstraint(name), _component(component) {}
+namespace nopt = kfbase::newtonian_opt;
+namespace core = kfbase::core;
 
-KFBase::VertexConstraint::~VertexConstraint() {}
+core::VertexConstraint::VertexConstraint(const std::string& name,
+                                           core::VERTEX_COMPONENT component)
+    : nopt::EqualityLagrangeConstraint(name), _component(component) {}
 
-KFBase::VERTEX_COMPONENT KFBase::VertexConstraint::getComponent() const {
+core::VertexConstraint::~VertexConstraint() {}
+
+core::VERTEX_COMPONENT core::VertexConstraint::getComponent() const {
   return _component;
 }
 
-void KFBase::VertexConstraint::add(const ccgo::TargetFunction* obj) {
-  if (!dynamic_cast<const KFBase::VertexParticle*>(obj)) {
+void core::VertexConstraint::add(const nopt::TargetFunction* obj) {
+  if (!dynamic_cast<const core::VertexParticle*>(obj)) {
     // TODO: exception
   }
   auto& targets = getTargets();
@@ -56,7 +59,7 @@ void KFBase::VertexConstraint::add(const ccgo::TargetFunction* obj) {
   }
 }
 
-void KFBase::VertexConstraint::setVertexCommonParams(
+void core::VertexConstraint::setVertexCommonParams(
     const std::string& name) {
   auto it = getCommonParameters()->find(name);
   if (it == getCommonParameters()->end()) {
@@ -65,33 +68,33 @@ void KFBase::VertexConstraint::setVertexCommonParams(
   _vertexCoordinate = it->second;
 }
 
-double KFBase::VertexConstraint::h(const Eigen::VectorXd& x) const {
+double core::VertexConstraint::h(const Eigen::VectorXd& x) const {
   double result = 0;
   const auto it = getTargets().begin();
   if (it->second->isEnabled()) {
-    result += static_cast<const KFBase::VertexParticle*>(it->second)
+    result += static_cast<const core::VertexParticle*>(it->second)
                   ->calcVertexComponent(x, _component) -
               x(_vertexCoordinate->getBeginIndex());
   }
   return result;
 }
 
-Eigen::VectorXd KFBase::VertexConstraint::dh(const Eigen::VectorXd& x) const {
+Eigen::VectorXd core::VertexConstraint::dh(const Eigen::VectorXd& x) const {
   Eigen::VectorXd result = Eigen::VectorXd::Zero(x.size());
   const auto it = getTargets().begin();
   if (it->second->isEnabled()) {
-    result += static_cast<const KFBase::VertexParticle*>(it->second)
+    result += static_cast<const core::VertexParticle*>(it->second)
                   ->calcDVertexComponent(x, _component);
     result(_vertexCoordinate->getBeginIndex()) -= 1;
   }
   return result;
 }
 
-Eigen::MatrixXd KFBase::VertexConstraint::d2h(const Eigen::VectorXd& x) const {
+Eigen::MatrixXd core::VertexConstraint::d2h(const Eigen::VectorXd& x) const {
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
   const auto it = getTargets().begin();
   if (it->second->isEnabled()) {
-    result += static_cast<const KFBase::VertexParticle*>(it->second)
+    result += static_cast<const core::VertexParticle*>(it->second)
                   ->calcD2VertexComponent(x, _component);
   }
   return result;

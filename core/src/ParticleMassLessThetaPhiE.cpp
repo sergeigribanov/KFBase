@@ -30,10 +30,13 @@
  */
 
 #include <cmath>
-#include "ParticleMassLessThetaPhiE.hpp"
+#include "kfbase/core/ParticleMassLessThetaPhiE.hpp"
 
-KFBase::ParticleMassLessThetaPhiE::ParticleMassLessThetaPhiE(const std::string& name) :
-  KFBase::Particle(name, 3, 0) {
+namespace nopt = kfbase::newtonian_opt;
+namespace core = kfbase::core;
+
+core::ParticleMassLessThetaPhiE::ParticleMassLessThetaPhiE(const std::string& name) :
+  core::Particle(name, 3, 0) {
   setPeriod(1, 0, 2 * TMath::Pi());
   setLowerLimit(1, -1000 * TMath::Pi());
   setUpperLimit(1, 1000 * TMath::Pi());
@@ -42,34 +45,34 @@ KFBase::ParticleMassLessThetaPhiE::ParticleMassLessThetaPhiE(const std::string& 
   setUpperLimit(2, 1000 * TMath::Pi());
 }
 
-KFBase::ParticleMassLessThetaPhiE::~ParticleMassLessThetaPhiE() {}
+core::ParticleMassLessThetaPhiE::~ParticleMassLessThetaPhiE() {}
 
-double KFBase::ParticleMassLessThetaPhiE::calcMomentumComponent(
-    const Eigen::VectorXd& x, KFBase::MOMENT_COMPONENT component) const {
+double core::ParticleMassLessThetaPhiE::calcMomentumComponent(
+    const Eigen::VectorXd& x, core::MOMENT_COMPONENT component) const {
   const long bi = getBeginIndex();
   double result = 0;
   // E --- 0
   // theta --- 1
   // phi --- 2
   switch (component) {
-  case KFBase::MOMENT_X:
+  case core::MOMENT_X:
     result = x(bi) * std::sin(x(bi + 1)) * std::cos(x(bi + 2));
     break;
-  case KFBase::MOMENT_Y:
+  case core::MOMENT_Y:
     result = x(bi) * std::sin(x(bi + 1)) * std::sin(x(bi + 2));
     break;
-  case KFBase::MOMENT_Z:
+  case core::MOMENT_Z:
     result = x(bi) * std::cos(x(bi + 1));
     break;
-  case KFBase::MOMENT_E:
+  case core::MOMENT_E:
     result = x(bi);
     break;
   }
   return result;
 }
 
-Eigen::VectorXd KFBase::ParticleMassLessThetaPhiE::calcDMomentumComponent(
-    const Eigen::VectorXd& x, KFBase::MOMENT_COMPONENT component) const {
+Eigen::VectorXd core::ParticleMassLessThetaPhiE::calcDMomentumComponent(
+    const Eigen::VectorXd& x, core::MOMENT_COMPONENT component) const {
   // E --- 0
   // theta --- 1
   // phi --- 2
@@ -80,29 +83,29 @@ Eigen::VectorXd KFBase::ParticleMassLessThetaPhiE::calcDMomentumComponent(
   const double cosP = std::cos(x(bi + 2));
   Eigen::VectorXd result = Eigen::VectorXd::Zero(x.size());
   switch (component) {
-  case KFBase::MOMENT_X:
+  case core::MOMENT_X:
     result(bi) = sinT * cosP;
     result(bi + 1) = x(bi) * cosT * cosP;
     result(bi + 2) = -x(bi) * sinT * sinP;
     break;
-  case KFBase::MOMENT_Y:
+  case core::MOMENT_Y:
     result(bi) = sinT * sinP;
     result(bi + 1) = x(bi) * cosT * sinP;
     result(bi + 2) = x(bi) * sinT * cosP;
     break;
-  case KFBase::MOMENT_Z:
+  case core::MOMENT_Z:
     result(bi) = cosT;
     result(bi + 1) = -x(bi) * sinT;
     break;
-  case KFBase::MOMENT_E:
+  case core::MOMENT_E:
     result(bi) = 1;
     break;
   }
   return result;
 }
 
-Eigen::MatrixXd KFBase::ParticleMassLessThetaPhiE::calcD2MomentumComponent(
-    const Eigen::VectorXd& x, KFBase::MOMENT_COMPONENT component) const {
+Eigen::MatrixXd core::ParticleMassLessThetaPhiE::calcD2MomentumComponent(
+    const Eigen::VectorXd& x, core::MOMENT_COMPONENT component) const {
   // E --- 0
   // theta --- 1
   // phi --- 2
@@ -113,7 +116,7 @@ Eigen::MatrixXd KFBase::ParticleMassLessThetaPhiE::calcD2MomentumComponent(
   const double cosP = std::cos(x(bi + 2));
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
   switch (component) {
-  case KFBase::MOMENT_X:
+  case core::MOMENT_X:
     // x(bi) * sinT * cosP
     result(bi, bi + 1) = cosT * cosP;
     result(bi + 1, bi) = result(bi, bi + 1);
@@ -124,7 +127,7 @@ Eigen::MatrixXd KFBase::ParticleMassLessThetaPhiE::calcD2MomentumComponent(
     result(bi + 2, bi + 1) = result(bi + 1, bi + 2);
     result(bi + 2, bi + 2) = -x(bi) * sinT * cosP;
     break;
-  case KFBase::MOMENT_Y:
+  case core::MOMENT_Y:
     // x(bi) * sinT * sinP
     result(bi, bi + 1) = cosT * sinP;
     result(bi + 1, bi) = result(bi, bi + 1);
@@ -135,13 +138,13 @@ Eigen::MatrixXd KFBase::ParticleMassLessThetaPhiE::calcD2MomentumComponent(
     result(bi + 2, bi + 1) = result(bi + 1, bi + 2);
     result(bi + 2, bi + 2) = -x(bi) * sinT * sinP;
     break;
-  case KFBase::MOMENT_Z:
+  case core::MOMENT_Z:
     // x(bi) * cosT
     result(bi, bi + 1) = -sinT;
     result(bi + 1, bi) = result(bi, bi + 1);
     result(bi + 1, bi + 1) = -x(bi) * cosT;
     break;
-  case KFBase::MOMENT_E:
+  case core::MOMENT_E:
     break;
   }
   return result;

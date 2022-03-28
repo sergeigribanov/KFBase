@@ -34,30 +34,31 @@
 
 #include <string>
 
-#include "ParamContainer.hpp"
-#include "Switch.hpp"
+#include "kfbase/newtonian_opt/ParamContainer.hpp"
+#include "kfbase/newtonian_opt/Switch.hpp"
 
-namespace ccgo {
-/**
- * Implementation of common parameters. Common parameters do not
- * belong any of target function. Common parameters can be used inside
- * any of target function or constraint. Each of CommonParams object contains
- * a vector of common parameters and has unique name.
- *
- */
-class CommonParams : public ParamContainer, public Switch {
- public:
-  //! A constructor
-  /*!
-   * @param name (a name of a CommonParams object)
-   *
-   * @param n (a number of parameters in a CommonParams object)
-   *
-   */
-  CommonParams(const std::string&, long);
-  //! A destructor
-  virtual ~CommonParams();
-};
-}  // namespace ccgo
-
+namespace kfbase {
+  namespace newtonian_opt {
+    /**
+     * Implementation of common parameters. Common parameters do not
+     * belong any of target function. Common parameters can be used inside
+     * any of target function or constraint. Each of CommonParams object contains
+     * a vector of common parameters and has unique name.
+     *
+     */
+    class CommonParams : public ParamContainer, public Switch {
+    public:
+      //! A constructor
+      /*!
+       * @param name (a name of a CommonParams object)
+       *
+       * @param n (a number of parameters in a CommonParams object)
+       *
+       */
+      CommonParams(const std::string&, long);
+      //! A destructor
+      virtual ~CommonParams();
+    };
+  }  // namespace newtonian_opt
+} // namespace kfbase
 #endif

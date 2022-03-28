@@ -29,17 +29,19 @@
  *
  */
 
-#include "Constraint.hpp"
+#include "kfbase/newtonian_opt/Constraint.hpp"
 
 #include <iostream>
 #include <utility>
 
-ccgo::Constraint::Constraint(const std::string& name)
+namespace nopt = kfbase::newtonian_opt;
+
+nopt::Constraint::Constraint(const std::string& name)
     : Function(), Switch(name) {}
 
-ccgo::Constraint::~Constraint() {}
+nopt::Constraint::~Constraint() {}
 
-void ccgo::Constraint::add(const ccgo::TargetFunction* obj) {
+void nopt::Constraint::add(const nopt::TargetFunction* obj) {
   if (_targets.find(obj->getName()) == _targets.end()) {
     _targets.insert(std::make_pair(obj->getName(), obj));
   } else {
@@ -47,17 +49,17 @@ void ccgo::Constraint::add(const ccgo::TargetFunction* obj) {
   }
 }
 
-const std::unordered_map<std::string, const ccgo::TargetFunction*>&
-ccgo::Constraint::getTargets() const {
+const std::unordered_map<std::string, const nopt::TargetFunction*>&
+nopt::Constraint::getTargets() const {
   return _targets;
 }
 
-std::unordered_map<std::string, const ccgo::TargetFunction*>&
-ccgo::Constraint::getTargets() {
+std::unordered_map<std::string, const nopt::TargetFunction*>&
+nopt::Constraint::getTargets() {
   return _targets;
 }
 
-void ccgo::Constraint::updateIndices() {
+void nopt::Constraint::updateIndices() {
   removeIndices();
   for (const auto& el : getTargets()) {
     if (el.second->isEnabled()) {

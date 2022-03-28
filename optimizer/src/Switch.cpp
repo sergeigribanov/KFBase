@@ -29,16 +29,18 @@
  *
  */
 
-#include "Switch.hpp"
+#include "kfbase/newtonian_opt/Switch.hpp"
 
-ccgo::Switch::Switch(const std::string& name) : _enabled(false), _name(name) {}
+namespace nopt = kfbase::newtonian_opt;
 
-ccgo::Switch::~Switch() {}
+nopt::Switch::Switch(const std::string& name) : _enabled(false), _name(name) {}
 
-bool ccgo::Switch::isEnabled() const { return _enabled; }
+nopt::Switch::~Switch() {}
 
-std::string ccgo::Switch::getName() const { return _name; }
+bool nopt::Switch::isEnabled() const { return _enabled; }
 
-void ccgo::Switch::enable() { _enabled = true; }
+std::string nopt::Switch::getName() const { return _name; }
 
-void ccgo::Switch::disable() { _enabled = false; }
+void nopt::Switch::enable() { _enabled = true; }
+
+void nopt::Switch::disable() { _enabled = false; }

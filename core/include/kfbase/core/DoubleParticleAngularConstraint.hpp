@@ -32,30 +32,32 @@
 #ifndef __KFBASE_DOUBLE_PARTICLE_ANGULAR_CONSTRAINT_HPP__
 #define __KFBASE_DOUBLE_PARTICLE_ANGULAR_CONSTRAINT_HPP__
 
-#include <ccgo/NonLagrangeConstraint.hpp>
-#include "Particle.hpp"
+#include "kfbase/newtonian_opt/NonLagrangeConstraint.hpp"
+#include "kfbase/core/Particle.hpp"
 
-namespace KFBase {
-/**
- * A double particle angular constraint implementation.
- */
-class DoubleParticleAngularConstraint : public ccgo::NonLagrangeConstraint {
- public:
-  //! A constructor
-  /*!
-   * @param name (constraint name)
-   *
-   * @param component (constraint vertex component)
-   */
-  DoubleParticleAngularConstraint(const std::string&);
-  //! A destructor
-  virtual ~DoubleParticleAngularConstraint();
-  virtual void add(const ccgo::TargetFunction*) override final;  
- protected:
-  virtual double h(const Eigen::VectorXd&) const override final;
-  virtual Eigen::VectorXd dh(const Eigen::VectorXd&) const override final;
-  virtual Eigen::MatrixXd d2h(const Eigen::VectorXd&) const override final;
-};
-}  // namespace KFBase
+namespace kfbase {
+  namespace core {
+    /**
+     * A double particle angular constraint implementation.
+     */
+    class DoubleParticleAngularConstraint : public kfbase::newtonian_opt::NonLagrangeConstraint {
+    public:
+      //! A constructor
+      /*!
+       * @param name (constraint name)
+       *
+       * @param component (constraint vertex component)
+       */
+      DoubleParticleAngularConstraint(const std::string&);
+      //! A destructor
+      virtual ~DoubleParticleAngularConstraint();
+      virtual void add(const kfbase::newtonian_opt::TargetFunction*) override final;
+    protected:
+      virtual double h(const Eigen::VectorXd&) const override final;
+      virtual Eigen::VectorXd dh(const Eigen::VectorXd&) const override final;
+      virtual Eigen::MatrixXd d2h(const Eigen::VectorXd&) const override final;
+    };
+  }  // namespace core
+} // namespace kfbase
 
 #endif

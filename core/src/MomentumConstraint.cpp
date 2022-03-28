@@ -29,59 +29,62 @@
  *
  */
 
-#include "MomentumConstraint.hpp"
+#include "kfbase/core/MomentumConstraint.hpp"
 
-KFBase::MomentumConstraint::MomentumConstraint(
-    const std::string& name, KFBase::MOMENT_COMPONENT component,
+namespace nopt = kfbase::newtonian_opt;
+namespace core = kfbase::core;
+
+core::MomentumConstraint::MomentumConstraint(
+    const std::string& name, core::MOMENT_COMPONENT component,
     double constraintValue)
-    : ccgo::EqualityLagrangeConstraint(name, constraintValue),
+    : nopt::EqualityLagrangeConstraint(name, constraintValue),
       _component(component) {}
 
-KFBase::MomentumConstraint::~MomentumConstraint() {}
+core::MomentumConstraint::~MomentumConstraint() {}
 
-KFBase::MOMENT_COMPONENT KFBase::MomentumConstraint::getComponent() const {
+core::MOMENT_COMPONENT core::MomentumConstraint::getComponent() const {
   return _component;
 }
 
-double KFBase::MomentumConstraint::h(const Eigen::VectorXd& x) const {
+double core::MomentumConstraint::h(const Eigen::VectorXd& x) const {
   double result = 0.;
   const auto& targets = getTargets();
   for (const auto& el : targets) {
     if (el.second->isEnabled()) {
-      result += static_cast<const KFBase::Particle*>(el.second)
+      result += static_cast<const core::Particle*>(el.second)
                     ->calcMomentumComponent(x, _component);
     }
   }
   return result;
 }
 
-Eigen::VectorXd KFBase::MomentumConstraint::dh(const Eigen::VectorXd& x) const {
+Eigen::VectorXd core::MomentumConstraint::dh(const Eigen::VectorXd& x) const {
   Eigen::VectorXd result = Eigen::VectorXd::Zero(x.size());
   const auto& targets = getTargets();
   for (const auto& el : targets) {
     if (el.second->isEnabled()) {
-      result += static_cast<const KFBase::Particle*>(el.second)
+      result += static_cast<const core::Particle*>(el.second)
                     ->calcDMomentumComponent(x, _component);
     }
   }
   return result;
 }
 
-Eigen::MatrixXd KFBase::MomentumConstraint::d2h(
+Eigen::MatrixXd core::MomentumConstraint::d2h(
     const Eigen::VectorXd& x) const {
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
   const auto& targets = getTargets();
   for (const auto& el : targets) {
     if (el.second->isEnabled()) {
-      result += static_cast<const KFBase::Particle*>(el.second)
+      result += static_cast<const core::Particle*>(el.second)
                     ->calcD2MomentumComponent(x, _component);
     }
   }
   return result;
 }
 
-void KFBase::MomentumConstraint::add(const ccgo::TargetFunction* obj) {
-  if (!dynamic_cast<const KFBase::Particle*>(obj)) {
+void core::MomentumConstraint::add(const nopt::TargetFunction* obj) {
+  if (!dynamic_cast<const core::Particle*>(obj)) {
     // TODO: exception
   }
   auto& targets = getTargets();

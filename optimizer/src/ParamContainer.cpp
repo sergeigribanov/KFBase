@@ -30,30 +30,32 @@
  */
 
 #include <iostream>
-#include "ParamContainer.hpp"
+#include "kfbase/newtonian_opt/ParamContainer.hpp"
 
-ccgo::ParamContainer::ParamContainer(long n) :
+namespace nopt = kfbase::newtonian_opt;
+
+nopt::ParamContainer::ParamContainer(long n) :
   _xInitial(Eigen::VectorXd::Zero(n)),
   _xBegin(Eigen::VectorXd::Zero(n)),
   _xFinal(Eigen::VectorXd::Zero(n)) {}
 
-ccgo::ParamContainer::~ParamContainer() {}
+nopt::ParamContainer::~ParamContainer() {}
 
-long ccgo::ParamContainer::getBeginIndex() const { return _beginIndex; }
+long nopt::ParamContainer::getBeginIndex() const { return _beginIndex; }
 
-long ccgo::ParamContainer::getN() const { return _xInitial.size(); }
+long nopt::ParamContainer::getN() const { return _xInitial.size(); }
 
-long ccgo::ParamContainer::getNFixed() const { return _fixedParams.size(); }
+long nopt::ParamContainer::getNFixed() const { return _fixedParams.size(); }
 
-const Eigen::VectorXd& ccgo::ParamContainer::getInitialParameters() const {
+const Eigen::VectorXd& nopt::ParamContainer::getInitialParameters() const {
   return _xInitial;
 }
 
-const Eigen::VectorXd& ccgo::ParamContainer::getFinalParameters() const {
+const Eigen::VectorXd& nopt::ParamContainer::getFinalParameters() const {
   return _xFinal;
 }
 
-void ccgo::ParamContainer::setInitialParameters(const Eigen::VectorXd& x) {
+void nopt::ParamContainer::setInitialParameters(const Eigen::VectorXd& x) {
   if (x.size() == _xInitial.size()) {
     _xInitial = x;
     _xFinal = x;
@@ -71,13 +73,13 @@ void ccgo::ParamContainer::setInitialParameters(const Eigen::VectorXd& x) {
   }
 }
 
-void ccgo::ParamContainer::setBeginIndex(long index) { _beginIndex = index; }
+void nopt::ParamContainer::setBeginIndex(long index) { _beginIndex = index; }
 
-void ccgo::ParamContainer::setFinalParameters(const Eigen::VectorXd& xfull) {
+void nopt::ParamContainer::setFinalParameters(const Eigen::VectorXd& xfull) {
   _xFinal = xfull.segment(getBeginIndex(), getN());
 }
 
-void ccgo::ParamContainer::setLowerLimit(long index, double value) {
+void nopt::ParamContainer::setLowerLimit(long index, double value) {
   if (index < _xInitial.size() && index >= 0) {
     // TO DO : exception if upper limit is lower
     _lowerLimits.insert(std::make_pair(index, value));
@@ -86,7 +88,7 @@ void ccgo::ParamContainer::setLowerLimit(long index, double value) {
   }
 }
 
-void ccgo::ParamContainer::setUpperLimit(long index, double value) {
+void nopt::ParamContainer::setUpperLimit(long index, double value) {
   if (index < _xInitial.size() && index >= 0) {
     // TO DO : exception if upper limit is lower
     _upperLimits.insert(std::make_pair(index, value));
@@ -95,7 +97,7 @@ void ccgo::ParamContainer::setUpperLimit(long index, double value) {
   }
 }
 
-bool ccgo::ParamContainer::checkLimits(Eigen::VectorXd* x) const {
+bool nopt::ParamContainer::checkLimits(Eigen::VectorXd* x) const {
   long index;
   bool result = false;
   for (const auto& el : _lowerLimits) {
@@ -121,7 +123,7 @@ bool ccgo::ParamContainer::checkLimits(Eigen::VectorXd* x) const {
   return result;
 }
 
-void ccgo::ParamContainer::setPeriod(long index, double left, double right) {
+void nopt::ParamContainer::setPeriod(long index, double left, double right) {
   if (right <= left) {
     // TO DO: exception
   }
@@ -132,7 +134,7 @@ void ccgo::ParamContainer::setPeriod(long index, double left, double right) {
   }
 }
 
-void ccgo::ParamContainer::checkPeriodical(Eigen::VectorXd* x) const {
+void nopt::ParamContainer::checkPeriodical(Eigen::VectorXd* x) const {
   long index;
   long nsteps;
   double period;
@@ -156,19 +158,19 @@ void ccgo::ParamContainer::checkPeriodical(Eigen::VectorXd* x) const {
   }
 }
 
-bool ccgo::ParamContainer::haveLimits() const {
+bool nopt::ParamContainer::haveLimits() const {
   return (_lowerLimits.size() > 0) || (_upperLimits.size() > 0);
 }
 
-bool ccgo::ParamContainer::havePeriodical() const {
+bool nopt::ParamContainer::havePeriodical() const {
   return _periodical.size() > 0;
 }
 
-bool ccgo::ParamContainer::isFixedParameter(long index) const {
+bool nopt::ParamContainer::isFixedParameter(long index) const {
   return (_fixedParams.find(index) != _fixedParams.end());
 }
 
-void ccgo::ParamContainer::fixParameter(long index) {
+void nopt::ParamContainer::fixParameter(long index) {
   if (index >= 0 && index < getN()) {
     _fixedParams.insert(index);
   } else {
@@ -176,7 +178,7 @@ void ccgo::ParamContainer::fixParameter(long index) {
   }
 }
 
-void ccgo::ParamContainer::fixParameter(long index, double value) {
+void nopt::ParamContainer::fixParameter(long index, double value) {
   if (index >= 0 && index < getN()) {
     _fixedParams.insert(index);
     _xBegin(index) = value;
@@ -185,17 +187,17 @@ void ccgo::ParamContainer::fixParameter(long index, double value) {
   }
 }
 
-void ccgo::ParamContainer::releaseParameter(long index) {
+void nopt::ParamContainer::releaseParameter(long index) {
   auto it = _fixedParams.find(index);
   if (it != _fixedParams.end()) {
     _fixedParams.erase(it);
   }
 }
 
-const std::set<long>& ccgo::ParamContainer::getFixedParamIndices() const {
+const std::set<long>& nopt::ParamContainer::getFixedParamIndices() const {
   return _fixedParams;
 }
 
-const Eigen::VectorXd& ccgo::ParamContainer::getBeginParameters() const {
+const Eigen::VectorXd& nopt::ParamContainer::getBeginParameters() const {
   return _xBegin;
 }

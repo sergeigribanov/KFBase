@@ -29,20 +29,21 @@
  *
  */
 
-#include "Optimizer.hpp"
+#include "kfbase/newtonian_opt/Optimizer.hpp"
 
 #include <cmath>
 #include <iostream>
 #include <limits>
 #include <utility>
-// #include <fenv.h>
 
-#include "LagrangeConstraint.hpp"
-#include "NonLagrangeConstraint.hpp"
-#include "EqualityLagrangeConstraint.hpp"
-#include "NameException.hpp"
+namespace nopt = kfbase::newtonian_opt;
 
-ccgo::Optimizer::Optimizer(long nIter, double tolerance,
+#include "kfbase/newtonian_opt/LagrangeConstraint.hpp"
+#include "kfbase/newtonian_opt/NonLagrangeConstraint.hpp"
+#include "kfbase/newtonian_opt/EqualityLagrangeConstraint.hpp"
+#include "kfbase/newtonian_opt/NameException.hpp"
+
+nopt::Optimizer::Optimizer(long nIter, double tolerance,
                            bool numericalDerivatives, double derivativeStep)
     : _n(0),
       _nIter(nIter),
@@ -54,15 +55,15 @@ ccgo::Optimizer::Optimizer(long nIter, double tolerance,
   // feenableexcept(FE_INVALID | FE_OVERFLOW);
 }
 
-ccgo::Optimizer::~Optimizer() {}
+nopt::Optimizer::~Optimizer() {}
 
-long ccgo::Optimizer::getN() const { return _n; }
+long nopt::Optimizer::getN() const { return _n; }
 
-int ccgo::Optimizer::getErrorCode() const { return _errorCode; }
+int nopt::Optimizer::getErrorCode() const { return _errorCode; }
 
-double ccgo::Optimizer::getTargetValue() const { return _targetValue; }
+double nopt::Optimizer::getTargetValue() const { return _targetValue; }
 
-double ccgo::Optimizer::getTargetValue(const std::string& targetName) const {
+double nopt::Optimizer::getTargetValue(const std::string& targetName) const {
   double result = 0;
   const auto& target = _targets.at(targetName);
   if (target->isEnabled()) {
@@ -73,7 +74,7 @@ double ccgo::Optimizer::getTargetValue(const std::string& targetName) const {
   return result;
 }
 
-double ccgo::Optimizer::getTargetValue(
+double nopt::Optimizer::getTargetValue(
     const std::set<std::string>& targetNames) const {
   double result = 0;
   for (const auto& name : targetNames) {
@@ -87,82 +88,82 @@ double ccgo::Optimizer::getTargetValue(
   return result;
 }
 
-const Eigen::VectorXd& ccgo::Optimizer::getInitialParameters(
+const Eigen::VectorXd& nopt::Optimizer::getInitialParameters(
     const std::string& name) const noexcept(false) {
   auto it = _targets.find(name);
   if (it == _targets.end()) {
-    ccgo::NameException<ccgo::TargetFunction> e(name);
+    nopt::NameException<nopt::TargetFunction> e(name);
     std::cerr << e.what() << std::endl;
     throw(e);
   }
   return it->second->getInitialParameters();
 }
 
-const Eigen::VectorXd& ccgo::Optimizer::getFinalParameters(
+const Eigen::VectorXd& nopt::Optimizer::getFinalParameters(
     const std::string& name) const noexcept(false) {
   auto it = _targets.find(name);
   if (it == _targets.end()) {
-    ccgo::NameException<ccgo::TargetFunction> e(name);
+    nopt::NameException<nopt::TargetFunction> e(name);
     std::cerr << e.what() << std::endl;
     throw(e);
   }
   return it->second->getFinalParameters();
 }
 
-void ccgo::Optimizer::addTarget(ccgo::TargetFunction* obj) noexcept(false) {
+void nopt::Optimizer::addTarget(nopt::TargetFunction* obj) noexcept(false) {
   if (_targets.find(obj->getName()) == _targets.end()) {
     obj->setCommonParameters(&_commonParams);
     obj->setConstants(&_constants);
     _targets.insert(std::make_pair(obj->getName(), obj));
   } else {
-    ccgo::NameException<ccgo::TargetFunction> e(obj->getName());
+    nopt::NameException<nopt::TargetFunction> e(obj->getName());
     std::cerr << e.what() << std::endl;
     throw(e);
   }
 }
 
-void ccgo::Optimizer::addConstraint(ccgo::Constraint* obj) noexcept(false) {
+void nopt::Optimizer::addConstraint(nopt::Constraint* obj) noexcept(false) {
   if (_constraints.find(obj->getName()) == _constraints.end()) {
     obj->setCommonParameters(&_commonParams);
     obj->setConstants(&_constants);
     _constraints.insert(std::make_pair(obj->getName(), obj));
   } else {
-    ccgo::NameException<ccgo::Constraint> e(obj->getName());
+    nopt::NameException<nopt::Constraint> e(obj->getName());
     std::cerr << e.what() << std::endl;
     throw(e);
   }
 }
 
-void ccgo::Optimizer::addTargetToConstraint(
+void nopt::Optimizer::addTargetToConstraint(
     const std::string& targetFunctionName,
     const std::string& constraintName) noexcept(false) {
   auto ci = _constraints.find(constraintName);
   auto ti = _targets.find(targetFunctionName);
   if (ti == _targets.end()) {
-    ccgo::NameException<ccgo::TargetFunction> e(targetFunctionName);
+    nopt::NameException<nopt::TargetFunction> e(targetFunctionName);
     std::cerr << e.what() << std::endl;
     throw(e);
   }
   if (ci == _constraints.end()) {
-    ccgo::NameException<ccgo::Constraint> e(constraintName);
+    nopt::NameException<nopt::Constraint> e(constraintName);
     std::cerr << e.what() << std::endl;
     throw(e);
   }
   ci->second->add(ti->second);
 }
 
-void ccgo::Optimizer::setParameters(
+void nopt::Optimizer::setParameters(
     const std::string& name, const Eigen::VectorXd& params) noexcept(false) {
   auto it = _targets.find(name);
   if (it == _targets.end()) {
-    ccgo::NameException<ccgo::TargetFunction> e(name);
+    nopt::NameException<nopt::TargetFunction> e(name);
     std::cerr << e.what() << std::endl;
     throw(e);
   }
   it->second->setInitialParameters(params);
 }
 
-double ccgo::Optimizer::calcTargetValue(const Eigen::VectorXd& x) const {
+double nopt::Optimizer::calcTargetValue(const Eigen::VectorXd& x) const {
   double result = 0;
   for (const auto& el : _targets) {
     if (el.second->isEnabled()) {
@@ -171,7 +172,7 @@ double ccgo::Optimizer::calcTargetValue(const Eigen::VectorXd& x) const {
   }
   for (const auto& el : _constraints) {
     if (el.second->isEnabled()) {
-      const auto cnt = dynamic_cast<ccgo::NonLagrangeConstraint*>(el.second);
+      const auto cnt = dynamic_cast<nopt::NonLagrangeConstraint*>(el.second);
       if (cnt) {
         result += el.second->f(x);
       }
@@ -180,11 +181,11 @@ double ccgo::Optimizer::calcTargetValue(const Eigen::VectorXd& x) const {
   return result;
 }
 
-double ccgo::Optimizer::calcResidual(const Eigen::VectorXd& x) const {
+double nopt::Optimizer::calcResidual(const Eigen::VectorXd& x) const {
   double result = 0;
   for (const auto& el : _constraints) {
     if (el.second->isEnabled()) {
-      const auto cnt = dynamic_cast<ccgo::EqualityLagrangeConstraint*>(el.second);
+      const auto cnt = dynamic_cast<nopt::EqualityLagrangeConstraint*>(el.second);
       if (cnt) {
         result += cnt->calcResidual(x);
       }
@@ -193,7 +194,7 @@ double ccgo::Optimizer::calcResidual(const Eigen::VectorXd& x) const {
   return result;
 }
 
-double ccgo::Optimizer::f(const Eigen::VectorXd& x) const {
+double nopt::Optimizer::f(const Eigen::VectorXd& x) const {
   double result = 0;
   for (const auto& el : _targets) {
     if (el.second->isEnabled()) {
@@ -209,7 +210,7 @@ double ccgo::Optimizer::f(const Eigen::VectorXd& x) const {
   return result;
 }
 
-Eigen::VectorXd ccgo::Optimizer::df(const Eigen::VectorXd& x) const {
+Eigen::VectorXd nopt::Optimizer::df(const Eigen::VectorXd& x) const {
   Eigen::VectorXd result = Eigen::VectorXd::Zero(_n);
   for (const auto& el : _targets) {
     if (el.second->isEnabled()) {
@@ -253,7 +254,7 @@ Eigen::VectorXd ccgo::Optimizer::df(const Eigen::VectorXd& x) const {
   return result;
 }
 
-Eigen::MatrixXd ccgo::Optimizer::d2f(const Eigen::VectorXd& x) const {
+Eigen::MatrixXd nopt::Optimizer::d2f(const Eigen::VectorXd& x) const {
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(_n, _n);
   for (const auto& el : _targets) {
     if (el.second->isEnabled()) {
@@ -303,45 +304,45 @@ Eigen::MatrixXd ccgo::Optimizer::d2f(const Eigen::VectorXd& x) const {
   return result;
 }
 
-void ccgo::Optimizer::enableConstraint(const std::string& name) noexcept(
+void nopt::Optimizer::enableConstraint(const std::string& name) noexcept(
     false) {
   auto it = _constraints.find(name);
   if (it != _constraints.end()) {
     if (!it->second->isEnabled()) {
       it->second->enable();
-      auto lc = dynamic_cast<ccgo::LagrangeConstraint*>(it->second);
+      auto lc = dynamic_cast<nopt::LagrangeConstraint*>(it->second);
       if (lc) {
         lc->setLambdaIndex(_n);
         _n += 1;
       }
     }
   } else {
-    ccgo::NameException<ccgo::Constraint> e(name);
+    nopt::NameException<nopt::Constraint> e(name);
     std::cerr << e.what() << std::endl;
     throw(e);
   }
 }
 
-void ccgo::Optimizer::disableConstraint(const std::string& name) noexcept(
+void nopt::Optimizer::disableConstraint(const std::string& name) noexcept(
     false) {
   auto it = _constraints.find(name);
   if (it != _constraints.end()) {
     if (it->second->isEnabled()) {
       it->second->disable();
-      auto lc = dynamic_cast<ccgo::LagrangeConstraint*>(it->second);
+      auto lc = dynamic_cast<nopt::LagrangeConstraint*>(it->second);
       if (lc) {
         _n -= 1;
         decIndicies(lc->getLambdaIndex(), 1);
       }
     }
   } else {
-    ccgo::NameException<ccgo::Constraint> e(name);
+    nopt::NameException<nopt::Constraint> e(name);
     std::cerr << e.what() << std::endl;
     throw(e);
   }
 }
 
-void ccgo::Optimizer::enableTarget(const std::string& name) noexcept(false) {
+void nopt::Optimizer::enableTarget(const std::string& name) noexcept(false) {
   auto it = _targets.find(name);
   if (it != _targets.end()) {
     if (!it->second->isEnabled()) {
@@ -350,13 +351,13 @@ void ccgo::Optimizer::enableTarget(const std::string& name) noexcept(false) {
       _n += it->second->getN();
     }
   } else {
-    ccgo::NameException<ccgo::TargetFunction> e(name);
+    nopt::NameException<nopt::TargetFunction> e(name);
     std::cerr << e.what() << std::endl;
     throw(e);
   }
 }
 
-void ccgo::Optimizer::disableTarget(const std::string& name) noexcept(false) {
+void nopt::Optimizer::disableTarget(const std::string& name) noexcept(false) {
   auto it = _targets.find(name);
   if (it != _targets.end()) {
     if (it->second->isEnabled()) {
@@ -365,13 +366,13 @@ void ccgo::Optimizer::disableTarget(const std::string& name) noexcept(false) {
       decIndicies(it->second->getBeginIndex(), it->second->getN());
     }
   } else {
-    ccgo::NameException<ccgo::TargetFunction> e(name);
+    nopt::NameException<nopt::TargetFunction> e(name);
     std::cerr << e.what() << std::endl;
     throw(e);
   }
 }
 
-void ccgo::Optimizer::checkLimits(Eigen::VectorXd* x) const {
+void nopt::Optimizer::checkLimits(Eigen::VectorXd* x) const {
   bool flag = false;
   for (const auto& el : _targets) {
     if (el.second->isEnabled() && el.second->haveLimits()) {
@@ -383,21 +384,21 @@ void ccgo::Optimizer::checkLimits(Eigen::VectorXd* x) const {
       flag = flag ||  el.second->checkLimits(x);
     }
   }
-  
+
   if (flag) {
     for (const auto& el : _constraints) {
       if (el.second->isEnabled()) {
-  	auto lc = dynamic_cast<ccgo::LagrangeConstraint*>(el.second);
+  	auto lc = dynamic_cast<nopt::LagrangeConstraint*>(el.second);
   	if (lc) {
   	  (*x)(lc->getLambdaIndex()) = 0;
   	}
       }
     }
   }
-  
+
 }
 
-void ccgo::Optimizer::checkPeriodical(Eigen::VectorXd* x) const {
+void nopt::Optimizer::checkPeriodical(Eigen::VectorXd* x) const {
   for (const auto& el : _targets) {
     if (el.second->isEnabled() && el.second->havePeriodical()) {
       el.second->checkPeriodical(x);
@@ -410,7 +411,7 @@ void ccgo::Optimizer::checkPeriodical(Eigen::VectorXd* x) const {
   }
 }
 
-void ccgo::Optimizer::optimize() {
+void nopt::Optimizer::optimize() {
   Eigen::VectorXd x = getBeginParameterVector();
   onFitBegin(x);
   Eigen::VectorXd xp;
@@ -434,7 +435,7 @@ void ccgo::Optimizer::optimize() {
   return;
 }
 
-void ccgo::Optimizer::onFitBegin(const Eigen::VectorXd& x) {
+void nopt::Optimizer::onFitBegin(const Eigen::VectorXd& x) {
   for (auto& el : _targets) {
     if (el.second->isEnabled()) {
       el.second->onFitBegin(x);
@@ -442,7 +443,7 @@ void ccgo::Optimizer::onFitBegin(const Eigen::VectorXd& x) {
   }
 }
 
-void ccgo::Optimizer::onFitEnd(const Eigen::VectorXd& x) {
+void nopt::Optimizer::onFitEnd(const Eigen::VectorXd& x) {
   for (auto& el : _targets) {
     if (el.second->isEnabled()) {
       el.second->setFinalParameters(x);
@@ -456,7 +457,7 @@ void ccgo::Optimizer::onFitEnd(const Eigen::VectorXd& x) {
   }
   for (auto& el : _constraints) {
     if (el.second->isEnabled()) {
-      auto lc = dynamic_cast<ccgo::LagrangeConstraint*>(el.second);
+      auto lc = dynamic_cast<nopt::LagrangeConstraint*>(el.second);
       if (lc) {
         lc->setLambdaFinal(x);
       }
@@ -465,7 +466,7 @@ void ccgo::Optimizer::onFitEnd(const Eigen::VectorXd& x) {
   _targetValue = calcTargetValue(x);
 }
 
-void ccgo::Optimizer::decIndicies(long index, long n) {
+void nopt::Optimizer::decIndicies(long index, long n) {
   for (auto& el : _targets) {
     if (el.second->isEnabled()) {
       if (el.second->getBeginIndex() > index) {
@@ -482,7 +483,7 @@ void ccgo::Optimizer::decIndicies(long index, long n) {
   }
   for (auto& el : _constraints) {
     if (el.second->isEnabled()) {
-      auto lc = dynamic_cast<ccgo::LagrangeConstraint*>(el.second);
+      auto lc = dynamic_cast<nopt::LagrangeConstraint*>(el.second);
       if (lc) {
         if (lc->getLambdaIndex() > index) {
           lc->setLambdaIndex(lc->getLambdaIndex() - n);
@@ -492,7 +493,7 @@ void ccgo::Optimizer::decIndicies(long index, long n) {
   }
 }
 
-Eigen::VectorXd ccgo::Optimizer::getBeginParameterVector() const {
+Eigen::VectorXd nopt::Optimizer::getBeginParameterVector() const {
   Eigen::VectorXd result(_n);
   for (const auto& el : _targets) {
     if (el.second->isEnabled()) {
@@ -508,7 +509,7 @@ Eigen::VectorXd ccgo::Optimizer::getBeginParameterVector() const {
   }
   for (const auto& el : _constraints) {
     if (el.second->isEnabled()) {
-      auto lc = dynamic_cast<ccgo::LagrangeConstraint*>(el.second);
+      auto lc = dynamic_cast<nopt::LagrangeConstraint*>(el.second);
       if (lc) {
         result(lc->getLambdaIndex()) = lc->getLambdaInitial();
       }
@@ -517,28 +518,28 @@ Eigen::VectorXd ccgo::Optimizer::getBeginParameterVector() const {
   return result;
 }
 
-void ccgo::Optimizer::addCommonParams(ccgo::CommonParams* obj) noexcept(false) {
+void nopt::Optimizer::addCommonParams(nopt::CommonParams* obj) noexcept(false) {
   if (_commonParams.find(obj->getName()) == _commonParams.end()) {
     _commonParams.insert(std::make_pair(obj->getName(), obj));
   } else {
-    ccgo::NameException<ccgo::CommonParams> e(obj->getName());
+    nopt::NameException<nopt::CommonParams> e(obj->getName());
     std::cerr << e.what() << std::endl;
     throw(e);
   }
 }
 
-void ccgo::Optimizer::setCommonParameters(
+void nopt::Optimizer::setCommonParameters(
     const std::string& name, const Eigen::VectorXd& params) noexcept(false) {
   auto it = _commonParams.find(name);
   if (it == _commonParams.end()) {
-    ccgo::NameException<ccgo::TargetFunction> e(name);
+    nopt::NameException<nopt::TargetFunction> e(name);
     std::cerr << e.what() << std::endl;
     throw(e);
   }
   it->second->setInitialParameters(params);
 }
 
-void ccgo::Optimizer::enableCommonParams(const std::string& name) noexcept(
+void nopt::Optimizer::enableCommonParams(const std::string& name) noexcept(
     false) {
   auto it = _commonParams.find(name);
   if (it != _commonParams.end()) {
@@ -548,13 +549,13 @@ void ccgo::Optimizer::enableCommonParams(const std::string& name) noexcept(
       _n += it->second->getN();
     }
   } else {
-    ccgo::NameException<ccgo::CommonParams> e(name);
+    nopt::NameException<nopt::CommonParams> e(name);
     std::cerr << e.what() << std::endl;
     throw(e);
   }
 }
 
-void ccgo::Optimizer::disableCommonParams(const std::string& name) noexcept(
+void nopt::Optimizer::disableCommonParams(const std::string& name) noexcept(
     false) {
   auto it = _commonParams.find(name);
   if (it != _commonParams.end()) {
@@ -564,27 +565,27 @@ void ccgo::Optimizer::disableCommonParams(const std::string& name) noexcept(
       decIndicies(it->second->getBeginIndex(), it->second->getN());
     }
   } else {
-    ccgo::NameException<ccgo::CommonParams> e(name);
+    nopt::NameException<nopt::CommonParams> e(name);
     std::cerr << e.what() << std::endl;
     throw(e);
   }
 }
 
-const ccgo::CommonParams* ccgo::Optimizer::getCommonParameters(
+const nopt::CommonParams* nopt::Optimizer::getCommonParameters(
     const std::string& name) const {
   return _commonParams.at(name);
 }
 
-double ccgo::Optimizer::getConstant(const std::string& name) const {
+double nopt::Optimizer::getConstant(const std::string& name) const {
   return _constants.at(name);
 }
 
-void ccgo::Optimizer::setConstant(const std::string& name,
+void nopt::Optimizer::setConstant(const std::string& name,
                                   double value) noexcept(false) {
   _constants.insert(std::make_pair(name, value));
 }
 
-int ccgo::Optimizer::getNumberOfEnabledTargetFunctions() const {
+int nopt::Optimizer::getNumberOfEnabledTargetFunctions() const {
   int result = 0;
   for (const auto& el : _targets) {
     if (el.second->isEnabled()) {
@@ -594,7 +595,7 @@ int ccgo::Optimizer::getNumberOfEnabledTargetFunctions() const {
   return result;
 }
 
-int ccgo::Optimizer::getNumberOfEnabledConstraints() const {
+int nopt::Optimizer::getNumberOfEnabledConstraints() const {
   int result = 0;
   for (const auto& el : _constraints) {
     if (el.second->isEnabled()) {
@@ -604,7 +605,7 @@ int ccgo::Optimizer::getNumberOfEnabledConstraints() const {
   return result;
 }
 
-int ccgo::Optimizer::getNumberOfEnabledCommonParamContainers() const {
+int nopt::Optimizer::getNumberOfEnabledCommonParamContainers() const {
   int result = 0;
   for (const auto& el : _commonParams) {
     if (el.second->isEnabled()) {
@@ -614,50 +615,50 @@ int ccgo::Optimizer::getNumberOfEnabledCommonParamContainers() const {
   return result;
 }
 
-bool ccgo::Optimizer::isTargetFunctionEnabled(
+bool nopt::Optimizer::isTargetFunctionEnabled(
     const std::string& targetName) const {
   return _targets.at(targetName)->isEnabled();
 }
 
-bool ccgo::Optimizer::isCommonParamContainerEnabled(
+bool nopt::Optimizer::isCommonParamContainerEnabled(
     const std::string& commonParamName) const {
   return _commonParams.at(commonParamName)->isEnabled();
 }
 
-bool ccgo::Optimizer::isConstraintEnabled(
+bool nopt::Optimizer::isConstraintEnabled(
     const std::string& constraintName) const {
   return _constraints.at(constraintName)->isEnabled();
 }
 
-void ccgo::Optimizer::enableNumericalDerivatives() {
+void nopt::Optimizer::enableNumericalDerivatives() {
   _numericalDerivatives = true;
 }
 
-void ccgo::Optimizer::disableNumericalDerivatives() {
+void nopt::Optimizer::disableNumericalDerivatives() {
   _numericalDerivatives = false;
 }
 
-bool ccgo::Optimizer::isNumericalDerivatives() const {
+bool nopt::Optimizer::isNumericalDerivatives() const {
   return _numericalDerivatives;
 }
 
-void ccgo::Optimizer::setNumericalDerivativeStep(double step) {
+void nopt::Optimizer::setNumericalDerivativeStep(double step) {
   _derivativeStep = step;
 }
 
-double ccgo::Optimizer::getNumericalDerivativeStep() const {
+double nopt::Optimizer::getNumericalDerivativeStep() const {
   return _derivativeStep;
 }
 
-void ccgo::Optimizer::setTolerance(double tolerance) { _tol = tolerance; }
+void nopt::Optimizer::setTolerance(double tolerance) { _tol = tolerance; }
 
-void ccgo::Optimizer::setMaxNumberOfIterations(long nIter) { _nIter = nIter; }
+void nopt::Optimizer::setMaxNumberOfIterations(long nIter) { _nIter = nIter; }
 
-double ccgo::Optimizer::getTolerance() const { return _tol; }
+double nopt::Optimizer::getTolerance() const { return _tol; }
 
-long ccgo::Optimizer::getMaxNumberOfIterations() const { return _nIter; }
+long nopt::Optimizer::getMaxNumberOfIterations() const { return _nIter; }
 
-void ccgo::Optimizer::prepare() {
+void nopt::Optimizer::prepare() {
   for (const auto& el : _targets) {
     el.second->updateIndices();
   }
@@ -667,7 +668,7 @@ void ccgo::Optimizer::prepare() {
 }
 
 
-void ccgo::Optimizer::updateValues(const Eigen::VectorXd& x) {
+void nopt::Optimizer::updateValues(const Eigen::VectorXd& x) {
   if (!isNumericalDerivatives()) {
     for (const auto& el : _targets) {
       if (el.second->isEnabled()) {

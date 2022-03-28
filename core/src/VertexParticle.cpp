@@ -29,40 +29,43 @@
  *
  */
 
-#include "VertexParticle.hpp"
+#include "kfbase/core/VertexParticle.hpp"
 
-KFBase::VertexParticle::VertexParticle(const std::string& name, long n,
+namespace nopt = kfbase::newtonian_opt;
+namespace core = kfbase::core;
+
+core::VertexParticle::VertexParticle(const std::string& name, long n,
                                        double mass, double charge)
-    : KFBase::Particle(name, n, mass, charge) {}
+    : core::Particle(name, n, mass, charge) {}
 
-KFBase::VertexParticle::~VertexParticle() {}
+core::VertexParticle::~VertexParticle() {}
 
-const TVector3& KFBase::VertexParticle::getInitialVertex() const {
+const TVector3& core::VertexParticle::getInitialVertex() const {
   return _initialVertex;
 }
 
-const TVector3& KFBase::VertexParticle::getFinalVertex() const {
+const TVector3& core::VertexParticle::getFinalVertex() const {
   return _finalVertex;
 }
 
-void KFBase::VertexParticle::onFitBegin(const Eigen::VectorXd& x) {
-  for (int i = KFBase::MOMENT_X; i <= KFBase::MOMENT_E; ++i) {
+void core::VertexParticle::onFitBegin(const Eigen::VectorXd& x) {
+  for (int i = core::MOMENT_X; i <= core::MOMENT_E; ++i) {
     _initialMomentum[i] =
-        calcMomentumComponent(x, static_cast<KFBase::MOMENT_COMPONENT>(i));
+        calcMomentumComponent(x, static_cast<core::MOMENT_COMPONENT>(i));
   }
-  for (int i = KFBase::VERTEX_X; i <= KFBase::VERTEX_Z; ++i) {
+  for (int i = core::VERTEX_X; i <= core::VERTEX_Z; ++i) {
     _initialVertex[i] =
-        calcVertexComponent(x, static_cast<KFBase::VERTEX_COMPONENT>(i));
+        calcVertexComponent(x, static_cast<core::VERTEX_COMPONENT>(i));
   }
 }
 
-void KFBase::VertexParticle::onFitEnd(const Eigen::VectorXd& x) {
-  for (int i = KFBase::MOMENT_X; i <= KFBase::MOMENT_E; ++i) {
+void core::VertexParticle::onFitEnd(const Eigen::VectorXd& x) {
+  for (int i = core::MOMENT_X; i <= core::MOMENT_E; ++i) {
     _finalMomentum[i] =
-        calcMomentumComponent(x, static_cast<KFBase::MOMENT_COMPONENT>(i));
+        calcMomentumComponent(x, static_cast<core::MOMENT_COMPONENT>(i));
   }
-  for (int i = KFBase::VERTEX_X; i <= KFBase::VERTEX_Z; ++i) {
+  for (int i = core::VERTEX_X; i <= core::VERTEX_Z; ++i) {
     _finalVertex[i] =
-        calcVertexComponent(x, static_cast<KFBase::VERTEX_COMPONENT>(i));
+        calcVertexComponent(x, static_cast<core::VERTEX_COMPONENT>(i));
   }
 }

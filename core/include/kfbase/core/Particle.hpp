@@ -35,9 +35,10 @@
 #include <TLorentzVector.h>
 
 #include <Eigen/Dense>
-#include <ccgo/TargetChiSquare.hpp>
+#include "kfbase/newtonian_opt/TargetChiSquare.hpp"
 
-namespace KFBase {
+namespace kfbase {
+namespace core {
 /**
  * The MOMENT_COMPONENT enum enumerates px, py, pz and pe components of
  * Lorentz four-vector
@@ -53,7 +54,7 @@ enum MOMENT_COMPONENT {
  * and returns particle chi-square as a target function for CCGO
  * optimizer.
  */
-class Particle : public ccgo::TargetChiSquare {
+class Particle : public kfbase::newtonian_opt::TargetChiSquare {
  public:
   //! A constructor
   /*!
@@ -115,5 +116,6 @@ class Particle : public ccgo::TargetChiSquare {
   //! A particle charge
   double _charge;
 };
-}  // namespace KFBase
+}  // namespace core
+} // namespace kfbase
 #endif

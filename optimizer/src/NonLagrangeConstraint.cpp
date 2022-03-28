@@ -29,16 +29,18 @@
  *
  */
 
-#include "NonLagrangeConstraint.hpp"
+#include "kfbase/newtonian_opt/NonLagrangeConstraint.hpp"
 
 #include <utility>
 
-ccgo::NonLagrangeConstraint::NonLagrangeConstraint(const std::string& name)
-    : ccgo::Constraint(name), _lambda(1.) {}
+namespace nopt = kfbase::newtonian_opt;
 
-ccgo::NonLagrangeConstraint::~NonLagrangeConstraint() {}
+nopt::NonLagrangeConstraint::NonLagrangeConstraint(const std::string& name)
+    : nopt::Constraint(name), _lambda(1.) {}
 
-void ccgo::NonLagrangeConstraint::updateIndices() {
+nopt::NonLagrangeConstraint::~NonLagrangeConstraint() {}
+
+void nopt::NonLagrangeConstraint::updateIndices() {
   removeIndices();
   for (const auto& el : getTargets()) {
     if (el.second->isEnabled()) {
@@ -59,22 +61,22 @@ void ccgo::NonLagrangeConstraint::updateIndices() {
   }
 }
 
-double ccgo::NonLagrangeConstraint::getLambda() const {
+double nopt::NonLagrangeConstraint::getLambda() const {
   return _lambda;
 }
 
-void ccgo::NonLagrangeConstraint::setLambda(double lambda) {
+void nopt::NonLagrangeConstraint::setLambda(double lambda) {
   _lambda = lambda;
 }
 
-double ccgo::NonLagrangeConstraint::f(const Eigen::VectorXd& x, bool recalc) const {
+double nopt::NonLagrangeConstraint::f(const Eigen::VectorXd& x, bool recalc) const {
   if (!recalc) {
     return getCurF();
   }
   return getLambda() * h(x);
 }
 
-Eigen::VectorXd ccgo::NonLagrangeConstraint::df(
+Eigen::VectorXd nopt::NonLagrangeConstraint::df(
     const Eigen::VectorXd& x, bool recalc) const {
   if (!recalc) {
     return getCurDF();
@@ -82,7 +84,7 @@ Eigen::VectorXd ccgo::NonLagrangeConstraint::df(
   return getLambda() * dh(x);
 }
 
-Eigen::MatrixXd ccgo::NonLagrangeConstraint::d2f(
+Eigen::MatrixXd nopt::NonLagrangeConstraint::d2f(
     const Eigen::VectorXd& x, bool recalc) const {
   if (!recalc) {
     return getCurD2F();
