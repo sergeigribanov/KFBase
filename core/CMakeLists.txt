@@ -18,5 +18,5 @@ set_target_properties(kfbase_core
 
 install(TARGETS kfbase_core
   EXPORT kfbaseTargets
-  LIBRARY DESTINATION lib/kfbase
+  LIBRARY DESTINATION lib
   PUBLIC_HEADER DESTINATION include/kfbase/core)

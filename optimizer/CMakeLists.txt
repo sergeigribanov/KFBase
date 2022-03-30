@@ -14,5 +14,5 @@ set_target_properties(kfbase_newtonian_opt
 
 install(TARGETS kfbase_newtonian_opt
   EXPORT kfbaseTargets
-  LIBRARY DESTINATION lib/kfbase
+  LIBRARY DESTINATION lib
   PUBLIC_HEADER DESTINATION include/kfbase/newtonian_opt)
