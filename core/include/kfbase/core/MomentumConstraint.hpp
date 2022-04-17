@@ -48,22 +48,22 @@ namespace kfbase {
        * @param name (constraint name)
        *
        * @param component (momentum component)
-       *
-       * @param constraintValue (constraint value)
        */
-      MomentumConstraint(const std::string&, MOMENT_COMPONENT, double = 0);
+      MomentumConstraint(const std::string&, MOMENT_COMPONENT);
       //! A destructor
       virtual ~MomentumConstraint();
       //! A constraint momentum component getter
       MOMENT_COMPONENT getComponent() const;
-      //! A method used to add a target function
-      virtual void add(const kfbase::newtonian_opt::TargetFunction*) override final;
-
+      void outAdd(const core::Particle*);
+      void inAdd(const core::Particle*);
     protected:
+      virtual void add(const kfbase::newtonian_opt::TargetFunction *) override final;
       virtual double h(const Eigen::VectorXd&) const override final;
       virtual Eigen::VectorXd dh(const Eigen::VectorXd&) const override final;
       virtual Eigen::MatrixXd d2h(const Eigen::VectorXd&) const override final;
-
+    protected:
+      std::vector<const Particle*> inputs_;
+      std::vector<const Particle*> outputs_;
     private:
       //! A momentum component
       MOMENT_COMPONENT _component;

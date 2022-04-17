@@ -225,11 +225,12 @@ namespace kfbase {
       void optimize();
 
     protected:
+      Particle* getParticle(const std::string &) const;
       //! A method that used to add a particle
       /*!
        * @param particle (pointer to a particle object)
        */
-      void addParticle(Particle*);
+          void addParticle(Particle *);
       //! A method that used to add constraint
       /*!
        * @param constraint (pointer to a constraint object)

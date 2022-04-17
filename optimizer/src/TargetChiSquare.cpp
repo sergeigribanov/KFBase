@@ -46,6 +46,7 @@ const Eigen::MatrixXd& nopt::TargetChiSquare::getInverseErrorMatrix() const {
 }
 
 double nopt::TargetChiSquare::f(const Eigen::VectorXd& x, bool recalc) const {
+  if (x.size() == 0) return 0.;
   if (!recalc) {
     return getCurF();
   }
@@ -54,6 +55,7 @@ double nopt::TargetChiSquare::f(const Eigen::VectorXd& x, bool recalc) const {
 }
 
 Eigen::VectorXd nopt::TargetChiSquare::df(const Eigen::VectorXd& x, bool recalc) const {
+  if (x.size() == 0) return Eigen::VectorXd::Zero(0);
   if (!recalc) {
     return getCurDF();
   }
@@ -62,6 +64,7 @@ Eigen::VectorXd nopt::TargetChiSquare::df(const Eigen::VectorXd& x, bool recalc)
 }
 
 Eigen::MatrixXd nopt::TargetChiSquare::d2f(const Eigen::VectorXd& x, bool recalc) const {
+  if (x.size() == 0) return Eigen::MatrixXd::Zero(0, 0);
   if (!recalc) {
     return getCurD2F();
   }

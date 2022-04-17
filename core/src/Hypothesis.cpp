@@ -162,6 +162,10 @@ void core::Hypothesis::disableCommonParams(const std::string& name) {
   _opt.disableCommonParams(name);
 }
 
+core::Particle* core::Hypothesis::getParticle(const std::string& name) const {
+  return _particles.at(name);
+}
+
 void core::Hypothesis::addParticle(core::Particle* particle) {
   _particles.insert(std::make_pair(particle->getName(), particle));
   _opt.addTarget(particle);

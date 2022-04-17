@@ -35,9 +35,8 @@ namespace nopt = kfbase::newtonian_opt;
 namespace core = kfbase::core;
 
 core::MomentumConstraint::MomentumConstraint(
-    const std::string& name, core::MOMENT_COMPONENT component,
-    double constraintValue)
-    : nopt::EqualityLagrangeConstraint(name, constraintValue),
+    const std::string& name, core::MOMENT_COMPONENT component)
+    : nopt::EqualityLagrangeConstraint(name, 0.),
       _component(component) {}
 
 core::MomentumConstraint::~MomentumConstraint() {}
@@ -48,11 +47,16 @@ core::MOMENT_COMPONENT core::MomentumConstraint::getComponent() const {
 
 double core::MomentumConstraint::h(const Eigen::VectorXd& x) const {
   double result = 0.;
-  const auto& targets = getTargets();
-  for (const auto& el : targets) {
-    if (el.second->isEnabled()) {
-      result += static_cast<const core::Particle*>(el.second)
-                    ->calcMomentumComponent(x, _component);
+  // !!! Introduce input / output momenta
+  for (const auto& el : inputs_) {;
+    if (el->isEnabled()) {
+        result +=
+          el->calcMomentumComponent(x, _component);
+    }
+  }
+  for (const auto& el : outputs_) {
+    if (el->isEnabled()) {
+      result -= el->calcMomentumComponent(x, _component);
     }
   }
   return result;
@@ -60,37 +64,51 @@ double core::MomentumConstraint::h(const Eigen::VectorXd& x) const {
 
 Eigen::VectorXd core::MomentumConstraint::dh(const Eigen::VectorXd& x) const {
   Eigen::VectorXd result = Eigen::VectorXd::Zero(x.size());
-  const auto& targets = getTargets();
-  for (const auto& el : targets) {
-    if (el.second->isEnabled()) {
-      result += static_cast<const core::Particle*>(el.second)
-                    ->calcDMomentumComponent(x, _component);
+  // !!! Introduce input / output momentum gradients
+  for (const auto& el : inputs_) {
+    if (el->isEnabled()) {
+      result += el->calcDMomentumComponent(x, _component);
+    }
+  }
+  for (const auto& el : outputs_) {
+    if (el->isEnabled()) {
+      result -= el->calcDMomentumComponent(x, _component);
     }
   }
   return result;
 }
 
-Eigen::MatrixXd core::MomentumConstraint::d2h(
-    const Eigen::VectorXd& x) const {
+Eigen::MatrixXd core::MomentumConstraint::d2h(const Eigen::VectorXd& x) const {
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
-  const auto& targets = getTargets();
-  for (const auto& el : targets) {
-    if (el.second->isEnabled()) {
-      result += static_cast<const core::Particle*>(el.second)
-                    ->calcD2MomentumComponent(x, _component);
+  // !!! Introduce input / output momentum hessians
+  for (const auto& el : inputs_) {
+    if (el->isEnabled()) {
+      result += el->calcD2MomentumComponent(x, _component);
+    }
+  }
+  for (const auto& el : outputs_) {
+    if (el->isEnabled()) {
+      result -= el->calcD2MomentumComponent(x, _component);
     }
   }
   return result;
 }
 
-void core::MomentumConstraint::add(const nopt::TargetFunction* obj) {
-  if (!dynamic_cast<const core::Particle*>(obj)) {
-    // TODO: exception
-  }
+void core::MomentumConstraint::add(const nopt::TargetFunction *obj) {
   auto& targets = getTargets();
   if (targets.find(obj->getName()) == targets.end()) {
     targets.insert(std::make_pair(obj->getName(), obj));
   } else {
     // TODO: exception
   }
+}
+
+void core::MomentumConstraint::outAdd(const core::Particle *particle) {
+  add(particle);
+  outputs_.push_back(particle);
+}
+
+void core::MomentumConstraint::inAdd(const core::Particle *particle) {
+  add(particle);
+  inputs_.push_back(particle);
 }

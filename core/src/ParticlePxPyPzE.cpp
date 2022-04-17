@@ -32,7 +32,6 @@
 #include <cmath>
 #include "kfbase/core/ParticlePxPyPzE.hpp"
 
-namespace nopt = kfbase::newtonian_opt;
 namespace core = kfbase::core;
 
 core::ParticlePxPyPzE::ParticlePxPyPzE(const std::string& name, double mass) :

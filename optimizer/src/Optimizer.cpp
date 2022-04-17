@@ -32,6 +32,7 @@
 #include "kfbase/newtonian_opt/Optimizer.hpp"
 
 #include <cmath>
+#include <iomanip>
 #include <iostream>
 #include <limits>
 #include <utility>
@@ -185,6 +186,7 @@ double nopt::Optimizer::calcResidual(const Eigen::VectorXd& x) const {
   double result = 0;
   for (const auto& el : _constraints) {
     if (el.second->isEnabled()) {
+      // !!! avoid casts
       const auto cnt = dynamic_cast<nopt::EqualityLagrangeConstraint*>(el.second);
       if (cnt) {
         result += cnt->calcResidual(x);
@@ -215,11 +217,13 @@ Eigen::VectorXd nopt::Optimizer::df(const Eigen::VectorXd& x) const {
   for (const auto& el : _targets) {
     if (el.second->isEnabled()) {
       if (isNumericalDerivatives()) {
+        if (el.second->getN() == 0) continue;
         result.segment(el.second->getBeginIndex(), el.second->getN()) +=
             el.second->dfNumerical(
                 x.segment(el.second->getBeginIndex(), el.second->getN()),
                 _derivativeStep);
       } else {
+        if (el.second->getN() == 0) continue;
         result.segment(el.second->getBeginIndex(), el.second->getN()) +=
             el.second->df(
                 x.segment(el.second->getBeginIndex(), el.second->getN()));
@@ -259,12 +263,14 @@ Eigen::MatrixXd nopt::Optimizer::d2f(const Eigen::VectorXd& x) const {
   for (const auto& el : _targets) {
     if (el.second->isEnabled()) {
       if (isNumericalDerivatives()) {
+        if (el.second->getN() == 0) continue;
         result.block(el.second->getBeginIndex(), el.second->getBeginIndex(),
                      el.second->getN(), el.second->getN()) +=
             el.second->d2fNumerical(
                 x.segment(el.second->getBeginIndex(), el.second->getN()),
                 _derivativeStep);
       } else {
+        if (el.second->getN() == 0) continue;
         result.block(el.second->getBeginIndex(), el.second->getBeginIndex(),
                      el.second->getN(), el.second->getN()) +=
             el.second->d2f(
@@ -582,7 +588,12 @@ double nopt::Optimizer::getConstant(const std::string& name) const {
 
 void nopt::Optimizer::setConstant(const std::string& name,
                                   double value) noexcept(false) {
-  _constants.insert(std::make_pair(name, value));
+  auto it = _constants.find(name);
+  if (it != _constants.end()) {
+    it->second = value;
+  } else {
+    _constants.insert(std::make_pair(name, value));
+  }
 }
 
 int nopt::Optimizer::getNumberOfEnabledTargetFunctions() const {
