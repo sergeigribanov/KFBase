@@ -29,6 +29,7 @@
  *
  */
 
+#include "kfbase/newtonian_opt/LagrangeConstraint.hpp"
 #include "kfbase/core/Hypothesis.hpp"
 
 #include <utility>
@@ -76,6 +77,17 @@ const Eigen::VectorXd& core::Hypothesis::getInitialParameters(
 const Eigen::VectorXd& core::Hypothesis::getFinalParameters(
     const std::string& particleName) const {
   return _particles.at(particleName)->getFinalParameters();
+}
+
+double core::Hypothesis::getInitialLagrangeMultiplier(const std::string& constraintName) const {
+  return dynamic_cast<nopt::LagrangeConstraint*>(_constraints.at(constraintName))->getLambdaInitial();
+}
+
+double core::Hypothesis::getFinalLagrangeMultiplier(
+    const std::string &constraintName) const {
+  return dynamic_cast<nopt::LagrangeConstraint *>(
+             _constraints.at(constraintName))
+      ->getLambdaFinal();
 }
 
 const Eigen::MatrixXd& core::Hypothesis::getInverseErrorMatrix(

@@ -89,11 +89,13 @@ namespace kfbase {
        * @param particleName (particle name)
        */
       const Eigen::VectorXd& getInitialParameters(const std::string&) const;
+      double getInitialLagrangeMultiplier(const std::string &) const;
+      double getFinalLagrangeMultiplier(const std::string &) const;
       //! A getter for a particle final parameters
       /*!
        * @param particleName (particle name)
        */
-      const Eigen::VectorXd& getFinalParameters(const std::string&) const;
+      const Eigen::VectorXd &getFinalParameters(const std::string &) const;
       //! A getter for a particle inverse error matrix
       /*!
        * @param particleName (particle name)
