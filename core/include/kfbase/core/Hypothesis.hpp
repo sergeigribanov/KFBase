@@ -121,14 +121,6 @@ namespace kfbase {
        * @param particleName (particle name)
        */
       const TLorentzVector& getFinalMomentum(const std::string&) const;
-      //! A getter for a particle "enabled"/"disabled" status
-      /*!
-       * This method returns true for an enabled particle
-       * and returns false otherwise.
-       *
-       * @param particleName (particle name)
-       */
-      bool isParticleEnabled(const std::string&) const;
       //! A getter for a common parameter container "enabled"/"disabled" status
       /*!
        * This method returns true for an enabled common parameter container
@@ -165,16 +157,6 @@ namespace kfbase {
       double getTolerance() const;
       void setMaxNumberOfIterations(long);
       void setTolerance(double);
-      //! A method used to enable particle by name
-      /*!
-       * @param name (particle name)
-       */
-      void enableParticle(const std::string&);
-      //! A method used to disable particle by name
-      /*!
-       * @param name (particle name)
-       */
-      void disableParticle(const std::string&);
       //! A method used to enable constraint by name
       /*!
        * @param name (constraint name)

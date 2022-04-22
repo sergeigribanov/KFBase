@@ -56,9 +56,6 @@ double core::DoubleParticleAngularConstraint::h(const Eigen::VectorXd& x) const 
   auto it1 = targets.begin();
   auto it2 = targets.begin();
   it2++;
-  if (!it1->second->isEnabled() || !it2->second->isEnabled()) {
-    return 0.;
-  }
   Eigen::Vector3d p1;
   Eigen::Vector3d p2;
   p1(0) = static_cast<const core::Particle*>(it1->second)
@@ -84,9 +81,6 @@ Eigen::VectorXd core::DoubleParticleAngularConstraint::dh(const Eigen::VectorXd&
   auto it1 = targets.begin();
   auto it2 = targets.begin();
   it2++;
-  if (!it1->second->isEnabled() || !it2->second->isEnabled()) {
-    return Eigen::VectorXd::Zero(x.size());
-  }
   Eigen::Vector3d p1;
   Eigen::Vector3d p2;
   p1(0) = static_cast<const core::Particle*>(it1->second)
@@ -133,9 +127,6 @@ Eigen::MatrixXd core::DoubleParticleAngularConstraint::d2h(const Eigen::VectorXd
   auto it1 = targets.begin();
   auto it2 = targets.begin();
   it2++;
-  if (!it1->second->isEnabled() || !it2->second->isEnabled()) {
-    return Eigen::MatrixXd::Zero(x.size(), x.size());
-  }
   Eigen::Vector3d p1;
   Eigen::Vector3d p2;
   p1(0) = static_cast<const core::Particle*>(it1->second)

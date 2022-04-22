@@ -36,14 +36,14 @@
 
 #include "kfbase/newtonian_opt/Function.hpp"
 #include "kfbase/newtonian_opt/ParamContainer.hpp"
-#include "kfbase/newtonian_opt/Switch.hpp"
+#include "kfbase/newtonian_opt/Named.hpp"
 
 namespace kfbase {
   namespace newtonian_opt {
     /**
      * Implementation of a target function facility.
      */
-    class TargetFunction : public Function, public ParamContainer, public Switch {
+    class TargetFunction : public Function, public ParamContainer, public Named {
     public:
       //! A constructor
       /*!

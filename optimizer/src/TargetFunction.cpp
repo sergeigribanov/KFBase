@@ -37,7 +37,7 @@
 namespace nopt = kfbase::newtonian_opt;
 
 nopt::TargetFunction::TargetFunction(const std::string& name, long n)
-    : Function(), ParamContainer(n), Switch(name) {}
+    : Function(), ParamContainer(n), Named(name) {}
 
 nopt::TargetFunction::~TargetFunction() {}
 

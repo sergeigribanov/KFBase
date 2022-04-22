@@ -65,9 +65,6 @@ Eigen::Vector3d core::ParticleAngularConstraint::getAxis() const {
 double core::ParticleAngularConstraint::h(const Eigen::VectorXd& x) const {
   const auto& targets = getTargets();
   auto it = targets.begin();
-  if (!it->second->isEnabled()) {
-    return 0.;
-  }
   Eigen::Vector3d p;
   p(0) = static_cast<const core::Particle*>(it->second)
          ->calcMomentumComponent(x, core::MOMENT_X);
@@ -84,9 +81,6 @@ double core::ParticleAngularConstraint::h(const Eigen::VectorXd& x) const {
 Eigen::VectorXd core::ParticleAngularConstraint::dh(const Eigen::VectorXd& x) const {
   const auto& targets = getTargets();
   auto it = targets.begin();
-  if (!it->second->isEnabled()) {
-    return Eigen::VectorXd::Zero(x.size());
-  }
   Eigen::Vector3d p;
   p(0) = static_cast<const core::Particle*>(it->second)
           ->calcMomentumComponent(x, core::MOMENT_X);
@@ -115,9 +109,6 @@ Eigen::VectorXd core::ParticleAngularConstraint::dh(const Eigen::VectorXd& x) co
 Eigen::MatrixXd core::ParticleAngularConstraint::d2h(const Eigen::VectorXd& x) const {
   const auto& targets = getTargets();
   auto it = targets.begin();
-  if (!it->second->isEnabled()) {
-    return Eigen::MatrixXd::Zero(x.size(), x.size());
-  }
   Eigen::Vector3d p;
   p(0) = static_cast<const core::Particle*>(it->second)
          ->calcMomentumComponent(x, core::MOMENT_X);

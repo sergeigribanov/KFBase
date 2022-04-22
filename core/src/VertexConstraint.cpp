@@ -69,33 +69,28 @@ void core::VertexConstraint::setVertexCommonParams(
 }
 
 double core::VertexConstraint::h(const Eigen::VectorXd& x) const {
-  double result = 0;
   const auto it = getTargets().begin();
-  if (it->second->isEnabled()) {
-    result += static_cast<const core::VertexParticle*>(it->second)
-                  ->calcVertexComponent(x, _component) -
-              x(_vertexCoordinate->getBeginIndex());
-  }
-  return result;
+  // !!! cast
+  return static_cast<const core::VertexParticle *>(it->second)
+    ->calcVertexComponent(x, _component) -
+    x(_vertexCoordinate->getBeginIndex());
 }
 
 Eigen::VectorXd core::VertexConstraint::dh(const Eigen::VectorXd& x) const {
   Eigen::VectorXd result = Eigen::VectorXd::Zero(x.size());
   const auto it = getTargets().begin();
-  if (it->second->isEnabled()) {
-    result += static_cast<const core::VertexParticle*>(it->second)
-                  ->calcDVertexComponent(x, _component);
-    result(_vertexCoordinate->getBeginIndex()) -= 1;
-  }
+  // !!! cast
+  result += static_cast<const core::VertexParticle*>(it->second)
+    ->calcDVertexComponent(x, _component);
+  result(_vertexCoordinate->getBeginIndex()) -= 1;
   return result;
 }
 
 Eigen::MatrixXd core::VertexConstraint::d2h(const Eigen::VectorXd& x) const {
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
   const auto it = getTargets().begin();
-  if (it->second->isEnabled()) {
-    result += static_cast<const core::VertexParticle*>(it->second)
-                  ->calcD2VertexComponent(x, _component);
-  }
+  // !!! cast
+  result += static_cast<const core::VertexParticle*>(it->second)
+      ->calcD2VertexComponent(x, _component);
   return result;
 }

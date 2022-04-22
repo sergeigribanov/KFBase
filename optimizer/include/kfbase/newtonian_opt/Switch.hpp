@@ -32,6 +32,7 @@
 #ifndef __CCGO_SWITCH_HPP__
 #define __CCGO_SWITCH_HPP__
 
+#include "kfbase/newtonian_opt/Named.hpp"
 #include <string>
 
 namespace kfbase {
@@ -43,7 +44,7 @@ namespace kfbase {
      * The facility has methods for changing and getting state.
      *
      */
-    class Switch {
+    class Switch : public Named {
     public:
       //! A constructor
       /*!
@@ -62,7 +63,6 @@ namespace kfbase {
        * othewis false is returned.
        */
       bool isEnabled() const;
-      std::string getName() const;
       /*!
        * This method changes an object state to "enabled".
        */
@@ -77,10 +77,6 @@ namespace kfbase {
        * An "enabled"/"disabled" status
        */
       bool _enabled;
-      /*!
-       * A name of an object
-       */
-      std::string _name;
     };
   }  // namespace newtonian_opt
 } // namespace kfbase

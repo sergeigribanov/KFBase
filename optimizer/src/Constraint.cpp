@@ -62,9 +62,7 @@ nopt::Constraint::getTargets() {
 void nopt::Constraint::updateIndices() {
   removeIndices();
   for (const auto& el : getTargets()) {
-    if (el.second->isEnabled()) {
-      addIndices(el.second->getBeginIndex(), el.second->getN());
-    }
+    addIndices(el.second->getBeginIndex(), el.second->getN());
   }
   for (const auto& name : getUsedCommonParameters()) {
     if (getCommonParameters()->at(name)->isEnabled()) {

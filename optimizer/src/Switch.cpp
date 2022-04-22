@@ -33,13 +33,11 @@
 
 namespace nopt = kfbase::newtonian_opt;
 
-nopt::Switch::Switch(const std::string& name) : _enabled(false), _name(name) {}
+nopt::Switch::Switch(const std::string &name) : Named(name),  _enabled(false) {}
 
 nopt::Switch::~Switch() {}
 
 bool nopt::Switch::isEnabled() const { return _enabled; }
-
-std::string nopt::Switch::getName() const { return _name; }
 
 void nopt::Switch::enable() { _enabled = true; }
 

@@ -148,14 +148,6 @@ void core::Hypothesis::setParticleInverseErrorMatrix(
 
 void core::Hypothesis::optimize() { _opt.optimize(); }
 
-void core::Hypothesis::enableParticle(const std::string& name) {
-  _opt.enableTarget(name);
-}
-
-void core::Hypothesis::disableParticle(const std::string& name) {
-  _opt.disableTarget(name);
-}
-
 void core::Hypothesis::enableConstraint(const std::string& name) {
   _opt.enableConstraint(name);
 }
@@ -210,11 +202,6 @@ int core::Hypothesis::getNumberOfEnabledConstraints() const {
 
 int core::Hypothesis::getNumberOfEnabledCommonParamContainers() const {
   return _opt.getNumberOfEnabledCommonParamContainers();
-}
-
-bool core::Hypothesis::isParticleEnabled(
-    const std::string& particleName) const {
-  return _opt.isTargetFunctionEnabled(particleName);
 }
 
 bool core::Hypothesis::isCommonParamContinerEnabled(

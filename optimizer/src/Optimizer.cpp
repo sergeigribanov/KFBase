@@ -62,26 +62,14 @@ int nopt::Optimizer::getErrorCode() const { return _errorCode; }
 double nopt::Optimizer::getTargetValue() const { return _targetValue; }
 
 double nopt::Optimizer::getTargetValue(const std::string& targetName) const {
-  double result = 0;
-  const auto& target = _targets.at(targetName);
-  if (target->isEnabled()) {
-    result = target->getTargetValue();
-  } else {
-    // TO DO: exception
-  }
-  return result;
+  return _targets.at(targetName)->getTargetValue();
 }
 
 double nopt::Optimizer::getTargetValue(
     const std::set<std::string>& targetNames) const {
   double result = 0;
   for (const auto& name : targetNames) {
-    const auto& target = _targets.at(name);
-    if (target->isEnabled()) {
-      result += target->getTargetValue();
-    } else {
-      // TO DO: exception
-    }
+    result += _targets.at(name)->getTargetValue();
   }
   return result;
 }
@@ -113,6 +101,8 @@ void nopt::Optimizer::addTarget(nopt::TargetFunction* obj) noexcept(false) {
     obj->setCommonParameters(&_commonParams);
     obj->setConstants(&_constants);
     _targets.insert(std::make_pair(obj->getName(), obj));
+    obj->setBeginIndex(_n);
+    _n += obj->getN();
   } else {
     nopt::NameException<nopt::TargetFunction> e(obj->getName());
     std::cerr << e.what() << std::endl;
@@ -164,9 +154,7 @@ void nopt::Optimizer::setParameters(
 double nopt::Optimizer::calcTargetValue(const Eigen::VectorXd& x) const {
   double result = 0;
   for (const auto& el : _targets) {
-    if (el.second->isEnabled()) {
-      result += el.second->getTargetValue(x);
-    }
+    result += el.second->getTargetValue(x);
   }
   for (const auto& el : _constraints) {
     if (el.second->isEnabled()) {
@@ -196,10 +184,7 @@ double nopt::Optimizer::calcResidual(const Eigen::VectorXd& x) const {
 double nopt::Optimizer::f(const Eigen::VectorXd& x) const {
   double result = 0;
   for (const auto& el : _targets) {
-    if (el.second->isEnabled()) {
-      result += el.second->f(
-          x.segment(el.second->getBeginIndex(), el.second->getN()));
-    }
+    result += el.second->f(x.segment(el.second->getBeginIndex(), el.second->getN()));
   }
   for (const auto& el : _constraints) {
     if (el.second->isEnabled()) {
@@ -212,12 +197,9 @@ double nopt::Optimizer::f(const Eigen::VectorXd& x) const {
 Eigen::VectorXd nopt::Optimizer::df(const Eigen::VectorXd& x) const {
   Eigen::VectorXd result = Eigen::VectorXd::Zero(_n);
   for (const auto& el : _targets) {
-    if (el.second->isEnabled()) {
-      if (el.second->getN() == 0) continue;
-      result.segment(el.second->getBeginIndex(), el.second->getN()) +=
-        el.second->df(
-                      x.segment(el.second->getBeginIndex(), el.second->getN()));
-    }
+    if (el.second->getN() == 0) continue;
+    result.segment(el.second->getBeginIndex(), el.second->getN()) +=
+      el.second->df(x.segment(el.second->getBeginIndex(), el.second->getN()));
   }
   for (const auto& el : _constraints) {
     if (el.second->isEnabled()) {
@@ -225,11 +207,9 @@ Eigen::VectorXd nopt::Optimizer::df(const Eigen::VectorXd& x) const {
     }
   }
   for (const auto& el : _targets) {
-    if (el.second->isEnabled()) {
-      for (long index : el.second->getFixedParamIndices()) {
-        long idx = el.second->getBeginIndex() + index;
-        result(idx) = 0;
-      }
+    for (long index : el.second->getFixedParamIndices()) {
+      long idx = el.second->getBeginIndex() + index;
+      result(idx) = 0;
     }
   }
   for (const auto& el : _commonParams) {
@@ -246,13 +226,10 @@ Eigen::VectorXd nopt::Optimizer::df(const Eigen::VectorXd& x) const {
 Eigen::MatrixXd nopt::Optimizer::d2f(const Eigen::VectorXd& x) const {
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(_n, _n);
   for (const auto& el : _targets) {
-    if (el.second->isEnabled()) {
-      if (el.second->getN() == 0) continue;
-      result.block(el.second->getBeginIndex(), el.second->getBeginIndex(),
-                   el.second->getN(), el.second->getN()) +=
-        el.second->d2f(
-                       x.segment(el.second->getBeginIndex(), el.second->getN()));
-    }
+    if (el.second->getN() == 0) continue;
+    result.block(el.second->getBeginIndex(), el.second->getBeginIndex(),
+                 el.second->getN(), el.second->getN()) +=
+      el.second->d2f(x.segment(el.second->getBeginIndex(), el.second->getN()));
   }
   for (const auto& el : _constraints) {
     if (el.second->isEnabled()) {
@@ -260,13 +237,11 @@ Eigen::MatrixXd nopt::Optimizer::d2f(const Eigen::VectorXd& x) const {
     }
   }
   for (const auto& el : _targets) {
-    if (el.second->isEnabled()) {
-      for (long index : el.second->getFixedParamIndices()) {
-        long idx = el.second->getBeginIndex() + index;
-        result.row(idx).setZero();
-        result.col(idx).setZero();
-        result(idx, idx) = 1;
-      }
+    for (long index : el.second->getFixedParamIndices()) {
+      long idx = el.second->getBeginIndex() + index;
+      result.row(idx).setZero();
+      result.col(idx).setZero();
+      result(idx, idx) = 1;
     }
   }
   for (const auto& el : _commonParams) {
@@ -320,40 +295,10 @@ void nopt::Optimizer::disableConstraint(const std::string& name) noexcept(
   }
 }
 
-void nopt::Optimizer::enableTarget(const std::string& name) noexcept(false) {
-  auto it = _targets.find(name);
-  if (it != _targets.end()) {
-    if (!it->second->isEnabled()) {
-      it->second->enable();
-      it->second->setBeginIndex(_n);
-      _n += it->second->getN();
-    }
-  } else {
-    nopt::NameException<nopt::TargetFunction> e(name);
-    std::cerr << e.what() << std::endl;
-    throw(e);
-  }
-}
-
-void nopt::Optimizer::disableTarget(const std::string& name) noexcept(false) {
-  auto it = _targets.find(name);
-  if (it != _targets.end()) {
-    if (it->second->isEnabled()) {
-      it->second->disable();
-      _n -= it->second->getN();
-      decIndicies(it->second->getBeginIndex(), it->second->getN());
-    }
-  } else {
-    nopt::NameException<nopt::TargetFunction> e(name);
-    std::cerr << e.what() << std::endl;
-    throw(e);
-  }
-}
-
 void nopt::Optimizer::checkLimits(Eigen::VectorXd* x) const {
   bool flag = false;
   for (const auto& el : _targets) {
-    if (el.second->isEnabled() && el.second->haveLimits()) {
+    if (el.second->haveLimits()) {
       flag = flag || el.second->checkLimits(x);
     }
   }
@@ -378,7 +323,7 @@ void nopt::Optimizer::checkLimits(Eigen::VectorXd* x) const {
 
 void nopt::Optimizer::checkPeriodical(Eigen::VectorXd* x) const {
   for (const auto& el : _targets) {
-    if (el.second->isEnabled() && el.second->havePeriodical()) {
+    if (el.second->havePeriodical()) {
       el.second->checkPeriodical(x);
     }
   }
@@ -395,10 +340,8 @@ void nopt::Optimizer::optimize() {
   Eigen::VectorXd xp;
   for (int i = 0; i < _nIter; ++i) {
     xp = x;
-    // x -= d2f(x).inverse() * df(x);
     updateValues(x);
     x -= d2f(x).partialPivLu().solve(df(x));
-    // x -= d2f(x).completeOrthogonalDecomposition().solve(df(x));
     checkLimits(&x);
     checkPeriodical(&x);
     if (std::fabs(calcTargetValue(x) - calcTargetValue(xp)) < _tol &&
@@ -415,18 +358,14 @@ void nopt::Optimizer::optimize() {
 
 void nopt::Optimizer::onFitBegin(const Eigen::VectorXd& x) {
   for (auto& el : _targets) {
-    if (el.second->isEnabled()) {
-      el.second->onFitBegin(x);
-    }
+    el.second->onFitBegin(x);
   }
 }
 
 void nopt::Optimizer::onFitEnd(const Eigen::VectorXd& x) {
   for (auto& el : _targets) {
-    if (el.second->isEnabled()) {
-      el.second->setFinalParameters(x);
-      el.second->onFitEnd(x);
-    }
+    el.second->setFinalParameters(x);
+    el.second->onFitEnd(x);
   }
   for (auto& el : _commonParams) {
     if (el.second->isEnabled()) {
@@ -446,10 +385,8 @@ void nopt::Optimizer::onFitEnd(const Eigen::VectorXd& x) {
 
 void nopt::Optimizer::decIndicies(long index, long n) {
   for (auto& el : _targets) {
-    if (el.second->isEnabled()) {
-      if (el.second->getBeginIndex() > index) {
-        el.second->setBeginIndex(el.second->getBeginIndex() - n);
-      }
+    if (el.second->getBeginIndex() > index) {
+      el.second->setBeginIndex(el.second->getBeginIndex() - n);
     }
   }
   for (auto& el : _commonParams) {
@@ -474,10 +411,9 @@ void nopt::Optimizer::decIndicies(long index, long n) {
 Eigen::VectorXd nopt::Optimizer::getBeginParameterVector() const {
   Eigen::VectorXd result(_n);
   for (const auto& el : _targets) {
-    if (el.second->isEnabled()) {
-      result.segment(el.second->getBeginIndex(), el.second->getN()) =
-          el.second->getBeginParameters();
-    }
+    result.segment(el.second->getBeginIndex(),
+                   el.second->getN()) =
+        el.second->getBeginParameters();
   }
   for (const auto& el : _commonParams) {
     if (el.second->isEnabled()) {
@@ -568,14 +504,13 @@ void nopt::Optimizer::setConstant(const std::string& name,
   }
 }
 
-int nopt::Optimizer::getNumberOfEnabledTargetFunctions() const {
-  int result = 0;
-  for (const auto& el : _targets) {
-    if (el.second->isEnabled()) {
-      result++;
-    }
-  }
-  return result;
+int nopt::Optimizer::getNumberOfEnabledTargetFunctions() const { // !!!
+  return _targets.size();
+  // int result = 0;
+  // for (const auto& el : _targets) {
+  //   result++;
+  // }
+  // return result;
 }
 
 int nopt::Optimizer::getNumberOfEnabledConstraints() const {
@@ -596,11 +531,6 @@ int nopt::Optimizer::getNumberOfEnabledCommonParamContainers() const {
     }
   }
   return result;
-}
-
-bool nopt::Optimizer::isTargetFunctionEnabled(
-    const std::string& targetName) const {
-  return _targets.at(targetName)->isEnabled();
 }
 
 bool nopt::Optimizer::isCommonParamContainerEnabled(
@@ -633,9 +563,7 @@ void nopt::Optimizer::prepare() {
 
 void nopt::Optimizer::updateValues(const Eigen::VectorXd& x) {
   for (const auto& el : _targets) {
-    if (el.second->isEnabled()) {
-      el.second->updateValue(x.segment(el.second->getBeginIndex(), el.second->getN()));
-    }
+    el.second->updateValue(x.segment(el.second->getBeginIndex(), el.second->getN()));
   }
   for (const auto& el : _constraints) {
     if (el.second->isEnabled()) {

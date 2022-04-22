@@ -110,11 +110,6 @@ namespace kfbase {
        */
       const CommonParams* getCommonParameters(const std::string&) const;
       //! A getter for "enabled"/"disabled" status of a target function
-      /*!
-       * @param targetName (target function name)
-       */
-      bool isTargetFunctionEnabled(const std::string&) const;
-      //! A getter for "enabled"/"disabled" status of a target function
       bool isCommonParamContainerEnabled(const std::string&) const;
       //! A getter for "enabled"/"disabled" status of a common parameters container
       /*!
@@ -191,16 +186,6 @@ namespace kfbase {
        * @param name (constraint name)
        */
       void disableConstraint(const std::string&) noexcept(false);
-      //! A method that enables target function by name
-      /*!
-       * @param name (target function name)
-       */
-      void enableTarget(const std::string&) noexcept(false);
-      //! A method that disables target function by name
-      /*!
-       * @param name (target function name)
-       */
-      void disableTarget(const std::string&) noexcept(false);
       //! A method that enables common parameter container by name
       /*!
        * @param name (name of a common parameter container)
