@@ -192,10 +192,6 @@ void core::Hypothesis::addParticleToConstraint(
   _opt.addTargetToConstraint(particleName, constraintName);
 }
 
-int core::Hypothesis::getNumberOfEnabledParticles() const {
-  return _opt.getNumberOfEnabledTargetFunctions();
-}
-
 int core::Hypothesis::getNumberOfEnabledConstraints() const {
   return _opt.getNumberOfEnabledConstraints();
 }

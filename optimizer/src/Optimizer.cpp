@@ -504,15 +504,6 @@ void nopt::Optimizer::setConstant(const std::string& name,
   }
 }
 
-int nopt::Optimizer::getNumberOfEnabledTargetFunctions() const { // !!!
-  return _targets.size();
-  // int result = 0;
-  // for (const auto& el : _targets) {
-  //   result++;
-  // }
-  // return result;
-}
-
 int nopt::Optimizer::getNumberOfEnabledConstraints() const {
   int result = 0;
   for (const auto& el : _constraints) {

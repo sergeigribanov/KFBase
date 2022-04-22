@@ -137,8 +137,6 @@ namespace kfbase {
        * @param constraintName (constraint name)
        */
       bool isConstraintEnabled(const std::string&) const;
-      //! This method counts a number of enabled particles
-      int getNumberOfEnabledParticles() const;
       //! This method counts a number of enabled constraints
       int getNumberOfEnabledConstraints() const;
       //! This method counts a number of enabled common parameter containers

@@ -116,8 +116,6 @@ namespace kfbase {
        * @param commonParamName (name of common parameters container)
        */
       bool isConstraintEnabled(const std::string&) const;
-      //! A getter for number of enabled target functions
-      int getNumberOfEnabledTargetFunctions() const;
       //! A getter for number of enabled constraints
       int getNumberOfEnabledConstraints() const;
       //! A getter for number of enabled common parameter containers
