@@ -56,7 +56,7 @@ namespace kfbase {
        *
        * @param tolerance (optimization tolreance)
        */
-      Hypothesis(long = 20, double = 1.e-3, bool = false, double = 1.e-5);
+      Hypothesis(long = 20, double = 1.e-3);
       //! A destructor
       virtual ~Hypothesis();
       //! A error code getter
@@ -163,13 +163,8 @@ namespace kfbase {
       TLorentzVector getFinalMomentum(const std::set<std::string>&) const;
       long getMaxNumberOfIterations() const;
       double getTolerance() const;
-      bool isNumericalDerivatives() const;
-      double getNumericalDerivativeStep() const;
       void setMaxNumberOfIterations(long);
       void setTolerance(double);
-      void enableNumericalDerivatives();
-      void disableNumericalDerivatives();
-      void setNumericalDerivativeStep(double);
       //! A method used to enable particle by name
       /*!
        * @param name (particle name)

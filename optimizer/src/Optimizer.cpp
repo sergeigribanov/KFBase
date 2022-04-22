@@ -44,15 +44,12 @@ namespace nopt = kfbase::newtonian_opt;
 #include "kfbase/newtonian_opt/EqualityLagrangeConstraint.hpp"
 #include "kfbase/newtonian_opt/NameException.hpp"
 
-nopt::Optimizer::Optimizer(long nIter, double tolerance,
-                           bool numericalDerivatives, double derivativeStep)
+nopt::Optimizer::Optimizer(long nIter, double tolerance)
     : _n(0),
       _nIter(nIter),
       _tol(tolerance),
       _targetValue(std::numeric_limits<double>::infinity()),
-      _errorCode(1),
-      _numericalDerivatives(numericalDerivatives),
-      _derivativeStep(derivativeStep) {
+      _errorCode(1) {
   // feenableexcept(FE_INVALID | FE_OVERFLOW);
 }
 
@@ -216,27 +213,15 @@ Eigen::VectorXd nopt::Optimizer::df(const Eigen::VectorXd& x) const {
   Eigen::VectorXd result = Eigen::VectorXd::Zero(_n);
   for (const auto& el : _targets) {
     if (el.second->isEnabled()) {
-      if (isNumericalDerivatives()) {
-        if (el.second->getN() == 0) continue;
-        result.segment(el.second->getBeginIndex(), el.second->getN()) +=
-            el.second->dfNumerical(
-                x.segment(el.second->getBeginIndex(), el.second->getN()),
-                _derivativeStep);
-      } else {
-        if (el.second->getN() == 0) continue;
-        result.segment(el.second->getBeginIndex(), el.second->getN()) +=
-            el.second->df(
-                x.segment(el.second->getBeginIndex(), el.second->getN()));
-      }
+      if (el.second->getN() == 0) continue;
+      result.segment(el.second->getBeginIndex(), el.second->getN()) +=
+        el.second->df(
+                      x.segment(el.second->getBeginIndex(), el.second->getN()));
     }
   }
   for (const auto& el : _constraints) {
     if (el.second->isEnabled()) {
-      if (isNumericalDerivatives()) {
-        result += el.second->dfNumerical(x, _derivativeStep);
-      } else {
-        result += el.second->df(x);
-      }
+      result += el.second->df(x);
     }
   }
   for (const auto& el : _targets) {
@@ -262,29 +247,16 @@ Eigen::MatrixXd nopt::Optimizer::d2f(const Eigen::VectorXd& x) const {
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(_n, _n);
   for (const auto& el : _targets) {
     if (el.second->isEnabled()) {
-      if (isNumericalDerivatives()) {
-        if (el.second->getN() == 0) continue;
-        result.block(el.second->getBeginIndex(), el.second->getBeginIndex(),
-                     el.second->getN(), el.second->getN()) +=
-            el.second->d2fNumerical(
-                x.segment(el.second->getBeginIndex(), el.second->getN()),
-                _derivativeStep);
-      } else {
-        if (el.second->getN() == 0) continue;
-        result.block(el.second->getBeginIndex(), el.second->getBeginIndex(),
-                     el.second->getN(), el.second->getN()) +=
-            el.second->d2f(
-                x.segment(el.second->getBeginIndex(), el.second->getN()));
-      }
+      if (el.second->getN() == 0) continue;
+      result.block(el.second->getBeginIndex(), el.second->getBeginIndex(),
+                   el.second->getN(), el.second->getN()) +=
+        el.second->d2f(
+                       x.segment(el.second->getBeginIndex(), el.second->getN()));
     }
   }
   for (const auto& el : _constraints) {
     if (el.second->isEnabled()) {
-      if (isNumericalDerivatives()) {
-        result += el.second->d2fNumerical(x, _derivativeStep);
-      } else {
-        result += el.second->d2f(x);
-      }
+      result += el.second->d2f(x);
     }
   }
   for (const auto& el : _targets) {
@@ -641,26 +613,6 @@ bool nopt::Optimizer::isConstraintEnabled(
   return _constraints.at(constraintName)->isEnabled();
 }
 
-void nopt::Optimizer::enableNumericalDerivatives() {
-  _numericalDerivatives = true;
-}
-
-void nopt::Optimizer::disableNumericalDerivatives() {
-  _numericalDerivatives = false;
-}
-
-bool nopt::Optimizer::isNumericalDerivatives() const {
-  return _numericalDerivatives;
-}
-
-void nopt::Optimizer::setNumericalDerivativeStep(double step) {
-  _derivativeStep = step;
-}
-
-double nopt::Optimizer::getNumericalDerivativeStep() const {
-  return _derivativeStep;
-}
-
 void nopt::Optimizer::setTolerance(double tolerance) { _tol = tolerance; }
 
 void nopt::Optimizer::setMaxNumberOfIterations(long nIter) { _nIter = nIter; }
@@ -680,16 +632,14 @@ void nopt::Optimizer::prepare() {
 
 
 void nopt::Optimizer::updateValues(const Eigen::VectorXd& x) {
-  if (!isNumericalDerivatives()) {
-    for (const auto& el : _targets) {
-      if (el.second->isEnabled()) {
-        el.second->updateValue(x.segment(el.second->getBeginIndex(), el.second->getN()));
-      }
+  for (const auto& el : _targets) {
+    if (el.second->isEnabled()) {
+      el.second->updateValue(x.segment(el.second->getBeginIndex(), el.second->getN()));
     }
-    for (const auto& el : _constraints) {
-      if (el.second->isEnabled()) {
-        el.second->updateValue(x);
-      }
+  }
+  for (const auto& el : _constraints) {
+    if (el.second->isEnabled()) {
+      el.second->updateValue(x);
     }
   }
 }

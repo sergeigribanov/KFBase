@@ -37,10 +37,8 @@
 namespace nopt = kfbase::newtonian_opt;
 namespace core = kfbase::core;
 
-core::Hypothesis::Hypothesis(long nIter, double tolerance,
-			       bool numericalDerivatives,
-			       double derivativeStep)
-  : _opt(nIter, tolerance, numericalDerivatives, derivativeStep) {}
+core::Hypothesis::Hypothesis(long nIter, double tolerance)
+  : _opt(nIter, tolerance) {}
 
 core::Hypothesis::~Hypothesis() {
   for (auto& el : _particles) {
@@ -237,32 +235,12 @@ double core::Hypothesis::getTolerance() const {
   return _opt.getTolerance();
 }
 
-bool core::Hypothesis::isNumericalDerivatives() const {
-  return _opt.isNumericalDerivatives();
-}
-
-double core::Hypothesis::getNumericalDerivativeStep() const {
-  return _opt.getNumericalDerivativeStep();
-}
-
 void core::Hypothesis::setMaxNumberOfIterations(long nIter) {
   _opt.setMaxNumberOfIterations(nIter);
 }
 
 void core::Hypothesis::setTolerance(double tolerance) {
   _opt.setTolerance(tolerance);
-}
-
-void core::Hypothesis::enableNumericalDerivatives() {
-  _opt.enableNumericalDerivatives();
-}
-
-void core::Hypothesis::disableNumericalDerivatives() {
-  _opt.disableNumericalDerivatives();
-}
-
-void core::Hypothesis::setNumericalDerivativeStep(double step) {
-  _opt.setNumericalDerivativeStep(step);
 }
 
 void core::Hypothesis::prepare() {

@@ -76,8 +76,6 @@ namespace kfbase {
        */
       virtual Eigen::MatrixXd d2f(const Eigen::VectorXd& x,
                                   bool = false) const = 0;
-      virtual Eigen::VectorXd dfNumerical(const Eigen::VectorXd&, double) const;
-      virtual Eigen::MatrixXd d2fNumerical(const Eigen::VectorXd&, double) const;
       /*!
        * This method assigns an unordered map of common parameter pointers.
        * Key value of a map is a name of a common parameter container.
