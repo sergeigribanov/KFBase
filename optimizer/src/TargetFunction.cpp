@@ -36,8 +36,9 @@
 
 namespace nopt = kfbase::newtonian_opt;
 
-nopt::TargetFunction::TargetFunction(const std::string& name, long n)
-    : Function(), ParamContainer(n), Named(name) {}
+nopt::TargetFunction::TargetFunction(const std::string &name, long n)
+    : Function(), ParamContainer(n), Named(name),
+      inverseCovarianceMatrix_(Eigen::MatrixXd::Zero(n, n))  {}
 
 nopt::TargetFunction::~TargetFunction() {}
 
@@ -67,8 +68,7 @@ const Eigen::MatrixXd &nopt::TargetFunction::getInverseCovarianceMatrix() const 
 }
 
 double nopt::TargetFunction::f(const Eigen::VectorXd &x, bool recalc) const {
-  if (x.size() == 0)
-    return 0.;
+  if (x.size() == 0) return 0.;
   if (!recalc) {
     return getCurF();
   }
