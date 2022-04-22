@@ -55,6 +55,8 @@ namespace kfbase {
       TargetFunction(const std::string&, long);
       //! A destructor
       virtual ~TargetFunction();
+      //! A getter for inverse covariance matrix
+      const Eigen::MatrixXd &getInverseCovarianceMatrix() const;
       //! A target value getter
       /*!
        * This method returns the value of a target function, calculated using
@@ -70,17 +72,30 @@ namespace kfbase {
        *
        */
       virtual double getTargetValue(const Eigen::VectorXd&) const;
+      virtual double f(const Eigen::VectorXd &, bool = false) const override;
+      virtual Eigen::VectorXd df(const Eigen::VectorXd &, bool = false) const override;
+      virtual Eigen::MatrixXd d2f(const Eigen::VectorXd &, bool = false) const override;
+      //! A setter for inverse covariance matrix
+      /*!
+       * @param matrix (inverse covariance matrix)
+       */
+      void setInverseCovarianceMatrix(const Eigen::MatrixXd &);
       //! A method that is called each time at optimization start
       /*!
        * @param x (vector of parameters)
        */
-      virtual void onFitBegin(const Eigen::VectorXd& x) = 0;
+      virtual void onFitBegin(const Eigen::VectorXd& x);
       //! A method that is called each time at optimization stop
       /*!
        * @param x (vector of parameters)
        */
-      virtual void onFitEnd(const Eigen::VectorXd& x) = 0;
+      virtual void onFitEnd(const Eigen::VectorXd& x);
       virtual void updateIndices() override;
+      // !!! void setCommonParameters(
+      //     std::unordered_map<std::string, CommonParams *> *) = delete;
+      // !!! void setConstants(std::unordered_map<std::string, double> *) = delete;
+    private:
+      Eigen::MatrixXd inverseCovarianceMatrix_;
     };
   }  // namespace newtonian_opt
 } // namespace kfbase

@@ -36,7 +36,7 @@ namespace core = kfbase::core;
 
 core::Particle::Particle(const std::string& name, long n, double mass,
                            double charge)
-    : nopt::TargetChiSquare(name, n), _mass(mass), _charge(charge) {}
+    : nopt::TargetFunction(name, n), _mass(mass), _charge(charge) {}
 
 core::Particle::~Particle() {}
 

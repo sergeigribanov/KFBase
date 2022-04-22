@@ -88,9 +88,9 @@ double core::Hypothesis::getFinalLagrangeMultiplier(
       ->getLambdaFinal();
 }
 
-const Eigen::MatrixXd& core::Hypothesis::getInverseErrorMatrix(
+const Eigen::MatrixXd& core::Hypothesis::getParticleInverseCovarianceMatrix(
     const std::string& particleName) const {
-  return _particles.at(particleName)->getInverseErrorMatrix();
+  return _particles.at(particleName)->getInverseCovarianceMatrix();
 }
 
 const Eigen::VectorXd& core::Hypothesis::getInitialCommonParameters(
@@ -141,9 +141,9 @@ void core::Hypothesis::setInitialParticleParams(const std::string& name,
   _particles.at(name)->setInitialParameters(x);
 }
 
-void core::Hypothesis::setParticleInverseErrorMatrix(
+void core::Hypothesis::setParticleInverseCovarianceMatrix(
     const std::string& name, const Eigen::MatrixXd& matrix) {
-  _particles.at(name)->setInverseErrorMatrix(matrix);
+  _particles.at(name)->setInverseCovarianceMatrix(matrix);
 }
 
 void core::Hypothesis::optimize() { _opt.optimize(); }

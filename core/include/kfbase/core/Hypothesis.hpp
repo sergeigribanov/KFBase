@@ -100,7 +100,7 @@ namespace kfbase {
       /*!
        * @param particleName (particle name)
        */
-      const Eigen::MatrixXd& getInverseErrorMatrix(const std::string&) const;
+      const Eigen::MatrixXd& getParticleInverseCovarianceMatrix(const std::string&) const;
       //! A getter for initial common parameters
       /*!
        * @param name (name of common parameters container)
@@ -195,7 +195,7 @@ namespace kfbase {
        *
        * @param matrix (inverse error matrix)
        */
-      void setParticleInverseErrorMatrix(const std::string&,
+      void setParticleInverseCovarianceMatrix(const std::string&,
                                          const Eigen::MatrixXd&);
       void prepare();
       //! A method that starts optimization

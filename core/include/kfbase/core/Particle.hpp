@@ -35,7 +35,7 @@
 #include <TLorentzVector.h>
 
 #include <Eigen/Dense>
-#include "kfbase/newtonian_opt/TargetChiSquare.hpp"
+#include "kfbase/newtonian_opt/TargetFunction.hpp"
 
 namespace kfbase {
 namespace core {
@@ -54,7 +54,7 @@ enum MOMENT_COMPONENT {
  * and returns particle chi-square as a target function for CCGO
  * optimizer.
  */
-class Particle : public kfbase::newtonian_opt::TargetChiSquare {
+class Particle : public kfbase::newtonian_opt::TargetFunction {
  public:
   //! A constructor
   /*!

@@ -51,3 +51,53 @@ void nopt::TargetFunction::updateIndices() {
   removeIndices();
   addIndices(0, getN());
 }
+
+void nopt::TargetFunction::setInverseCovarianceMatrix(
+    const Eigen::MatrixXd &matrix) {
+  if (matrix.rows() == matrix.cols() && matrix.rows() == getN()) {
+    inverseCovarianceMatrix_ = matrix;
+  } else {
+    std::cerr << "[ERROR] Wrong matrix size!" << std::endl;
+    // TODO: exception
+  }
+}
+
+const Eigen::MatrixXd &nopt::TargetFunction::getInverseCovarianceMatrix() const {
+  return inverseCovarianceMatrix_;
+}
+
+double nopt::TargetFunction::f(const Eigen::VectorXd &x, bool recalc) const {
+  if (x.size() == 0)
+    return 0.;
+  if (!recalc) {
+    return getCurF();
+  }
+  Eigen::VectorXd dx = x - getInitialParameters();
+  return dx.transpose() * inverseCovarianceMatrix_ * dx;
+}
+
+Eigen::VectorXd nopt::TargetFunction::df(const Eigen::VectorXd &x,
+                                         bool recalc) const {
+  if (x.size() == 0)
+    return Eigen::VectorXd::Zero(0);
+  if (!recalc) {
+    return getCurDF();
+  }
+  Eigen::VectorXd dx = x - getInitialParameters();
+  return 2 * inverseCovarianceMatrix_ * dx;
+}
+
+Eigen::MatrixXd nopt::TargetFunction::d2f(const Eigen::VectorXd &x,
+                                          bool recalc) const {
+  if (x.size() == 0)
+    return Eigen::MatrixXd::Zero(0, 0);
+  if (!recalc) {
+    return getCurD2F();
+  }
+  Eigen::VectorXd dx = x - getInitialParameters();
+  return 2 * inverseCovarianceMatrix_;
+}
+
+void nopt::TargetFunction::onFitBegin(const Eigen::VectorXd &) {}
+
+void nopt::TargetFunction::onFitEnd(const Eigen::VectorXd &) {}
