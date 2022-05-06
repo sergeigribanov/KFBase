@@ -47,36 +47,33 @@ core::MOMENT_COMPONENT core::MomentumConstraint::getComponent() const {
 
 double core::MomentumConstraint::h(const Eigen::VectorXd& x) const {
   double result = 0.;
-  // !!! Introduce input / output momenta
   for (const auto& el : inputs_) {
-    result += el->calcMomentumComponent(x, _component);
+    result += el->calcInputMomentumComponent(x, _component);
   }
   for (const auto& el : outputs_) {
-    result -= el->calcMomentumComponent(x, _component);
+    result -= el->calcOutputMomentumComponent(x, _component);
   }
   return result;
 }
 
 Eigen::VectorXd core::MomentumConstraint::dh(const Eigen::VectorXd& x) const {
   Eigen::VectorXd result = Eigen::VectorXd::Zero(x.size());
-  // !!! Introduce input / output momentum gradients
   for (const auto& el : inputs_) {
-    result += el->calcDMomentumComponent(x, _component);
+    result += el->calcInputDMomentumComponent(x, _component);
   }
   for (const auto& el : outputs_) {
-    result -= el->calcDMomentumComponent(x, _component);
+    result -= el->calcOutputDMomentumComponent(x, _component);
   }
   return result;
 }
 
 Eigen::MatrixXd core::MomentumConstraint::d2h(const Eigen::VectorXd& x) const {
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
-  // !!! Introduce input / output momentum hessians
   for (const auto& el : inputs_) {
-    result += el->calcD2MomentumComponent(x, _component);
+    result += el->calcInputD2MomentumComponent(x, _component);
   }
   for (const auto& el : outputs_) {
-    result -= el->calcD2MomentumComponent(x, _component);
+    result -= el->calcOutputD2MomentumComponent(x, _component);
   }
   return result;
 }

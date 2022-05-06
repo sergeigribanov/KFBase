@@ -18,9 +18,9 @@
  */
 
 /**
- * @file ParticleMassLessThetaPhiE.hpp
+ * @file ParticlePxPyPzE.hpp
  *
- * @brief ParticleMassLessThetaPhiE class definition
+ * @brief ParticlePxPyPzE class definition
  *
  * @ingroup KFBase
  *
@@ -29,29 +29,29 @@
  *
  */
 
-#ifndef __KFBASE_PARTICLE_MASSLESS_THETAPHIE_HPP__
-#define __KFBASE_PARTICLE_MASSLESS_THETAPHIE_HPP__
+#ifndef __KFBASE_PARTICLE_PXPYPZ_HPP__
+#define __KFBASE_PARTICLE_PXPYPZ_HPP__
 
 #include "kfbase/core/Particle.hpp"
 
 namespace kfbase {
   namespace core {
-    class ParticleMassLessThetaPhiE : public Particle {
+    class ParticlePxPyPz : public Particle {
     public:
-      explicit ParticleMassLessThetaPhiE(const std::string&);
-      virtual ~ParticleMassLessThetaPhiE();
+      ParticlePxPyPz(const std::string&, double);
+      virtual ~ParticlePxPyPz();
       virtual double calcOutputMomentumComponent(const Eigen::VectorXd&,
-                                                 kfbase::core::MOMENT_COMPONENT) const override final;
+                                           kfbase::core::MOMENT_COMPONENT) const override final;
       virtual double calcInputMomentumComponent(const Eigen::VectorXd &,
-                                                kfbase::core::MOMENT_COMPONENT) const override final;
+                                                 kfbase::core::MOMENT_COMPONENT) const override final;
       virtual Eigen::VectorXd calcOutputDMomentumComponent(const Eigen::VectorXd&,
-                                                           kfbase::core::MOMENT_COMPONENT) const override final;
+                                                     kfbase::core::MOMENT_COMPONENT) const override final;
       virtual Eigen::VectorXd calcInputDMomentumComponent(const Eigen::VectorXd &,
                                                           kfbase::core::MOMENT_COMPONENT) const override final;
       virtual Eigen::MatrixXd calcOutputD2MomentumComponent(const Eigen::VectorXd&,
                                                             kfbase::core::MOMENT_COMPONENT) const override final;
       virtual Eigen::MatrixXd calcInputD2MomentumComponent(const Eigen::VectorXd &,
-                                                            kfbase::core::MOMENT_COMPONENT) const override final;
+                                                           kfbase::core::MOMENT_COMPONENT) const override final;
     };
   } // namespace core
 } // namespace kfbase

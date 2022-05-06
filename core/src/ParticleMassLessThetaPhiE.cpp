@@ -47,8 +47,8 @@ core::ParticleMassLessThetaPhiE::ParticleMassLessThetaPhiE(const std::string& na
 
 core::ParticleMassLessThetaPhiE::~ParticleMassLessThetaPhiE() {}
 
-double core::ParticleMassLessThetaPhiE::calcMomentumComponent(
-    const Eigen::VectorXd& x, core::MOMENT_COMPONENT component) const {
+double core::ParticleMassLessThetaPhiE::calcOutputMomentumComponent(const Eigen::VectorXd& x,
+                                                                    core::MOMENT_COMPONENT component) const {
   const long bi = getBeginIndex();
   double result = 0;
   // E --- 0
@@ -71,8 +71,13 @@ double core::ParticleMassLessThetaPhiE::calcMomentumComponent(
   return result;
 }
 
-Eigen::VectorXd core::ParticleMassLessThetaPhiE::calcDMomentumComponent(
-    const Eigen::VectorXd& x, core::MOMENT_COMPONENT component) const {
+double core::ParticleMassLessThetaPhiE::calcInputMomentumComponent(
+    const Eigen::VectorXd &x, core::MOMENT_COMPONENT component) const {
+  return calcOutputMomentumComponent(x, component);
+}
+
+Eigen::VectorXd core::ParticleMassLessThetaPhiE::calcOutputDMomentumComponent(const Eigen::VectorXd &x,
+                                                                              core::MOMENT_COMPONENT component) const {
   // E --- 0
   // theta --- 1
   // phi --- 2
@@ -104,8 +109,13 @@ Eigen::VectorXd core::ParticleMassLessThetaPhiE::calcDMomentumComponent(
   return result;
 }
 
-Eigen::MatrixXd core::ParticleMassLessThetaPhiE::calcD2MomentumComponent(
-    const Eigen::VectorXd& x, core::MOMENT_COMPONENT component) const {
+Eigen::VectorXd core::ParticleMassLessThetaPhiE::calcInputDMomentumComponent(const Eigen::VectorXd &x,
+                                                                             core::MOMENT_COMPONENT component) const {
+  return calcOutputDMomentumComponent(x, component);
+}
+
+Eigen::MatrixXd core::ParticleMassLessThetaPhiE::calcOutputD2MomentumComponent(const Eigen::VectorXd &x,
+                                                                               core::MOMENT_COMPONENT component) const {
   // E --- 0
   // theta --- 1
   // phi --- 2
@@ -148,4 +158,9 @@ Eigen::MatrixXd core::ParticleMassLessThetaPhiE::calcD2MomentumComponent(
     break;
   }
   return result;
+}
+
+Eigen::MatrixXd core::ParticleMassLessThetaPhiE::calcInputD2MomentumComponent(const Eigen::VectorXd &x,
+                                                                               core::MOMENT_COMPONENT component) const {
+  return calcOutputD2MomentumComponent(x, component);
 }

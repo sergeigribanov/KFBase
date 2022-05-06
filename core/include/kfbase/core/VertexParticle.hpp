@@ -66,39 +66,55 @@ namespace kfbase {
       //! A getter for a particle initial vertex
       const TVector3& getInitialVertex() const;
       //! A getter for a particle final vertex
-      const TVector3& getFinalVertex() const;
+      const TVector3 &getFinalVertex() const;
+      //! A getter for a particle initial vertex
+      const TVector3& getInitialOutputVertex() const;
+      //! A getter for a particle final vertex
+      const TVector3& getFinalOutputVertex() const;
+      const TVector3 &getInitialInputVertex() const;
+      const TVector3 &getFinalInputVertex() const;
       //! A method that used to calculate a particle vertex component
       /*!
        * @param x (vector of parameters)
        *
        * @param component (vertex component)
        */
-      virtual double calcVertexComponent(const Eigen::VectorXd& x,
-                                         VERTEX_COMPONENT component) const = 0;
+      virtual double calcOutputVertexComponent(const Eigen::VectorXd& x,
+                                               VERTEX_COMPONENT component) const = 0;
+      virtual double
+      calcInputVertexComponent(const Eigen::VectorXd &x,
+                                VERTEX_COMPONENT component) const = 0;
       //! A method that used to calculate gradient of a particle vertex component
       /*!
        * @param x (vector of parameters)
        *
        * @param component (vertex component)
        */
-      virtual Eigen::VectorXd calcDVertexComponent(
-                                                   const Eigen::VectorXd& x, VERTEX_COMPONENT component) const = 0;
+      virtual Eigen::VectorXd calcOutputDVertexComponent(const Eigen::VectorXd& x,
+                                                         VERTEX_COMPONENT component) const = 0;
+      virtual Eigen::VectorXd calcInputDVertexComponent(const Eigen::VectorXd &x,
+                                                        VERTEX_COMPONENT component) const = 0;
       //! A method that used to calculate hessian of a particle vertex component
       /*!
        * @param x (vector of parameters)
        *
        * @param component (vertex component)
        */
-      virtual Eigen::MatrixXd calcD2VertexComponent(
-                                                    const Eigen::VectorXd& x, VERTEX_COMPONENT component) const = 0;
+      virtual Eigen::MatrixXd calcOutputD2VertexComponent(const Eigen::VectorXd& x,
+                                                    VERTEX_COMPONENT component) const = 0;
+      virtual Eigen::MatrixXd
+      calcInputD2VertexComponent(const Eigen::VectorXd &x,
+                                 VERTEX_COMPONENT component) const = 0;
       virtual void onFitBegin(const Eigen::VectorXd&) override final;
       virtual void onFitEnd(const Eigen::VectorXd&) override final;
 
     protected:
       //! An initial vertex of a particle
-      TVector3 _initialVertex;
+      TVector3 _initialOutputVertex;
       //! A final vertex of a particle
-      TVector3 _finalVertex;
+      TVector3 _finalOutputVertex;
+      TVector3 _initialInputVertex;
+      TVector3 _finalInputVertex;
     };
   }  // namespace core
 } // namespace kfbase

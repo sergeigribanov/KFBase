@@ -66,13 +66,13 @@ double core::MassConstraint::h(const Eigen::VectorXd& x) const {
   pe.reserve(targets.size());
   for (const auto& el : targets) {
     px.push_back(static_cast<const core::Particle*>(el.second)
-                 ->calcMomentumComponent(x, core::MOMENT_X));
+                 ->calcOutputMomentumComponent(x, core::MOMENT_X));
     py.push_back(static_cast<const core::Particle*>(el.second)
-                 ->calcMomentumComponent(x, core::MOMENT_Y));
+                 ->calcOutputMomentumComponent(x, core::MOMENT_Y));
     pz.push_back(static_cast<const core::Particle*>(el.second)
-                 ->calcMomentumComponent(x, core::MOMENT_Z));
+                 ->calcOutputMomentumComponent(x, core::MOMENT_Z));
     pe.push_back(static_cast<const core::Particle*>(el.second)
-                 ->calcMomentumComponent(x, core::MOMENT_E));
+                 ->calcOutputMomentumComponent(x, core::MOMENT_E));
   }
   // for (std::size_t i = 0; i + 1 < px.size(); ++i) {
   //   result += pe[i] * pe[i] - px[i] * px[i] - py[i] * py[i] - pz[i] * pz[i];
@@ -110,21 +110,21 @@ Eigen::VectorXd core::MassConstraint::dh(const Eigen::VectorXd& x) const {
   dpe.reserve(targets.size());
   for (const auto& el : targets) {
     px.push_back(static_cast<const core::Particle*>(el.second)
-                 ->calcMomentumComponent(x, core::MOMENT_X));
+                 ->calcOutputMomentumComponent(x, core::MOMENT_X));
     py.push_back(static_cast<const core::Particle*>(el.second)
-                 ->calcMomentumComponent(x, core::MOMENT_Y));
+                 ->calcOutputMomentumComponent(x, core::MOMENT_Y));
     pz.push_back(static_cast<const core::Particle*>(el.second)
-                 ->calcMomentumComponent(x, core::MOMENT_Z));
+                 ->calcOutputMomentumComponent(x, core::MOMENT_Z));
     pe.push_back(static_cast<const core::Particle*>(el.second)
-                 ->calcMomentumComponent(x, core::MOMENT_E));
+                 ->calcOutputMomentumComponent(x, core::MOMENT_E));
     dpx.push_back(static_cast<const core::Particle*>(el.second)
-                  ->calcDMomentumComponent(x, core::MOMENT_X));
+                  ->calcOutputDMomentumComponent(x, core::MOMENT_X));
     dpy.push_back(static_cast<const core::Particle*>(el.second)
-                  ->calcDMomentumComponent(x, core::MOMENT_Y));
+                  ->calcOutputDMomentumComponent(x, core::MOMENT_Y));
     dpz.push_back(static_cast<const core::Particle*>(el.second)
-                  ->calcDMomentumComponent(x, core::MOMENT_Z));
+                  ->calcOutputDMomentumComponent(x, core::MOMENT_Z));
     dpe.push_back(static_cast<const core::Particle*>(el.second)
-                  ->calcDMomentumComponent(x, core::MOMENT_E));
+                  ->calcOutputDMomentumComponent(x, core::MOMENT_E));
   }
   for (std::size_t i = 0; i < px.size(); ++i) {
     for (std::size_t j = 0; j < px.size(); ++j) {
@@ -163,29 +163,29 @@ Eigen::MatrixXd core::MassConstraint::d2h(const Eigen::VectorXd& x) const {
   d2pe.reserve(targets.size());
   for (const auto& el : targets) {
     px.push_back(static_cast<const core::Particle*>(el.second)
-                 ->calcMomentumComponent(x, core::MOMENT_X));
+                 ->calcOutputMomentumComponent(x, core::MOMENT_X));
     py.push_back(static_cast<const core::Particle*>(el.second)
-                 ->calcMomentumComponent(x, core::MOMENT_Y));
+                 ->calcOutputMomentumComponent(x, core::MOMENT_Y));
     pz.push_back(static_cast<const core::Particle*>(el.second)
-                 ->calcMomentumComponent(x, core::MOMENT_Z));
+                 ->calcOutputMomentumComponent(x, core::MOMENT_Z));
     pe.push_back(static_cast<const core::Particle*>(el.second)
-                 ->calcMomentumComponent(x, core::MOMENT_E));
+                 ->calcOutputMomentumComponent(x, core::MOMENT_E));
     dpx.push_back(static_cast<const core::Particle*>(el.second)
-                  ->calcDMomentumComponent(x, core::MOMENT_X));
+                  ->calcOutputDMomentumComponent(x, core::MOMENT_X));
     dpy.push_back(static_cast<const core::Particle*>(el.second)
-                  ->calcDMomentumComponent(x, core::MOMENT_Y));
+                  ->calcOutputDMomentumComponent(x, core::MOMENT_Y));
     dpz.push_back(static_cast<const core::Particle*>(el.second)
-                  ->calcDMomentumComponent(x, core::MOMENT_Z));
+                  ->calcOutputDMomentumComponent(x, core::MOMENT_Z));
     dpe.push_back(static_cast<const core::Particle*>(el.second)
-                  ->calcDMomentumComponent(x, core::MOMENT_E));
+                  ->calcOutputDMomentumComponent(x, core::MOMENT_E));
     d2px.push_back(static_cast<const core::Particle*>(el.second)
-                   ->calcD2MomentumComponent(x, core::MOMENT_X));
+                   ->calcOutputD2MomentumComponent(x, core::MOMENT_X));
     d2py.push_back(static_cast<const core::Particle*>(el.second)
-                   ->calcD2MomentumComponent(x, core::MOMENT_Y));
+                   ->calcOutputD2MomentumComponent(x, core::MOMENT_Y));
     d2pz.push_back(static_cast<const core::Particle*>(el.second)
-                   ->calcD2MomentumComponent(x, core::MOMENT_Z));
+                   ->calcOutputD2MomentumComponent(x, core::MOMENT_Z));
     d2pe.push_back(static_cast<const core::Particle*>(el.second)
-                   ->calcD2MomentumComponent(x, core::MOMENT_E));
+                   ->calcOutputD2MomentumComponent(x, core::MOMENT_E));
   }
   for (std::size_t i = 0; i < px.size(); ++i) {
     for (std::size_t j = 0; j < px.size(); ++j) {

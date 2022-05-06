@@ -9,7 +9,8 @@ ConstantMomentumParticle::ConstantMomentumParticle(const std::string &name,
 
 ConstantMomentumParticle::~ConstantMomentumParticle() {}
 
-double ConstantMomentumParticle::calcMomentumComponent(const Eigen::VectorXd&, MOMENT_COMPONENT component) const {
+double ConstantMomentumParticle::calcOutputMomentumComponent(const Eigen::VectorXd&,
+                                                             MOMENT_COMPONENT component) const {
   double result = 0;
   switch (component) {
   case MOMENT_X:
@@ -28,12 +29,28 @@ double ConstantMomentumParticle::calcMomentumComponent(const Eigen::VectorXd&, M
   return result;
 }
 
-Eigen::VectorXd ConstantMomentumParticle::calcDMomentumComponent(const Eigen::VectorXd &x,
-                                                                 MOMENT_COMPONENT) const {
+double ConstantMomentumParticle::calcInputMomentumComponent(const Eigen::VectorXd &x,
+                                                            MOMENT_COMPONENT component) const {
+  return calcOutputMomentumComponent(x, component);
+}
+
+Eigen::VectorXd ConstantMomentumParticle::calcOutputDMomentumComponent(const Eigen::VectorXd &x,
+                                                                       MOMENT_COMPONENT) const {
   return Eigen::VectorXd::Zero(x.size());
 }
 
-Eigen::MatrixXd ConstantMomentumParticle::calcD2MomentumComponent(
-    const Eigen::VectorXd &x, MOMENT_COMPONENT) const {
+Eigen::VectorXd
+ConstantMomentumParticle::calcInputDMomentumComponent(const Eigen::VectorXd &x,
+                                                      MOMENT_COMPONENT component) const {
+  return calcOutputDMomentumComponent(x, component);
+}
+
+Eigen::MatrixXd ConstantMomentumParticle::calcOutputD2MomentumComponent(const Eigen::VectorXd &x,
+                                                                        MOMENT_COMPONENT) const {
   return Eigen::MatrixXd::Zero(x.size(), x.size());
+}
+
+Eigen::MatrixXd ConstantMomentumParticle::calcInputD2MomentumComponent(const Eigen::VectorXd &x,
+                                                                       MOMENT_COMPONENT component) const {
+  return calcOutputD2MomentumComponent(x, component);
 }

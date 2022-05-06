@@ -45,23 +45,43 @@ double core::Particle::getMass() const { return _mass; }
 double core::Particle::getCharge() const { return _charge; }
 
 const TLorentzVector& core::Particle::getInitialMomentum() const {
-  return _initialMomentum;
+  return _initialOutputMomentum;
+}
+
+const TLorentzVector &core::Particle::getInitialOutputMomentum() const {
+  return _initialOutputMomentum;
 }
 
 const TLorentzVector& core::Particle::getFinalMomentum() const {
-  return _finalMomentum;
+  return _finalOutputMomentum;
+}
+
+const TLorentzVector &core::Particle::getFinalOutputMomentum() const {
+  return _finalOutputMomentum;
+}
+
+const TLorentzVector &core::Particle::getInitialInputMomentum() const {
+  return _initialInputMomentum;
+}
+
+const TLorentzVector &core::Particle::getFinalInputMomentum() const {
+  return _finalInputMomentum;
 }
 
 void core::Particle::onFitBegin(const Eigen::VectorXd& x) {
   for (int i = core::MOMENT_X; i <= core::MOMENT_E; ++i) {
-    _initialMomentum[i] =
-        calcMomentumComponent(x, static_cast<core::MOMENT_COMPONENT>(i));
+    _initialOutputMomentum[i] =
+      calcOutputMomentumComponent(x, static_cast<core::MOMENT_COMPONENT>(i));
+    _initialInputMomentum[i] =
+      calcInputMomentumComponent(x, static_cast<core::MOMENT_COMPONENT>(i));
   }
 }
 
 void core::Particle::onFitEnd(const Eigen::VectorXd& x) {
   for (int i = core::MOMENT_X; i <= core::MOMENT_E; ++i) {
-    _finalMomentum[i] =
-        calcMomentumComponent(x, static_cast<core::MOMENT_COMPONENT>(i));
+    _finalOutputMomentum[i] =
+      calcOutputMomentumComponent(x, static_cast<core::MOMENT_COMPONENT>(i));
+    _finalInputMomentum[i] =
+      calcInputMomentumComponent(x, static_cast<core::MOMENT_COMPONENT>(i));
   }
 }

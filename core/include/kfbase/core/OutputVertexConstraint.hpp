@@ -18,9 +18,9 @@
  */
 
 /**
- * @file VertexConstraint.hpp
+ * @file OutputVertexConstraint.hpp
  *
- * @brief VertexConstraint class definition
+ * @brief OutputVertexConstraint class definition
  *
  * @ingroup KFBase
  *
@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef __KFBASE_VERTEXCONSTRAINT_HPP__
-#define __KFBASE_VERTEXCONSTRAINT_HPP__
+#ifndef __KFBASE_OUTPUT_VERTEXCONSTRAINT_HPP__
+#define __KFBASE_OUTPUT_VERTEXCONSTRAINT_HPP__
 
 #include "kfbase/newtonian_opt/EqualityLagrangeConstraint.hpp"
 
@@ -41,7 +41,7 @@ namespace kfbase {
     /**
      * A vertex constraint implementation.
      */
-    class VertexConstraint : public kfbase::newtonian_opt::EqualityLagrangeConstraint {
+    class OutputVertexConstraint : public kfbase::newtonian_opt::EqualityLagrangeConstraint {
     public:
       //! A constructor
       /*!
@@ -49,9 +49,9 @@ namespace kfbase {
        *
        * @param component (constraint vertex component)
        */
-      VertexConstraint(const std::string&, VERTEX_COMPONENT);
+      OutputVertexConstraint(const std::string&, VERTEX_COMPONENT);
       //! A destructor
-      virtual ~VertexConstraint();
+      virtual ~OutputVertexConstraint();
       //! A constraint vertex component getter
       VERTEX_COMPONENT getComponent() const;
       //! A vertex coordinate common parameter setter

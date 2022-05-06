@@ -1,4 +1,5 @@
 #include "kfbase/core/IntermediateNeutralParticle.hpp"
+#include <cstdlib>
 
 namespace core = kfbase::core;
 
@@ -10,8 +11,8 @@ core::IntermediateNeutralParticle::IntermediateNeutralParticle(
 
 core::IntermediateNeutralParticle::~IntermediateNeutralParticle() {}
 
-double core::IntermediateNeutralParticle::calcMomentumComponent(
-    const Eigen::VectorXd &x, core::MOMENT_COMPONENT component) const {
+double core::IntermediateNeutralParticle::calcOutputMomentumComponent(const Eigen::VectorXd &x,
+                                                                      core::MOMENT_COMPONENT component) const {
   const long bi = getBeginIndex();
   double result = 0;
   switch (component) {
@@ -32,8 +33,13 @@ double core::IntermediateNeutralParticle::calcMomentumComponent(
   return result;
 }
 
-Eigen::VectorXd core::IntermediateNeutralParticle::calcDMomentumComponent(
-    const Eigen::VectorXd &x, core::MOMENT_COMPONENT component) const {
+double core::IntermediateNeutralParticle::calcInputMomentumComponent(const Eigen::VectorXd &x,
+                                                                     core::MOMENT_COMPONENT component) const {
+  return calcOutputMomentumComponent(x, component);
+}
+
+Eigen::VectorXd core::IntermediateNeutralParticle::calcOutputDMomentumComponent(const Eigen::VectorXd &x,
+                                                                                core::MOMENT_COMPONENT component) const {
   const long bi = getBeginIndex();
   Eigen::VectorXd result = Eigen::VectorXd::Zero(x.size());
   switch (component) {
@@ -57,8 +63,13 @@ Eigen::VectorXd core::IntermediateNeutralParticle::calcDMomentumComponent(
   return result;
 }
 
-Eigen::MatrixXd core::IntermediateNeutralParticle::calcD2MomentumComponent(
-    const Eigen::VectorXd &x, core::MOMENT_COMPONENT component) const {
+Eigen::VectorXd core::IntermediateNeutralParticle::calcInputDMomentumComponent(const Eigen::VectorXd &x,
+                                                                               core::MOMENT_COMPONENT component) const {
+  return calcOutputDMomentumComponent(x, component);
+}
+
+Eigen::MatrixXd core::IntermediateNeutralParticle::calcOutputD2MomentumComponent(const Eigen::VectorXd &x,
+                                                                                 core::MOMENT_COMPONENT component) const {
   const long bi = getBeginIndex();
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
   switch (component) {
@@ -70,7 +81,7 @@ Eigen::MatrixXd core::IntermediateNeutralParticle::calcD2MomentumComponent(
     break;
   case core::MOMENT_E:
     double q = std::sqrt(x(bi) * x(bi) + x(bi + 1) * x(bi + 1) +
-			 x(bi + 2) * x(bi + 2) + getMass() * getMass());
+                         x(bi + 2) * x(bi + 2) + getMass() * getMass());
     double q3 = q * q * q;
     result(bi, bi) = 1. / q - x(bi) * x(bi) / q3;
     result(bi, bi + 1) = -x(bi) * x(bi + 1) / q3;
@@ -84,6 +95,12 @@ Eigen::MatrixXd core::IntermediateNeutralParticle::calcD2MomentumComponent(
     break;
   }
   return result;
+}
+
+Eigen::MatrixXd
+core::IntermediateNeutralParticle::calcInputD2MomentumComponent(const Eigen::VectorXd &x,
+                                                                core::MOMENT_COMPONENT component) const {
+  return calcOutputD2MomentumComponent(x, component);
 }
 
 void core::IntermediateNeutralParticle::setVertexX(const std::string &name) {
@@ -110,8 +127,8 @@ void core::IntermediateNeutralParticle::setVertexZ(const std::string &name) {
   _vertexZ = it->second;
 }
 
-double core::IntermediateNeutralParticle::calcVertexComponent(
-    const Eigen::VectorXd &x, kfbase::core::VERTEX_COMPONENT component) const {
+double core::IntermediateNeutralParticle::calcInputVertexComponent(const Eigen::VectorXd &x,
+                                                                   kfbase::core::VERTEX_COMPONENT component) const {
   // 0 - px
   // 1 - py
   // 2 - pz
@@ -133,8 +150,13 @@ double core::IntermediateNeutralParticle::calcVertexComponent(
   return result;
 }
 
-Eigen::VectorXd core::IntermediateNeutralParticle::calcDVertexComponent(
-    const Eigen::VectorXd &x, kfbase::core::VERTEX_COMPONENT component) const {
+double core::IntermediateNeutralParticle::calcOutputVertexComponent(const Eigen::VectorXd &,
+                                                                    kfbase::core::VERTEX_COMPONENT) const {
+  return 0.;
+}
+
+Eigen::VectorXd core::IntermediateNeutralParticle::calcInputDVertexComponent(const Eigen::VectorXd &x,
+                                                                             kfbase::core::VERTEX_COMPONENT component) const {
   // 0 - px
   // 1 - py
   // 2 - pz
@@ -161,15 +183,20 @@ Eigen::VectorXd core::IntermediateNeutralParticle::calcDVertexComponent(
   return result;
 }
 
-Eigen::MatrixXd core::IntermediateNeutralParticle::calcD2VertexComponent(
-    const Eigen::VectorXd& x, kfbase::core::VERTEX_COMPONENT component) const {
-  // 0 - px
-  // 1 - py
-  // 2 - pz
-  // 3 - t
-  const long bi = getBeginIndex();
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
-  switch (component) {
+Eigen::VectorXd core::IntermediateNeutralParticle::calcOutputDVertexComponent(const Eigen::VectorXd &x,
+                                                                              kfbase::core::VERTEX_COMPONENT) const {
+  return Eigen::VectorXd::Zero(x.size());
+}
+
+Eigen::MatrixXd core::IntermediateNeutralParticle::calcInputD2VertexComponent(const Eigen::VectorXd &x,
+                                                                              kfbase::core::VERTEX_COMPONENT component) const {
+    // 0 - px
+    // 1 - py
+    // 2 - pz
+    // 3 - t
+    const long bi = getBeginIndex();
+    Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
+    switch (component) {
     case kfbase::core::VERTEX_X:
       result(bi, bi + 3) = 1.;
       result(bi + 3, bi) = 1.;
@@ -184,4 +211,9 @@ Eigen::MatrixXd core::IntermediateNeutralParticle::calcD2VertexComponent(
       break;
   }
   return result;
+}
+
+Eigen::MatrixXd core::IntermediateNeutralParticle::calcOutputD2VertexComponent(const Eigen::VectorXd &x,
+                                                                              kfbase::core::VERTEX_COMPONENT) const {
+  return Eigen::MatrixXd::Zero(x.size(), x.size());
 }

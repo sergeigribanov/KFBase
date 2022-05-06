@@ -18,9 +18,9 @@
  */
 
 /**
- * @file ParticlePxPyPzE.cpp
+ * @file ParticlePxPyPz.cpp
  *
- * @brief Implementation of ParticlePxPyPzE methods
+ * @brief Implementation of ParticlePxPyPz methods
  *
  * @ingroup KFBase
  *
@@ -30,16 +30,16 @@
  */
 
 #include <cmath>
-#include "kfbase/core/ParticlePxPyPzE.hpp"
+#include "kfbase/core/ParticlePxPyPz.hpp"
 
 namespace core = kfbase::core;
 
-core::ParticlePxPyPzE::ParticlePxPyPzE(const std::string& name, double mass) :
+core::ParticlePxPyPz::ParticlePxPyPz(const std::string& name, double mass) :
   core::Particle(name, 3, mass) {}
 
-core::ParticlePxPyPzE::~ParticlePxPyPzE() {}
+core::ParticlePxPyPz::~ParticlePxPyPz() {}
 
-double core::ParticlePxPyPzE::calcMomentumComponent(
+double core::ParticlePxPyPz::calcOutputMomentumComponent(
     const Eigen::VectorXd& x, core::MOMENT_COMPONENT component) const {
   const long bi = getBeginIndex();
   double result = 0;
@@ -61,8 +61,13 @@ double core::ParticlePxPyPzE::calcMomentumComponent(
   return result;
 }
 
-Eigen::VectorXd core::ParticlePxPyPzE::calcDMomentumComponent(
-    const Eigen::VectorXd& x, core::MOMENT_COMPONENT component) const {
+double core::ParticlePxPyPz::calcInputMomentumComponent(const Eigen::VectorXd &x,
+                                                        core::MOMENT_COMPONENT component) const {
+  return calcOutputMomentumComponent(x, component);
+}
+
+Eigen::VectorXd core::ParticlePxPyPz::calcOutputDMomentumComponent(const Eigen::VectorXd &x,
+                                                                   core::MOMENT_COMPONENT component) const {
   const long bi = getBeginIndex();
   Eigen::VectorXd result = Eigen::VectorXd::Zero(x.size());
   switch (component) {
@@ -77,7 +82,7 @@ Eigen::VectorXd core::ParticlePxPyPzE::calcDMomentumComponent(
     break;
   case core::MOMENT_E:
     double q = std::sqrt(x(bi) * x(bi) + x(bi + 1) * x(bi + 1) +
-			 x(bi + 2) * x(bi + 2) + getMass() * getMass());
+                         x(bi + 2) * x(bi + 2) + getMass() * getMass());
     result(bi) = x(bi) / q;
     result(bi + 1) = x(bi + 1) / q;
     result(bi + 2) = x(bi + 2) / q;
@@ -86,8 +91,13 @@ Eigen::VectorXd core::ParticlePxPyPzE::calcDMomentumComponent(
   return result;
 }
 
-Eigen::MatrixXd core::ParticlePxPyPzE::calcD2MomentumComponent(
-    const Eigen::VectorXd& x, core::MOMENT_COMPONENT component) const {
+Eigen::VectorXd core::ParticlePxPyPz::calcInputDMomentumComponent(const Eigen::VectorXd &x,
+                                                                  core::MOMENT_COMPONENT component) const {
+  return calcOutputDMomentumComponent(x, component);
+}
+
+Eigen::MatrixXd core::ParticlePxPyPz::calcOutputD2MomentumComponent(const Eigen::VectorXd &x,
+                                                                    core::MOMENT_COMPONENT component) const {
   const long bi = getBeginIndex();
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
   switch (component) {
@@ -99,7 +109,7 @@ Eigen::MatrixXd core::ParticlePxPyPzE::calcD2MomentumComponent(
     break;
   case core::MOMENT_E:
     double q = std::sqrt(x(bi) * x(bi) + x(bi + 1) * x(bi + 1) +
-			 x(bi + 2) * x(bi + 2) + getMass() * getMass());
+                         x(bi + 2) * x(bi + 2) + getMass() * getMass());
     double q3 = q * q * q;
     result(bi, bi) = 1. / q - x(bi) * x(bi) / q3;
     result(bi, bi + 1) = -x(bi) * x(bi + 1) / q3;
@@ -113,4 +123,9 @@ Eigen::MatrixXd core::ParticlePxPyPzE::calcD2MomentumComponent(
     break;
   }
   return result;
+}
+
+Eigen::MatrixXd core::ParticlePxPyPz::calcInputD2MomentumComponent(
+    const Eigen::VectorXd &x, core::MOMENT_COMPONENT component) const {
+  return calcOutputD2MomentumComponent(x, component);
 }

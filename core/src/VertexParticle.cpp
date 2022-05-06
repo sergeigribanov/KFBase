@@ -40,32 +40,56 @@ core::VertexParticle::VertexParticle(const std::string& name, long n,
 
 core::VertexParticle::~VertexParticle() {}
 
-const TVector3& core::VertexParticle::getInitialVertex() const {
-  return _initialVertex;
+const TVector3 &core::VertexParticle::getInitialVertex() const {
+  return _initialOutputVertex;
 }
 
-const TVector3& core::VertexParticle::getFinalVertex() const {
-  return _finalVertex;
+const TVector3 &core::VertexParticle::getFinalVertex() const {
+  return _finalOutputVertex;
+}
+
+const TVector3& core::VertexParticle::getInitialOutputVertex() const {
+  return _initialOutputVertex;
+}
+
+const TVector3 &core::VertexParticle::getInitialInputVertex() const {
+  return _initialInputVertex;
+}
+
+const TVector3& core::VertexParticle::getFinalOutputVertex() const {
+  return _finalOutputVertex;
+}
+
+const TVector3 &core::VertexParticle::getFinalInputVertex() const {
+  return _finalInputVertex;
 }
 
 void core::VertexParticle::onFitBegin(const Eigen::VectorXd& x) {
   for (int i = core::MOMENT_X; i <= core::MOMENT_E; ++i) {
-    _initialMomentum[i] =
-        calcMomentumComponent(x, static_cast<core::MOMENT_COMPONENT>(i));
+    _initialOutputMomentum[i] =
+        calcOutputMomentumComponent(x, static_cast<core::MOMENT_COMPONENT>(i));
+    _initialInputMomentum[i] =
+        calcInputMomentumComponent(x, static_cast<core::MOMENT_COMPONENT>(i));
   }
   for (int i = core::VERTEX_X; i <= core::VERTEX_Z; ++i) {
-    _initialVertex[i] =
-        calcVertexComponent(x, static_cast<core::VERTEX_COMPONENT>(i));
+    _initialOutputVertex[i] =
+        calcOutputVertexComponent(x, static_cast<core::VERTEX_COMPONENT>(i));
+    _initialInputVertex[i] =
+        calcInputVertexComponent(x, static_cast<core::VERTEX_COMPONENT>(i));
   }
 }
 
 void core::VertexParticle::onFitEnd(const Eigen::VectorXd& x) {
   for (int i = core::MOMENT_X; i <= core::MOMENT_E; ++i) {
-    _finalMomentum[i] =
-        calcMomentumComponent(x, static_cast<core::MOMENT_COMPONENT>(i));
+    _finalOutputMomentum[i] =
+      calcOutputMomentumComponent(x, static_cast<core::MOMENT_COMPONENT>(i));
+    _finalInputMomentum[i] =
+      calcInputMomentumComponent(x, static_cast<core::MOMENT_COMPONENT>(i));
   }
   for (int i = core::VERTEX_X; i <= core::VERTEX_Z; ++i) {
-    _finalVertex[i] =
-        calcVertexComponent(x, static_cast<core::VERTEX_COMPONENT>(i));
+    _finalOutputVertex[i] =
+        calcOutputVertexComponent(x, static_cast<core::VERTEX_COMPONENT>(i));
+    _finalInputVertex[i] =
+        calcInputVertexComponent(x, static_cast<core::VERTEX_COMPONENT>(i));
   }
 }

@@ -76,40 +76,53 @@ class Particle : public kfbase::newtonian_opt::TargetFunction {
   //! A getter for a particle initial momentum
   const TLorentzVector& getInitialMomentum() const;
   //! A getter for a particle final momentum
-  const TLorentzVector& getFinalMomentum() const;
+  const TLorentzVector &getFinalMomentum() const;
+  const TLorentzVector &getInitialOutputMomentum() const;
+  const TLorentzVector &getFinalOutputMomentum() const;
+  const TLorentzVector &getInitialInputMomentum() const;
+  const TLorentzVector &getFinalInputMomentum() const;
   //! A method that used to calculate a particle momentum component
   /*!
    * @param x (vector of parameters)
    *
    * @param component (momentum component)
    */
-  virtual double calcMomentumComponent(const Eigen::VectorXd& x,
-                                       MOMENT_COMPONENT component) const = 0;
+  virtual double calcOutputMomentumComponent(const Eigen::VectorXd& x,
+                                          MOMENT_COMPONENT component) const = 0;
+  virtual double calcInputMomentumComponent(const Eigen::VectorXd &x,
+                                            MOMENT_COMPONENT component) const = 0;
   //! A method that used to calculate gradient of a particle momentum component
   /*!
    * @param x (vector of parameters)
    *
    * @param component (momentum component)
    */
-  virtual Eigen::VectorXd calcDMomentumComponent(
+  virtual Eigen::VectorXd calcOutputDMomentumComponent(
       const Eigen::VectorXd& x, MOMENT_COMPONENT component) const = 0;
+  virtual Eigen::VectorXd
+  calcInputDMomentumComponent(const Eigen::VectorXd &x,
+                              MOMENT_COMPONENT component) const = 0;
   //! A method that used to calculate hessian of a particle momentum component
   /*!
    * @param x (vector of parameters)
    *
    * @param component (momentum component)
    */
-  virtual Eigen::MatrixXd calcD2MomentumComponent(
+  virtual Eigen::MatrixXd calcOutputD2MomentumComponent(
       const Eigen::VectorXd& x, MOMENT_COMPONENT component) const = 0;
+  virtual Eigen::MatrixXd
+  calcInputD2MomentumComponent(const Eigen::VectorXd &x,
+                             MOMENT_COMPONENT component) const = 0;
   virtual void onFitBegin(const Eigen::VectorXd&) override;
   virtual void onFitEnd(const Eigen::VectorXd&) override;
 
  protected:
   //! An initial momentum of a particle
-  TLorentzVector _initialMomentum;
+  TLorentzVector _initialOutputMomentum;
   //! A final momentum of a particle
-  TLorentzVector _finalMomentum;
-
+  TLorentzVector _finalOutputMomentum;
+  TLorentzVector _initialInputMomentum;
+  TLorentzVector _finalInputMomentum;
  private:
   //! A particle mass
   double _mass;
