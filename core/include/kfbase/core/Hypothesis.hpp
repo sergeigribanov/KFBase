@@ -35,10 +35,12 @@
 #include <TLorentzVector.h>
 #include "kfbase/newtonian_opt/Constraint.hpp"
 #include "kfbase/newtonian_opt/Optimizer.hpp"
+#include <TVector3.h>
 #include <set>
 #include <string>
 #include <unordered_map>
 
+#include "kfbase/core/Vertex.hpp"
 #include "kfbase/core/Particle.hpp"
 
 namespace kfbase {
@@ -54,7 +56,7 @@ namespace kfbase {
        *
        * @param tolerance (optimization tolreance)
        */
-      Hypothesis(long = 20, double = 1.e-3);
+      Hypothesis(long = 20, double = 1.e-4);
       //! A destructor
       virtual ~Hypothesis();
       //! A error code getter
@@ -68,47 +70,53 @@ namespace kfbase {
        * This method returns a total chi-square value.
        */
       double getChiSquare() const;
-      //! A particle chi-square getter
+      //! A particle / vertex chi-square getter
       /*!
-       * This method returns a value of a particle chi-square.
+       * This method returns a value of a particle / vertex chi-square.
        *
-       * @param particleName (particle name)
+       * @param particleName (particle / vertex name)
        */
       double getChiSquare(const std::string&) const;
-      //! A chi-square getter for a set of particles
+      //! A chi-square getter for a set of particles and vertices
       /*!
-       * This method returns a chi-square value for a set of particles.
+       * This method returns a chi-square value for a set of particles and vertices.
        *
-       * @param particleNames (set of particle names)
+       * @param particleNames (set of particle and vertex names)
        */
       double getChiSquare(const std::set<std::string>&) const;
       //! A getter for a particle initial parameters
       /*!
        * @param particleName (particle name)
        */
-      const Eigen::VectorXd& getInitialParameters(const std::string&) const;
+      const Eigen::VectorXd& getParticleInitialParams(const std::string&) const;
+      const Eigen::VectorXd& getVertexInitialParams(const std::string&) const;
       double getInitialLagrangeMultiplier(const std::string &) const;
       double getFinalLagrangeMultiplier(const std::string &) const;
       //! A getter for a particle final parameters
       /*!
        * @param particleName (particle name)
        */
-      const Eigen::VectorXd &getFinalParameters(const std::string &) const;
+      const Eigen::VectorXd &getParticleFinalParams(const std::string &) const;
+      const Eigen::VectorXd &getVertexFinalParams(const std::string &) const;
       //! A getter for a particle inverse error matrix
       /*!
        * @param particleName (particle name)
        */
       const Eigen::MatrixXd& getParticleInverseCovarianceMatrix(const std::string&) const;
+      const Eigen::MatrixXd &
+      getVertexInverseCovarianceMatrix(const std::string &) const;
       //! A particle initial momentum getter
       /*!
        * @param particleName (particle name)
        */
       const TLorentzVector& getInitialMomentum(const std::string&) const;
+      const TVector3& getInitialVertex(const std::string&) const;
       //! A particle final momentum getter
       /*!
        * @param particleName (particle name)
        */
       const TLorentzVector& getFinalMomentum(const std::string&) const;
+      const TVector3 &getFinalVertex(const std::string &) const;
       //! A getter for a constraint "enabled"/"disabled" status
       /*!
        * This method returns true for an enabled constraint and returns
@@ -150,6 +158,7 @@ namespace kfbase {
        * @param params (particle parameters)
        */
       void setInitialParticleParams(const std::string&, const Eigen::VectorXd&);
+      void setInitialVertexParams(const std::string&, const Eigen::VectorXd&);
       //! A particle inverse error matrix setter
       /*!
        * @param name (particle name)
@@ -158,6 +167,8 @@ namespace kfbase {
        */
       void setParticleInverseCovarianceMatrix(const std::string&,
                                          const Eigen::MatrixXd&);
+      void setVertexInverseCovarianceMatrix(const std::string&,
+                                            const Eigen::MatrixXd&);
       void prepare();
       //! A method that starts optimization
       void optimize();
@@ -168,7 +179,8 @@ namespace kfbase {
       /*!
        * @param particle (pointer to a particle object)
        */
-          void addParticle(Particle *);
+      void addParticle(Particle *);
+      void addVertex(Vertex *);
       //! A method that used to add constraint
       /*!
        * @param constraint (pointer to a constraint object)
@@ -188,6 +200,7 @@ namespace kfbase {
        * @param constraintName (constraint name)
        */
       void addParticleToConstraint(const std::string&, const std::string&);
+      std::unordered_map<std::string, Vertex*> vertices_;
       //! An unordered map of particles
       std::unordered_map<std::string, Particle*> _particles;
       //! An unordered map of constraints

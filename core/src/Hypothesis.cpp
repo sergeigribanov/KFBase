@@ -56,25 +56,33 @@ double core::Hypothesis::getChiSquare() const {
 }
 
 double core::Hypothesis::getChiSquare(
-    const std::set<std::string>& particleNames) const {
-  return _opt.getTargetValue(particleNames);
+    const std::set<std::string>& names) const {
+  return _opt.getTargetValue(names);
 }
 
-double core::Hypothesis::getChiSquare(const std::string& particleName) const {
-  return _opt.getTargetValue(particleName);
+double core::Hypothesis::getChiSquare(const std::string& name) const {
+  return _opt.getTargetValue(name);
 }
 
-const Eigen::VectorXd& core::Hypothesis::getInitialParameters(
-    const std::string& particleName) const {
+const Eigen::VectorXd &core::Hypothesis::getParticleInitialParams(const std::string &particleName) const {
   return _particles.at(particleName)->getInitialParameters();
 }
 
-const Eigen::VectorXd& core::Hypothesis::getFinalParameters(
-    const std::string& particleName) const {
+const Eigen::VectorXd &
+core::Hypothesis::getVertexInitialParams(const std::string &vertexName) const {
+  return vertices_.at(vertexName)->getInitialParameters();
+}
+
+const Eigen::VectorXd &core::Hypothesis::getParticleFinalParams(const std::string &particleName) const {
   return _particles.at(particleName)->getFinalParameters();
 }
 
-double core::Hypothesis::getInitialLagrangeMultiplier(const std::string& constraintName) const {
+const Eigen::VectorXd &
+core::Hypothesis::getVertexFinalParams(const std::string &vertexName) const {
+  return vertices_.at(vertexName)->getFinalParameters();
+}
+
+double core::Hypothesis::getInitialLagrangeMultiplier(const std::string &constraintName) const {
   return dynamic_cast<nopt::LagrangeConstraint*>(_constraints.at(constraintName))->getLambdaInitial();
 }
 
@@ -90,8 +98,13 @@ const Eigen::MatrixXd& core::Hypothesis::getParticleInverseCovarianceMatrix(
   return _particles.at(particleName)->getInverseCovarianceMatrix();
 }
 
-const TLorentzVector& core::Hypothesis::getInitialMomentum(
-    const std::string& particleName) const {
+const Eigen::MatrixXd &core::Hypothesis::getVertexInverseCovarianceMatrix(
+    const std::string &vertexName) const {
+  return vertices_.at(vertexName)->getInverseCovarianceMatrix();
+}
+
+const TLorentzVector &
+core::Hypothesis::getInitialMomentum(const std::string &particleName) const {
   return _particles.at(particleName)->getInitialMomentum();
 }
 
@@ -123,9 +136,19 @@ void core::Hypothesis::setInitialParticleParams(const std::string& name,
   _particles.at(name)->setInitialParameters(x);
 }
 
-void core::Hypothesis::setParticleInverseCovarianceMatrix(
-    const std::string& name, const Eigen::MatrixXd& matrix) {
+void core::Hypothesis::setInitialVertexParams(const std::string &name,
+                                              const Eigen::VectorXd &x) {
+  vertices_.at(name)->setInitialParameters(x);
+}
+
+void core::Hypothesis::setParticleInverseCovarianceMatrix(const std::string &name,
+                                                          const Eigen::MatrixXd &matrix) {
   _particles.at(name)->setInverseCovarianceMatrix(matrix);
+}
+
+void core::Hypothesis::setVertexInverseCovarianceMatrix(
+    const std::string &name, const Eigen::MatrixXd &matrix) {
+  vertices_.at(name)->setInverseCovarianceMatrix(matrix);
 }
 
 void core::Hypothesis::optimize() { _opt.optimize(); }
@@ -147,7 +170,12 @@ void core::Hypothesis::addParticle(core::Particle* particle) {
   _opt.addTarget(particle);
 }
 
-void core::Hypothesis::addConstraint(nopt::Constraint* constraint) {
+void core::Hypothesis::addVertex(core::Vertex *vertex) {
+  vertices_.insert(std::make_pair(vertex->getName(), vertex));
+  _opt.addTarget(vertex);
+}
+
+void core::Hypothesis::addConstraint(nopt::Constraint *constraint) {
   _constraints.insert(std::make_pair(constraint->getName(), constraint));
   _opt.addConstraint(constraint);
 }
@@ -188,4 +216,12 @@ void core::Hypothesis::setTolerance(double tolerance) {
 
 void core::Hypothesis::prepare() {
   _opt.prepare();
+}
+
+const TVector3 &core::Hypothesis::getInitialVertex(const std::string &vertexName) const {
+  return vertices_.at(vertexName)->getInitialXYZ();
+}
+
+const TVector3 &core::Hypothesis::getFinalVertex(const std::string& vertexName) const {
+  return vertices_.at(vertexName)->getFinalXYZ();
 }
