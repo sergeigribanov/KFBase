@@ -35,14 +35,10 @@
 #include <TVector3.h>
 
 #include "kfbase/core/Particle.hpp"
+#include "kfbase/core/Vertex.hpp"
 
 namespace kfbase {
   namespace core {
-    /**
-     * The VERTEX_COMPONENT enum enumerates x, y and z components of
-     * vertex vector
-     */
-    enum VERTEX_COMPONENT { VERTEX_X = 0, VERTEX_Y = 1, VERTEX_Z = 2 };
     /**
      * Implementation of a facility that describes particle properties
      * (including a particle vertex)  and returns particle chi-square as
