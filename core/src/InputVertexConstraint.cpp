@@ -59,13 +59,8 @@ void core::InputVertexConstraint::add(const nopt::TargetFunction* obj) {
   }
 }
 
-void core::InputVertexConstraint::setVertexCommonParams(
-    const std::string& name) {
-  auto it = getCommonParameters()->find(name);
-  if (it == getCommonParameters()->end()) {
-    // TO DO : exception
-  }
-  _vertexCoordinate = it->second;
+void core::InputVertexConstraint::setVertex(core::Vertex* vertex) {
+  vertex_ = vertex;
 }
 
 double core::InputVertexConstraint::h(const Eigen::VectorXd& x) const {
@@ -73,7 +68,7 @@ double core::InputVertexConstraint::h(const Eigen::VectorXd& x) const {
   // !!! cast
   return static_cast<const core::VertexParticle *>(it->second)
     ->calcInputVertexComponent(x, _component) -
-    x(_vertexCoordinate->getBeginIndex());
+    vertex_->calcCartesianCoordinate(x, _component);
 }
 
 Eigen::VectorXd core::InputVertexConstraint::dh(const Eigen::VectorXd& x) const {
@@ -82,7 +77,7 @@ Eigen::VectorXd core::InputVertexConstraint::dh(const Eigen::VectorXd& x) const 
   // !!! cast
   result += static_cast<const core::VertexParticle*>(it->second)
     ->calcInputDVertexComponent(x, _component);
-  result(_vertexCoordinate->getBeginIndex()) -= 1;
+  result -= vertex_->calcDCartesianCoordinate(x, _component);
   return result;
 }
 
@@ -92,5 +87,6 @@ Eigen::MatrixXd core::InputVertexConstraint::d2h(const Eigen::VectorXd& x) const
   // !!! cast
   result += static_cast<const core::VertexParticle*>(it->second)
       ->calcInputD2VertexComponent(x, _component);
+  result -= vertex_->calcD2CartesianCoordinate(x, _component);
   return result;
 }

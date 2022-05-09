@@ -33,7 +33,7 @@
 #define __KFBASE_INPUT_VERTEXCONSTRAINT_HPP__
 
 #include "kfbase/newtonian_opt/EqualityLagrangeConstraint.hpp"
-
+#include "kfbase/core/Vertex.hpp"
 #include "kfbase/core/VertexParticle.hpp"
 
 namespace kfbase {
@@ -61,7 +61,7 @@ namespace kfbase {
        * Vertex component common parameter container contains 1-dim vector that
        * represent one of vertex coordinates: x, y or z.
        */
-      void setVertexCommonParams(const std::string&);
+      void setVertex(Vertex *);
       virtual void add(const kfbase::newtonian_opt::TargetFunction*) override final;
 
     protected:
@@ -72,8 +72,7 @@ namespace kfbase {
     private:
       //! A vertex component
       VERTEX_COMPONENT _component;
-      //! A coordinate of vertex component
-      kfbase::newtonian_opt::CommonParams* _vertexCoordinate;
+      Vertex* vertex_;
     };
   }  // namespace core
 } // namespace kfbase
