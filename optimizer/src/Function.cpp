@@ -39,16 +39,6 @@ nopt::Function::Function() {}
 
 nopt::Function::~Function() {}
 
-std::unordered_map<std::string, nopt::CommonParams*>*
-nopt::Function::getCommonParameters() const {
-  return _commonParams;
-}
-
-void nopt::Function::setCommonParameters(
-    std::unordered_map<std::string, CommonParams*>* params) {
-  _commonParams = params;
-}
-
 void nopt::Function::setConstants(
     std::unordered_map<std::string, double>* constants) {
   _constants = constants;
@@ -81,29 +71,6 @@ void nopt::Function::removeIndices(long beginIndex, long n) {
 }
 
 void nopt::Function::removeIndices() { _indices.clear(); }
-
-void nopt::Function::includeUsedCommonParameter(const std::string& name) {
-  const auto& it = _commonParams->find(name);
-  if (it != _commonParams->end()) {
-    _usedCommonParams.insert(name);
-  } else {
-    // TO DO : exception
-  }
-}
-
-void nopt::Function::excludeUsedCommonParameter(const std::string& name) {
-  const auto& it = _commonParams->find(name);
-  if (it != _commonParams->end()) {
-    _usedCommonParams.erase(name);
-  } else {
-    // TO DO : exception
-  }
-}
-
-const std::unordered_set<std::string>& nopt::Function::getUsedCommonParameters()
-    const {
-  return _usedCommonParams;
-}
 
 void nopt::Function::updateValue(const Eigen::VectorXd& x) {
   _cur_f = this->f(x, true);

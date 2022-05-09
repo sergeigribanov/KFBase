@@ -64,16 +64,4 @@ void nopt::Constraint::updateIndices() {
   for (const auto& el : getTargets()) {
     addIndices(el.second->getBeginIndex(), el.second->getN());
   }
-  for (const auto& name : getUsedCommonParameters()) {
-    if (getCommonParameters()->at(name)->isEnabled()) {
-      long endIndex = getCommonParameters()->at(name)->getBeginIndex() +
-                      getCommonParameters()->at(name)->getN();
-      for (long index = getCommonParameters()->at(name)->getBeginIndex();
-           index < endIndex; ++index) {
-        if (!getCommonParameters()->at(name)->isFixedParameter(index)) {
-          addIndex(index);
-        }
-      }
-    }
-  }
 }

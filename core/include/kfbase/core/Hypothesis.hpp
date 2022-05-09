@@ -33,8 +33,6 @@
 #define __KFBASE_HYPOTHESIS_HPP__
 
 #include <TLorentzVector.h>
-
-#include "kfbase/newtonian_opt/CommonParams.hpp"
 #include "kfbase/newtonian_opt/Constraint.hpp"
 #include "kfbase/newtonian_opt/Optimizer.hpp"
 #include <set>
@@ -101,16 +99,6 @@ namespace kfbase {
        * @param particleName (particle name)
        */
       const Eigen::MatrixXd& getParticleInverseCovarianceMatrix(const std::string&) const;
-      //! A getter for initial common parameters
-      /*!
-       * @param name (name of common parameters container)
-       */
-      const Eigen::VectorXd& getInitialCommonParameters(const std::string&) const;
-      //! A getter for final common parameters
-      /*!
-       * @param name (name of common parameters container)
-       */
-      const Eigen::VectorXd& getFinalCommonParameters(const std::string&) const;
       //! A particle initial momentum getter
       /*!
        * @param particleName (particle name)
@@ -121,14 +109,6 @@ namespace kfbase {
        * @param particleName (particle name)
        */
       const TLorentzVector& getFinalMomentum(const std::string&) const;
-      //! A getter for a common parameter container "enabled"/"disabled" status
-      /*!
-       * This method returns true for an enabled common parameter container
-       * and returns false otherwise.
-       *
-       * @param commonParamName (name of common parameter container)
-       */
-      bool isCommonParamContinerEnabled(const std::string&) const;
       //! A getter for a constraint "enabled"/"disabled" status
       /*!
        * This method returns true for an enabled constraint and returns
@@ -139,8 +119,6 @@ namespace kfbase {
       bool isConstraintEnabled(const std::string&) const;
       //! This method counts a number of enabled constraints
       int getNumberOfEnabledConstraints() const;
-      //! This method counts a number of enabled common parameter containers
-      int getNumberOfEnabledCommonParamContainers() const;
       //! This method returns an initial momentum for a set of particles
       /*!
        * @param particleNames (set of particle names)
@@ -165,16 +143,6 @@ namespace kfbase {
        * @param name (constraint name)
        */
       void disableConstraint(const std::string&);
-      //! A method used to enable common parameter container by name
-      /*!
-       * @param name (name of common parameter container)
-       */
-      void enableCommonParams(const std::string&);
-      //! A method used to disable common parameter container by name
-      /*!
-       * @param name (name of common parameter container)
-       */
-      void disableCommonParams(const std::string&);
       //! A method used to set an initial parameters of a particle
       /*!
        * @param name (particle name)
@@ -182,13 +150,6 @@ namespace kfbase {
        * @param params (particle parameters)
        */
       void setInitialParticleParams(const std::string&, const Eigen::VectorXd&);
-      //! A method used to set an initial parameters of a common parameter container
-      /*!
-       * @param name (name of common parameter container)
-       *
-       * @param params (parameters of common parameter container)
-       */
-      void setInitialCommonParams(const std::string&, const Eigen::VectorXd&);
       //! A particle inverse error matrix setter
       /*!
        * @param name (particle name)
@@ -213,11 +174,6 @@ namespace kfbase {
        * @param constraint (pointer to a constraint object)
        */
       void addConstraint(kfbase::newtonian_opt::Constraint*);
-      //! A method that used to add common parameter container
-      /*!
-       * @param commonParams (pointer to a common parameter container)
-       */
-      void addCommonParams(kfbase::newtonian_opt::CommonParams*);
       //! A method that used to add a constant
       /*!
        * @param name (name of a constant)
@@ -236,8 +192,6 @@ namespace kfbase {
       std::unordered_map<std::string, Particle*> _particles;
       //! An unordered map of constraints
       std::unordered_map<std::string, kfbase::newtonian_opt::Constraint*> _constraints;
-      //! An unordered map of common parameter containers
-      std::unordered_map<std::string, kfbase::newtonian_opt::CommonParams*> _commonParams;
       //! A CCGO optimizer object
       kfbase::newtonian_opt::Optimizer _opt;
     };

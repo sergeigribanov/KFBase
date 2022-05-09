@@ -69,9 +69,6 @@ namespace kfbase {
        * @param x (vector of parameters)
        */
       void setLambdaFinal(const Eigen::VectorXd&);
-      //! Disabling setter of common parameters
-      void setCommonParameters(std::unordered_map<std::string, CommonParams*>*) =
-        delete;
       //! Disabling setter of constants
       void setConstants(std::unordered_map<std::string, double>*) = delete;
       virtual void updateIndices() override;

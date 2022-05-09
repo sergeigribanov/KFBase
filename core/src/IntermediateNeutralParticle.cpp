@@ -103,28 +103,8 @@ core::IntermediateNeutralParticle::calcInputD2MomentumComponent(const Eigen::Vec
   return calcOutputD2MomentumComponent(x, component);
 }
 
-void core::IntermediateNeutralParticle::setVertexX(const std::string &name) {
-  auto it = getCommonParameters()->find(name);
-  if (it == getCommonParameters()->end()) {
-    // TO DO : exception
-  }
-  _vertexX = it->second;
-}
-
-void core::IntermediateNeutralParticle::setVertexY(const std::string &name) {
-  auto it = getCommonParameters()->find(name);
-  if (it == getCommonParameters()->end()) {
-    // TO DO : exception
-  }
-  _vertexY = it->second;
-}
-
-void core::IntermediateNeutralParticle::setVertexZ(const std::string &name) {
-  auto it = getCommonParameters()->find(name);
-  if (it == getCommonParameters()->end()) {
-    // TO DO : exception
-  }
-  _vertexZ = it->second;
+void core::IntermediateNeutralParticle::setOutputVertex(core::Vertex *vertex) {
+  vertex_ = vertex;
 }
 
 double core::IntermediateNeutralParticle::calcInputVertexComponent(const Eigen::VectorXd &x,
@@ -134,16 +114,16 @@ double core::IntermediateNeutralParticle::calcInputVertexComponent(const Eigen::
   // 2 - pz
   // 3 - t
   const long bi = getBeginIndex();
-  double result = 0.;
+  double result = vertex_->calcCartesianCoordinate(x, component);
   switch (component) {
   case kfbase::core::VERTEX_X:
-    result = x(_vertexX->getBeginIndex()) + x(bi) * x(bi + 3);
+    result += x(bi) * x(bi + 3);
     break;
   case kfbase::core::VERTEX_Y:
-    result = x(_vertexY->getBeginIndex()) + x(bi + 1) * x(bi + 3);
+    result += x(bi + 1) * x(bi + 3);
     break;
   case kfbase::core::VERTEX_Z:
-    result = x(_vertexZ->getBeginIndex()) + x(bi + 2) * x(bi + 3);
+    result += x(bi + 2) * x(bi + 3);
     break;
   }
 
@@ -162,22 +142,19 @@ Eigen::VectorXd core::IntermediateNeutralParticle::calcInputDVertexComponent(con
   // 2 - pz
   // 3 - t
   const long bi = getBeginIndex();
-  Eigen::VectorXd result = Eigen::VectorXd::Zero(x.size());
+  Eigen::VectorXd result = vertex_->calcDCartesianCoordinate(x, component);
   switch (component) {
   case kfbase::core::VERTEX_X:
-    result(_vertexX->getBeginIndex()) = 1.;
-    result(bi) = x(bi + 3);
-    result(bi + 3) = x(bi);
+    result(bi) += x(bi + 3);
+    result(bi + 3) += x(bi);
     break;
   case kfbase::core::VERTEX_Y:
-    result(_vertexY->getBeginIndex()) = 1.;
-    result(bi + 1) = x(bi + 3);
-    result(bi + 3) = x(bi + 1);
+    result(bi + 1) += x(bi + 3);
+    result(bi + 3) += x(bi + 1);
     break;
   case kfbase::core::VERTEX_Z:
-    result(_vertexZ->getBeginIndex()) = 1.;
-    result(bi + 2) = x(bi + 3);
-    result(bi + 3) = x(bi + 2);
+    result(bi + 2) += x(bi + 3);
+    result(bi + 3) += x(bi + 2);
     break;
   }
   return result;
@@ -195,19 +172,19 @@ Eigen::MatrixXd core::IntermediateNeutralParticle::calcInputD2VertexComponent(co
     // 2 - pz
     // 3 - t
     const long bi = getBeginIndex();
-    Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
+    Eigen::MatrixXd result = vertex_->calcD2CartesianCoordinate(x, component);
     switch (component) {
     case kfbase::core::VERTEX_X:
-      result(bi, bi + 3) = 1.;
-      result(bi + 3, bi) = 1.;
+      result(bi, bi + 3) += 1.;
+      result(bi + 3, bi) += 1.;
       break;
     case kfbase::core::VERTEX_Y:
-      result(bi + 1, bi + 3) = 1.;
-      result(bi + 3, bi + 1) = 1.;
+      result(bi + 1, bi + 3) += 1.;
+      result(bi + 3, bi + 1) += 1.;
       break;
     case kfbase::core::VERTEX_Z:
-      result(bi + 2, bi + 3) = 1.;
-      result(bi + 3, bi + 2) = 1.;
+      result(bi + 2, bi + 3) += 1.;
+      result(bi + 3, bi + 2) += 1.;
       break;
   }
   return result;

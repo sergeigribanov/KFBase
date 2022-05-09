@@ -47,9 +47,6 @@ core::Hypothesis::~Hypothesis() {
   for (auto& el : _constraints) {
     delete el.second;
   }
-  for (auto& el : _commonParams) {
-    delete el.second;
-  }
 }
 
 int core::Hypothesis::getErrorCode() const { return _opt.getErrorCode(); }
@@ -91,21 +88,6 @@ double core::Hypothesis::getFinalLagrangeMultiplier(
 const Eigen::MatrixXd& core::Hypothesis::getParticleInverseCovarianceMatrix(
     const std::string& particleName) const {
   return _particles.at(particleName)->getInverseCovarianceMatrix();
-}
-
-const Eigen::VectorXd& core::Hypothesis::getInitialCommonParameters(
-    const std::string& name) const {
-  return _opt.getCommonParameters(name)->getInitialParameters();
-}
-
-const Eigen::VectorXd& core::Hypothesis::getFinalCommonParameters(
-    const std::string& name) const {
-  return _opt.getCommonParameters(name)->getFinalParameters();
-}
-
-void core::Hypothesis::setInitialCommonParams(const std::string& name,
-                                                const Eigen::VectorXd& params) {
-  _opt.setCommonParameters(name, params);
 }
 
 const TLorentzVector& core::Hypothesis::getInitialMomentum(
@@ -156,14 +138,6 @@ void core::Hypothesis::disableConstraint(const std::string& name) {
   _opt.disableConstraint(name);
 }
 
-void core::Hypothesis::enableCommonParams(const std::string& name) {
-  _opt.enableCommonParams(name);
-}
-
-void core::Hypothesis::disableCommonParams(const std::string& name) {
-  _opt.disableCommonParams(name);
-}
-
 core::Particle* core::Hypothesis::getParticle(const std::string& name) const {
   return _particles.at(name);
 }
@@ -178,11 +152,6 @@ void core::Hypothesis::addConstraint(nopt::Constraint* constraint) {
   _opt.addConstraint(constraint);
 }
 
-void core::Hypothesis::addCommonParams(nopt::CommonParams* commonParams) {
-  _commonParams.insert(std::make_pair(commonParams->getName(), commonParams));
-  _opt.addCommonParams(commonParams);
-}
-
 void core::Hypothesis::addConstant(const std::string& name, double value) {
   _opt.setConstant(name, value);
 }
@@ -194,15 +163,6 @@ void core::Hypothesis::addParticleToConstraint(
 
 int core::Hypothesis::getNumberOfEnabledConstraints() const {
   return _opt.getNumberOfEnabledConstraints();
-}
-
-int core::Hypothesis::getNumberOfEnabledCommonParamContainers() const {
-  return _opt.getNumberOfEnabledCommonParamContainers();
-}
-
-bool core::Hypothesis::isCommonParamContinerEnabled(
-    const std::string& commonParamName) const {
-  return _opt.isCommonParamContainerEnabled(commonParamName);
 }
 
 bool core::Hypothesis::isConstraintEnabled(

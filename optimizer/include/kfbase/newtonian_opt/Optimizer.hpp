@@ -32,8 +32,6 @@
 #ifndef __CCGO_OPTIMIZER_HPP__
 #define __CCGO_OPTIMIZER_HPP__
 #include <set>
-
-#include "kfbase/newtonian_opt/CommonParams.hpp"
 #include "kfbase/newtonian_opt/Constraint.hpp"
 #include "kfbase/newtonian_opt/TargetFunction.hpp"
 
@@ -104,11 +102,6 @@ namespace kfbase {
        */
       const Eigen::VectorXd& getFinalParameters(const std::string&) const
         noexcept(false);
-      //! A getter for common parameters
-      /*!
-       * @param name (name of common parameters container)
-       */
-      const CommonParams* getCommonParameters(const std::string&) const;
       //! A getter for "enabled"/"disabled" status of a target function
       bool isCommonParamContainerEnabled(const std::string&) const;
       //! A getter for "enabled"/"disabled" status of a common parameters container
@@ -135,11 +128,6 @@ namespace kfbase {
        * @param obj (constraint pointer)
        */
       void addConstraint(Constraint*) noexcept(false);
-      //! A method used to add common parameter container to optimizer
-      /*!
-       * @param obj (common parameter container pointer)
-       */
-      void addCommonParams(CommonParams*) noexcept(false);
       //! A method used to add target function to constraint
       /*!
        * @param targetFunctionName (target function name)
@@ -184,16 +172,6 @@ namespace kfbase {
        * @param name (constraint name)
        */
       void disableConstraint(const std::string&) noexcept(false);
-      //! A method that enables common parameter container by name
-      /*!
-       * @param name (name of a common parameter container)
-       */
-      void enableCommonParams(const std::string&) noexcept(false);
-      //! A method that disables common parameter container by name
-      /*!
-       * @param name (name of a common parameter container)
-       */
-      void disableCommonParams(const std::string&) noexcept(false);
       void setTolerance(double);
       void setMaxNumberOfIterations(long);
       void prepare();
@@ -269,9 +247,7 @@ namespace kfbase {
       std::unordered_map<std::string, TargetFunction*> _targets;
       //! An unordered map of constraints
       std::unordered_map<std::string, Constraint*> _constraints;
-      //! An unordered map of common parameter containers
-      std::unordered_map<std::string, CommonParams*> _commonParams;
-      //! An unordered map of containers
+      //! An unordered map of constraints
       std::unordered_map<std::string, double> _constants;
     };
   }  // namespace newtonian_opt

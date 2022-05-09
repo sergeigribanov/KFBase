@@ -1,7 +1,6 @@
 #ifndef __KFBASE_INTERMEDIATE_NEUTRAL_PARTICLE_HPP__
 #define __KFBASE_INTERMEDIATE_NEUTRAL_PARTICLE_HPP__
 
-#include "VertexParticle.hpp"
 #include "kfbase/core/VertexParticle.hpp"
 
 namespace kfbase {
@@ -34,14 +33,9 @@ namespace kfbase {
                                                           kfbase::core::VERTEX_COMPONENT) const override final;
       virtual Eigen::MatrixXd calcInputD2VertexComponent(const Eigen::VectorXd &,
                                                          kfbase::core::VERTEX_COMPONENT) const override final;
-      void setVertexX(const std::string &);
-      void setVertexY(const std::string &);
-      void setVertexZ(const std::string &);
-
+      void setOutputVertex(Vertex *);
     private:
-      kfbase::newtonian_opt::CommonParams *_vertexX;
-      kfbase::newtonian_opt::CommonParams *_vertexY;
-      kfbase::newtonian_opt::CommonParams *_vertexZ;
+      Vertex* vertex_;
     };
   } // namespace core
 } // namespace kfbase

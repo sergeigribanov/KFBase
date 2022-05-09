@@ -33,8 +33,6 @@
 #define __NAME_EXCEPTION_HPP__
 
 #include <string>
-
-#include "kfbase/newtonian_opt/CommonParams.hpp"
 #include "kfbase/newtonian_opt/Constraint.hpp"
 #include "kfbase/newtonian_opt/TargetFunction.hpp"
 
@@ -65,8 +63,6 @@ namespace kfbase {
     template class NameException<TargetFunction>;
     //! A name exception for constraints
     template class NameException<Constraint>;
-    //! A name exception for common parameters
-    template class NameException<CommonParams>;
 
     template <class T>
     NameException<T>::NameException(const std::string& name) : _name(name) {}
@@ -84,14 +80,6 @@ namespace kfbase {
     template <>
     std::string NameException<Constraint>::what() const {
       std::string result = "[ERROR] There is no constraint with such name: ";
-      result.append(_name);
-      return result;
-    }
-
-    template <>
-    std::string NameException<CommonParams>::what() const {
-      std::string result =
-        "[ERROR] There is no common params container with such name: ";
       result.append(_name);
       return result;
     }

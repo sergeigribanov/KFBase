@@ -98,7 +98,6 @@ const Eigen::VectorXd& nopt::Optimizer::getFinalParameters(
 
 void nopt::Optimizer::addTarget(nopt::TargetFunction* obj) noexcept(false) {
   if (_targets.find(obj->getName()) == _targets.end()) {
-    obj->setCommonParameters(&_commonParams);
     obj->setConstants(&_constants);
     _targets.insert(std::make_pair(obj->getName(), obj));
     obj->setBeginIndex(_n);
@@ -112,7 +111,6 @@ void nopt::Optimizer::addTarget(nopt::TargetFunction* obj) noexcept(false) {
 
 void nopt::Optimizer::addConstraint(nopt::Constraint* obj) noexcept(false) {
   if (_constraints.find(obj->getName()) == _constraints.end()) {
-    obj->setCommonParameters(&_commonParams);
     obj->setConstants(&_constants);
     _constraints.insert(std::make_pair(obj->getName(), obj));
   } else {
@@ -212,14 +210,6 @@ Eigen::VectorXd nopt::Optimizer::df(const Eigen::VectorXd& x) const {
       result(idx) = 0;
     }
   }
-  for (const auto& el : _commonParams) {
-    if (el.second->isEnabled()) {
-      for (long index : el.second->getFixedParamIndices()) {
-        long idx = el.second->getBeginIndex() + index;
-        result(idx) = 0;
-      }
-    }
-  }
   return result;
 }
 
@@ -242,16 +232,6 @@ Eigen::MatrixXd nopt::Optimizer::d2f(const Eigen::VectorXd& x) const {
       result.row(idx).setZero();
       result.col(idx).setZero();
       result(idx, idx) = 1;
-    }
-  }
-  for (const auto& el : _commonParams) {
-    if (el.second->isEnabled()) {
-      for (long index : el.second->getFixedParamIndices()) {
-        long idx = el.second->getBeginIndex() + index;
-        result.row(idx).setZero();
-        result.col(idx).setZero();
-        result(idx, idx) = 1;
-      }
     }
   }
   return result;
@@ -302,12 +282,6 @@ void nopt::Optimizer::checkLimits(Eigen::VectorXd* x) const {
       flag = flag || el.second->checkLimits(x);
     }
   }
-  for (const auto& el : _commonParams) {
-    if (el.second->isEnabled() && el.second->haveLimits()) {
-      flag = flag ||  el.second->checkLimits(x);
-    }
-  }
-
   if (flag) {
     for (const auto& el : _constraints) {
       if (el.second->isEnabled()) {
@@ -324,11 +298,6 @@ void nopt::Optimizer::checkLimits(Eigen::VectorXd* x) const {
 void nopt::Optimizer::checkPeriodical(Eigen::VectorXd* x) const {
   for (const auto& el : _targets) {
     if (el.second->havePeriodical()) {
-      el.second->checkPeriodical(x);
-    }
-  }
-  for (const auto& el : _commonParams) {
-    if (el.second->isEnabled() && el.second->havePeriodical()) {
       el.second->checkPeriodical(x);
     }
   }
@@ -367,11 +336,6 @@ void nopt::Optimizer::onFitEnd(const Eigen::VectorXd& x) {
     el.second->setFinalParameters(x);
     el.second->onFitEnd(x);
   }
-  for (auto& el : _commonParams) {
-    if (el.second->isEnabled()) {
-      el.second->setFinalParameters(x);
-    }
-  }
   for (auto& el : _constraints) {
     if (el.second->isEnabled()) {
       auto lc = dynamic_cast<nopt::LagrangeConstraint*>(el.second);
@@ -387,13 +351,6 @@ void nopt::Optimizer::decIndicies(long index, long n) {
   for (auto& el : _targets) {
     if (el.second->getBeginIndex() > index) {
       el.second->setBeginIndex(el.second->getBeginIndex() - n);
-    }
-  }
-  for (auto& el : _commonParams) {
-    if (el.second->isEnabled()) {
-      if (el.second->getBeginIndex() > index) {
-        el.second->setBeginIndex(el.second->getBeginIndex() - n);
-      }
     }
   }
   for (auto& el : _constraints) {
@@ -415,12 +372,6 @@ Eigen::VectorXd nopt::Optimizer::getBeginParameterVector() const {
                    el.second->getN()) =
         el.second->getBeginParameters();
   }
-  for (const auto& el : _commonParams) {
-    if (el.second->isEnabled()) {
-      result.segment(el.second->getBeginIndex(), el.second->getN()) =
-          el.second->getBeginParameters();
-    }
-  }
   for (const auto& el : _constraints) {
     if (el.second->isEnabled()) {
       auto lc = dynamic_cast<nopt::LagrangeConstraint*>(el.second);
@@ -430,64 +381,6 @@ Eigen::VectorXd nopt::Optimizer::getBeginParameterVector() const {
     }
   }
   return result;
-}
-
-void nopt::Optimizer::addCommonParams(nopt::CommonParams* obj) noexcept(false) {
-  if (_commonParams.find(obj->getName()) == _commonParams.end()) {
-    _commonParams.insert(std::make_pair(obj->getName(), obj));
-  } else {
-    nopt::NameException<nopt::CommonParams> e(obj->getName());
-    std::cerr << e.what() << std::endl;
-    throw(e);
-  }
-}
-
-void nopt::Optimizer::setCommonParameters(
-    const std::string& name, const Eigen::VectorXd& params) noexcept(false) {
-  auto it = _commonParams.find(name);
-  if (it == _commonParams.end()) {
-    nopt::NameException<nopt::TargetFunction> e(name);
-    std::cerr << e.what() << std::endl;
-    throw(e);
-  }
-  it->second->setInitialParameters(params);
-}
-
-void nopt::Optimizer::enableCommonParams(const std::string& name) noexcept(
-    false) {
-  auto it = _commonParams.find(name);
-  if (it != _commonParams.end()) {
-    if (!it->second->isEnabled()) {
-      it->second->enable();
-      it->second->setBeginIndex(_n);
-      _n += it->second->getN();
-    }
-  } else {
-    nopt::NameException<nopt::CommonParams> e(name);
-    std::cerr << e.what() << std::endl;
-    throw(e);
-  }
-}
-
-void nopt::Optimizer::disableCommonParams(const std::string& name) noexcept(
-    false) {
-  auto it = _commonParams.find(name);
-  if (it != _commonParams.end()) {
-    if (it->second->isEnabled()) {
-      it->second->disable();
-      _n -= it->second->getN();
-      decIndicies(it->second->getBeginIndex(), it->second->getN());
-    }
-  } else {
-    nopt::NameException<nopt::CommonParams> e(name);
-    std::cerr << e.what() << std::endl;
-    throw(e);
-  }
-}
-
-const nopt::CommonParams* nopt::Optimizer::getCommonParameters(
-    const std::string& name) const {
-  return _commonParams.at(name);
 }
 
 double nopt::Optimizer::getConstant(const std::string& name) const {
@@ -512,21 +405,6 @@ int nopt::Optimizer::getNumberOfEnabledConstraints() const {
     }
   }
   return result;
-}
-
-int nopt::Optimizer::getNumberOfEnabledCommonParamContainers() const {
-  int result = 0;
-  for (const auto& el : _commonParams) {
-    if (el.second->isEnabled()) {
-      result++;
-    }
-  }
-  return result;
-}
-
-bool nopt::Optimizer::isCommonParamContainerEnabled(
-    const std::string& commonParamName) const {
-  return _commonParams.at(commonParamName)->isEnabled();
 }
 
 bool nopt::Optimizer::isConstraintEnabled(

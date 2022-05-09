@@ -37,8 +37,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "kfbase/newtonian_opt/CommonParams.hpp"
-
 namespace kfbase {
   namespace newtonian_opt {
     /**
@@ -77,14 +75,6 @@ namespace kfbase {
       virtual Eigen::MatrixXd d2f(const Eigen::VectorXd& x,
                                   bool = false) const = 0;
       /*!
-       * This method assigns an unordered map of common parameter pointers.
-       * Key value of a map is a name of a common parameter container.
-       *
-       * @param params (unordered map of common parameter pointers)
-       *
-       */
-      void setCommonParameters(std::unordered_map<std::string, CommonParams*>*);
-      /*!
        * This method assigns an unordered map of constants.
        * Key value of a map is a name of a constant.
        *
@@ -93,8 +83,6 @@ namespace kfbase {
        */
       void setConstants(std::unordered_map<std::string, double>*);
       virtual void updateIndices() = 0;
-      void includeUsedCommonParameter(const std::string&);
-      void excludeUsedCommonParameter(const std::string&);
       void updateValue(const Eigen::VectorXd&);
 
     protected:
@@ -107,26 +95,16 @@ namespace kfbase {
       const Eigen::VectorXd& getCurDF() const;
       const Eigen::MatrixXd& getCurD2F() const;
       /*!
-       * This method returns pointer to unordered map of common parameter pointers
-       */
-      std::unordered_map<std::string, CommonParams*>* getCommonParameters() const;
-      /*!
        * This method returns pointer to unordered map of constants
        */
       std::unordered_map<std::string, double>* getConstants() const;
       const std::unordered_set<long>& getIndices() const;
-      const std::unordered_set<std::string>& getUsedCommonParameters() const;
 
     private:
-      /*!
-       * Unordered map of common parameter pointers
-       */
-      std::unordered_map<std::string, CommonParams*>* _commonParams;
       /*!
        * Unordered map of constant pointers
        */
       std::unordered_map<std::string, double>* _constants;
-      std::unordered_set<std::string> _usedCommonParams;
       std::unordered_set<long> _indices;
       double _cur_f;
       Eigen::VectorXd _cur_df;
