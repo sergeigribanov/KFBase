@@ -53,18 +53,5 @@ Eigen::MatrixXd VertexXYZ::calcD2CartesianCoordinate(const Eigen::VectorXd &x,
   // 0 --- x,
   // 1 --- y,
   // 2 --- z
-  const long bi = getBeginIndex();
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(x.size(), x.size());
-  switch (component) {
-  case VERTEX_X:
-    result(bi, bi) = 1.;
-    break;
-  case VERTEX_Y:
-    result(bi + 1, bi + 1) = 1.;
-    break;
-  case VERTEX_Z:
-    result(bi + 2, bi + 2) = 1.;
-    break;
-  }
-  return result;
+  return Eigen::MatrixXd::Zero(x.size(), x.size());
 }

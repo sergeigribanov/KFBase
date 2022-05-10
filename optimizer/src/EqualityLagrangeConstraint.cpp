@@ -51,11 +51,6 @@ double nopt::EqualityLagrangeConstraint::f(const Eigen::VectorXd& x, bool recalc
 }
 
 double nopt::EqualityLagrangeConstraint::calcResidual(const Eigen::VectorXd& x) const {
-  // if (getName() == "#ks-constraint-x") {
-  //   std::setprecision(9);
-  //   std::cout << "res = " << std::fabs(h(x) - _constraintValue) << std::endl;
-  //   std::cout << "(h, cval) = (" << h(x) << ", " << _constraintValue << ")" << std::endl;
-  // }
   return std::fabs(h(x) - _constraintValue);
 }
 

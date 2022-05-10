@@ -151,7 +151,31 @@ void core::Hypothesis::setVertexInverseCovarianceMatrix(
   vertices_.at(name)->setInverseCovarianceMatrix(matrix);
 }
 
-void core::Hypothesis::optimize() { _opt.optimize(); }
+void core::Hypothesis::fixParticleParameter(const std::string &name,
+                                            long index,
+                                            double value) {
+  _particles.at(name)->fixParameter(index, value);
+}
+
+void core::Hypothesis::fixVertexParameter(const std::string &name,
+                                          long index,
+                                          double value) {
+  vertices_.at(name)->fixParameter(index, value);
+}
+
+void core::Hypothesis::releaseParticleParameter(const std::string &name,
+                                                long index) {
+  _particles.at(name)->releaseParameter(index);
+}
+
+void core::Hypothesis::releaseVertexParameter(const std::string &name,
+                                              long index) {
+  vertices_.at(name)->releaseParameter(index);
+}
+
+void core::Hypothesis::optimize() {
+  _opt.optimize();
+}
 
 void core::Hypothesis::enableConstraint(const std::string& name) {
   _opt.enableConstraint(name);
@@ -163,6 +187,10 @@ void core::Hypothesis::disableConstraint(const std::string& name) {
 
 core::Particle* core::Hypothesis::getParticle(const std::string& name) const {
   return _particles.at(name);
+}
+
+core::Vertex *core::Hypothesis::getVertex(const std::string &name) const {
+  return vertices_.at(name);
 }
 
 void core::Hypothesis::addParticle(core::Particle* particle) {

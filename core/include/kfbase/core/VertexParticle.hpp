@@ -101,8 +101,8 @@ namespace kfbase {
       virtual Eigen::MatrixXd
       calcInputD2VertexComponent(const Eigen::VectorXd &x,
                                  VERTEX_COMPONENT component) const = 0;
-      virtual void onFitBegin(const Eigen::VectorXd&) override final;
-      virtual void onFitEnd(const Eigen::VectorXd&) override final;
+      virtual void onFitBegin(const Eigen::VectorXd&) override;
+      virtual void onFitEnd(const Eigen::VectorXd&) override;
 
     protected:
       //! An initial vertex of a particle

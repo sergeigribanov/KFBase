@@ -172,7 +172,8 @@ double nopt::Optimizer::calcResidual(const Eigen::VectorXd& x) const {
       // !!! avoid casts
       const auto cnt = dynamic_cast<nopt::EqualityLagrangeConstraint*>(el.second);
       if (cnt) {
-        result += cnt->calcResidual(x);
+        result +=
+            cnt->calcResidual(x);
       }
     }
   }
@@ -285,10 +286,10 @@ void nopt::Optimizer::checkLimits(Eigen::VectorXd* x) const {
   if (flag) {
     for (const auto& el : _constraints) {
       if (el.second->isEnabled()) {
-  	auto lc = dynamic_cast<nopt::LagrangeConstraint*>(el.second);
-  	if (lc) {
-  	  (*x)(lc->getLambdaIndex()) = 0;
-  	}
+        auto lc = dynamic_cast<nopt::LagrangeConstraint*>(el.second);
+        if (lc) {
+          (*x)(lc->getLambdaIndex()) = 0;
+        }
       }
     }
   }
@@ -314,7 +315,7 @@ void nopt::Optimizer::optimize() {
     checkLimits(&x);
     checkPeriodical(&x);
     if (std::fabs(calcTargetValue(x) - calcTargetValue(xp)) < _tol &&
-	calcResidual(x) < _tol) {
+        calcResidual(x) < _tol) {
       onFitEnd(x);
       _errorCode = 0;
       return;

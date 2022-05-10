@@ -105,8 +105,9 @@ bool nopt::ParamContainer::checkLimits(Eigen::VectorXd* x) const {
       continue;
     }
     index = _beginIndex + el.first;
-    if ((*x)[index] < el.second) {
-      (*x)[index] = _xBegin(el.first);
+    if ((*x)(index) < el.second) {
+      (*x)(index) =
+          _xBegin(el.first);
       result = true;
     }
   }
@@ -115,8 +116,8 @@ bool nopt::ParamContainer::checkLimits(Eigen::VectorXd* x) const {
       continue;
     }
     index = _beginIndex + el.first;
-    if ((*x)[index] > el.second) {
-       (*x)[index] = _xBegin(el.first);
+    if ((*x)(index) > el.second) {
+      (*x)(index) = _xBegin(el.first);
        result = true;
     }
   }

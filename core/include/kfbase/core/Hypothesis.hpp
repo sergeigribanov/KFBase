@@ -139,6 +139,8 @@ namespace kfbase {
       TLorentzVector getFinalMomentum(const std::set<std::string>&) const;
       long getMaxNumberOfIterations() const;
       double getTolerance() const;
+      Particle *getParticle(const std::string &) const;
+      Vertex* getVertex(const std::string&) const;
       void setMaxNumberOfIterations(long);
       void setTolerance(double);
       //! A method used to enable constraint by name
@@ -169,12 +171,16 @@ namespace kfbase {
                                          const Eigen::MatrixXd&);
       void setVertexInverseCovarianceMatrix(const std::string&,
                                             const Eigen::MatrixXd&);
+
+      void fixParticleParameter(const std::string&, long, double);
+      void fixVertexParameter(const std::string&, long, double);
+      void releaseParticleParameter(const std::string&, long);
+      void releaseVertexParameter(const std::string&, long);
       void prepare();
       //! A method that starts optimization
       void optimize();
 
     protected:
-      Particle* getParticle(const std::string &) const;
       //! A method that used to add a particle
       /*!
        * @param particle (pointer to a particle object)
