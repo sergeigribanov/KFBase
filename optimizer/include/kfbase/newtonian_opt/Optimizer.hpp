@@ -175,6 +175,7 @@ namespace kfbase {
       void setTolerance(double);
       void setMaxNumberOfIterations(long);
       void prepare();
+      void updateInitialParams();
       //! A method that starts optimization
       void optimize();
       void updateValues(const Eigen::VectorXd&);

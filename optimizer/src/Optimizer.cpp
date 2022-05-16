@@ -304,6 +304,11 @@ void nopt::Optimizer::checkPeriodical(Eigen::VectorXd* x) const {
   }
 }
 
+void nopt::Optimizer::updateInitialParams() {
+  Eigen::VectorXd x = getBeginParameterVector();
+  onFitBegin(x);
+}
+
 void nopt::Optimizer::optimize() {
   Eigen::VectorXd x = getBeginParameterVector();
   onFitBegin(x);

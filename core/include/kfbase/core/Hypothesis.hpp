@@ -177,8 +177,9 @@ namespace kfbase {
       void releaseParticleParameter(const std::string&, long);
       void releaseVertexParameter(const std::string&, long);
       void prepare();
-      //! A method that starts optimization
-      void optimize();
+      void updateInitialParams();
+          //! A method that starts optimization
+          void optimize();
 
     protected:
       //! A method that used to add a particle

@@ -173,6 +173,10 @@ void core::Hypothesis::releaseVertexParameter(const std::string &name,
   vertices_.at(name)->releaseParameter(index);
 }
 
+void core::Hypothesis::updateInitialParams() {
+  _opt.updateInitialParams();
+}
+
 void core::Hypothesis::optimize() {
   _opt.optimize();
 }
