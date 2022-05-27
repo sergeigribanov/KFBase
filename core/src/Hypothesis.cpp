@@ -51,9 +51,9 @@ core::Hypothesis::~Hypothesis() {
 
 int core::Hypothesis::getErrorCode() const { return _opt.getErrorCode(); }
 
-double core::Hypothesis::getChiSquare() const {
-  return _opt.getTargetValue();
-}
+double core::Hypothesis::getChiSquare() const { return _opt.getTargetValue(); }
+
+double core::Hypothesis::getdxTHdx() const {return _opt.getdxTHdx();}
 
 double core::Hypothesis::getChiSquare(
     const std::set<std::string>& names) const {

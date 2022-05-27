@@ -238,6 +238,20 @@ Eigen::MatrixXd nopt::Optimizer::d2f(const Eigen::VectorXd& x) const {
   return result;
 }
 
+Eigen::VectorXd nopt::Optimizer::calcDParams(const Eigen::VectorXd& x) const {
+  Eigen::VectorXd result = Eigen::VectorXd::Zero(x.size());
+  for (const auto &el : _targets) {
+    long bi = el.second->getBeginIndex();
+    long n = el.second->getN();
+    result.segment(bi, n) = x.segment(bi, n) - el.second->getInitialParameters();
+  }
+  return result;
+}
+
+double nopt::Optimizer::getdxTHdx() const {
+  return _dxTHdx;
+}
+
 void nopt::Optimizer::enableConstraint(const std::string& name) noexcept(
     false) {
   auto it = _constraints.find(name);
@@ -323,11 +337,15 @@ void nopt::Optimizer::optimize() {
         calcResidual(x) < _tol) {
       onFitEnd(x);
       _errorCode = 0;
+      Eigen::VectorXd dx = calcDParams(x);
+      _dxTHdx = dx.dot(d2f(x) * dx);
       return;
     }
   }
   onFitEnd(x);
   _errorCode = 1;
+  Eigen::VectorXd dx = calcDParams(x);
+  _dxTHdx = dx.dot(d2f(x) * dx);
   return;
 }
 

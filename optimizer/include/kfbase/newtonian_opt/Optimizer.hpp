@@ -88,6 +88,7 @@ namespace kfbase {
        *
        */
       double getTargetValue(const std::set<std::string>&) const;
+      double getdxTHdx() const;
       long getMaxNumberOfIterations() const;
       double getTolerance() const;
       //! A getter for initial parameters of a target function
@@ -118,11 +119,12 @@ namespace kfbase {
        * @param name (constant name)
        */
       double getConstant(const std::string&) const;
-      //! A method used to add target function to optimizer
-      /*!
-       * @param obj (target function pointer)
-       */
-      void addTarget(TargetFunction*) noexcept(false);
+      Eigen::VectorXd calcDParams(const Eigen::VectorXd &x) const;
+          //! A method used to add target function to optimizer
+          /*!
+           * @param obj (target function pointer)
+           */
+          void addTarget(TargetFunction *) noexcept(false);
       //! A method used to add constraint to optimizer
       /*!
        * @param obj (constraint pointer)
@@ -244,6 +246,7 @@ namespace kfbase {
       double _targetValue;
       //! An error code is 0 in the case of fit convergence and false otherwise
       int _errorCode;
+      double _dxTHdx;
       //! An unordered map of target functions
       std::unordered_map<std::string, TargetFunction*> _targets;
       //! An unordered map of constraints

@@ -70,13 +70,14 @@ namespace kfbase {
        * This method returns a total chi-square value.
        */
       double getChiSquare() const;
+      double getdxTHdx() const;
       //! A particle / vertex chi-square getter
       /*!
        * This method returns a value of a particle / vertex chi-square.
        *
        * @param particleName (particle / vertex name)
        */
-      double getChiSquare(const std::string&) const;
+      double getChiSquare(const std::string &) const;
       //! A chi-square getter for a set of particles and vertices
       /*!
        * This method returns a chi-square value for a set of particles and vertices.
