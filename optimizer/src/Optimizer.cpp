@@ -336,9 +336,13 @@ void nopt::Optimizer::optimize() {
     if (std::fabs(calcTargetValue(x) - calcTargetValue(xp)) < _tol &&
         calcResidual(x) < _tol) {
       onFitEnd(x);
-      _errorCode = 0;
       Eigen::VectorXd dx = calcDParams(x);
       _dxTHdx = dx.dot(d2f(x) * dx);
+      if (_dxTHdx > 0.) {
+        _errorCode = 0;
+      } else {
+        _errorCode = 2.;
+      }
       return;
     }
   }
