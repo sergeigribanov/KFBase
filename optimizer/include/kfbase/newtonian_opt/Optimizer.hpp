@@ -49,7 +49,7 @@ namespace kfbase {
        * @param tolerance (optimization tolerance)
        *
        */
-      Optimizer(long = 20, double = 1.e-3);
+      Optimizer(long = 20, double = 1.e-4);
       //! A destructor
       virtual ~Optimizer();
       //! A getter for total number of parameters
