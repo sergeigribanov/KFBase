@@ -222,11 +222,17 @@ Eigen::MatrixXd nopt::Optimizer::d2f(const Eigen::VectorXd& x) const {
                  el.second->getN(), el.second->getN()) +=
       el.second->d2f(x.segment(el.second->getBeginIndex(), el.second->getN()));
   }
-  // for (const auto& el : _constraints) {
-  //   if (el.second->isEnabled()) {
-  //     result += el.second->d2f(x);
-  //   }
-  // }
+  for (const auto& el : _constraints) {
+    if (el.second->isEnabled()) {
+      auto lc = dynamic_cast<nopt::LagrangeConstraint *>(el.second);
+      Eigen::MatrixXd td2f = el.second->d2f(x);
+      Eigen::MatrixXd newTd2f = Eigen::MatrixXd::Zero(x.size(), x.size());
+      newTd2f.row(lc->getLambdaIndex()) = td2f.row(lc->getLambdaIndex());
+      newTd2f.col(lc->getLambdaIndex()) = td2f.col(lc->getLambdaIndex());
+      newTd2f(lc->getLambdaIndex(), lc->getLambdaIndex()) = 0.;
+      result += newTd2f;
+    }
+  }
   for (const auto& el : _targets) {
     for (long index : el.second->getFixedParamIndices()) {
       long idx = el.second->getBeginIndex() + index;
