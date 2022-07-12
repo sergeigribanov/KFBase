@@ -222,11 +222,11 @@ Eigen::MatrixXd nopt::Optimizer::d2f(const Eigen::VectorXd& x) const {
                  el.second->getN(), el.second->getN()) +=
       el.second->d2f(x.segment(el.second->getBeginIndex(), el.second->getN()));
   }
-  for (const auto& el : _constraints) {
-    if (el.second->isEnabled()) {
-      result += el.second->d2f(x);
-    }
-  }
+  // for (const auto& el : _constraints) {
+  //   if (el.second->isEnabled()) {
+  //     result += el.second->d2f(x);
+  //   }
+  // }
   for (const auto& el : _targets) {
     for (long index : el.second->getFixedParamIndices()) {
       long idx = el.second->getBeginIndex() + index;
