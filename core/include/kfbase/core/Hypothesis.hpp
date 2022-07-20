@@ -184,6 +184,7 @@ namespace kfbase {
 
       int getRankJ() const;
       int getRankM() const;
+      int getRankO() const;
 
     protected:
       //! A method that used to add a particle

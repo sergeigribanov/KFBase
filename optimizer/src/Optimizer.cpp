@@ -345,6 +345,7 @@ void nopt::Optimizer::optimize() {
       }
       rank_j_ = rank_(d2f(x).block(_n - m_c(), 0, m_c(), _n - m_c()));
       rank_m_ = rank_(d2f(x).block(0, 0, _n - m_c(), _n - m_c()));
+      rank_o_ = rank_(d2f(x).block(_n - m_c(), _n - m_c(), m_c(), m_c()));
       return;
     }
   }
@@ -354,6 +355,7 @@ void nopt::Optimizer::optimize() {
   _dxTHdx = dx.dot(d2f(x) * dx);
   rank_j_ = rank_(d2f(x).block(_n - m_c(), 0, m_c(), _n - m_c()));
   rank_m_ = rank_(d2f(x).block(0, 0, _n - m_c(), _n - m_c()));
+  rank_o_ = rank_(d2f(x).block(_n - m_c(), _n - m_c(), m_c(), m_c()));
   return;
 }
 
@@ -363,12 +365,12 @@ int nopt::Optimizer::rank_(const Eigen::MatrixXd& mx) const {
 }
 
 int nopt::Optimizer::getRankJ() const {
-  return rank_j_; 
+  return rank_j_;
 }
 
-int nopt::Optimizer::getRankM() const {
-  return rank_m_;
-}
+int nopt::Optimizer::getRankM() const { return rank_m_; }
+
+int nopt::Optimizer::getRankO() const { return rank_o_; }
 
 long nopt::Optimizer::m_c() const {
   long result = 0;

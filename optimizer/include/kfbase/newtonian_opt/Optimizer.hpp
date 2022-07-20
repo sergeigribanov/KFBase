@@ -184,6 +184,7 @@ namespace kfbase {
 
       int getRankJ() const;
       int getRankM() const;
+      int getRankO() const;
     private:
       //! A method used to claculate target value
       /*!
@@ -259,6 +260,7 @@ namespace kfbase {
       long m_c() const;
       int rank_j_;
       int rank_m_;
+      int rank_o_;
     };
   }  // namespace newtonian_opt
 } // namespace kfbase
