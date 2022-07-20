@@ -182,6 +182,7 @@ namespace kfbase {
           //! A method that starts optimization
           void optimize();
 
+      Eigen::MatrixXd getHessian() const;
       int getRankJ() const;
       int getRankM() const;
       int getRankO() const;
