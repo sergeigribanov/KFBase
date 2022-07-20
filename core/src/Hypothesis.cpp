@@ -258,6 +258,6 @@ const TVector3 &core::Hypothesis::getFinalVertex(const std::string& vertexName) 
   return vertices_.at(vertexName)->getFinalXYZ();
 }
 
-int core::Hypothesis::getRankJ() const {
-  return _opt.getRankJ();
-}
+int core::Hypothesis::getRankJ() const { return _opt.getRankJ(); }
+
+int core::Hypothesis::getRankM() const { return _opt.getRankM(); }

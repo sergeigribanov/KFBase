@@ -183,7 +183,7 @@ namespace kfbase {
       void updateValues(const Eigen::VectorXd&);
 
       int getRankJ() const;
-
+      int getRankM() const;
     private:
       //! A method used to claculate target value
       /*!
@@ -258,6 +258,7 @@ namespace kfbase {
       int rank_(const Eigen::MatrixXd &) const;
       long m_c() const;
       int rank_j_;
+      int rank_m_
     };
   }  // namespace newtonian_opt
 } // namespace kfbase

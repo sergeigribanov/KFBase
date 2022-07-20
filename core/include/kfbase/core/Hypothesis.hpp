@@ -183,6 +183,7 @@ namespace kfbase {
           void optimize();
 
       int getRankJ() const;
+      int getRankM() const;
 
     protected:
       //! A method that used to add a particle
