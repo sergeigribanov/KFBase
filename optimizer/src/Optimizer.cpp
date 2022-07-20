@@ -354,9 +354,10 @@ void nopt::Optimizer::optimize() {
       } else {
         _errorCode = 2.;
       }
-      rank_j_ = rank_(d2f(x).block(_n - m_c(), 0, m_c(), _n - m_c()));
-      rank_m_ = rank_(d2f(x).block(0, 0, _n - m_c(), _n - m_c()));
-      rank_o_ = rank_(d2f(x).block(_n - m_c(), _n - m_c(), m_c(), m_c()));
+      hessian_ = d2f(x);
+      rank_j_ = rank_(hessian_.block(_n - m_c(), 0, m_c(), _n - m_c()));
+      rank_m_ = rank_(hessian_.block(0, 0, _n - m_c(), _n - m_c()));
+      rank_o_ = rank_(hessian_.block(_n - m_c(), _n - m_c(), m_c(), m_c()));
       return;
     }
   }
@@ -364,9 +365,10 @@ void nopt::Optimizer::optimize() {
   _errorCode = 1;
   Eigen::VectorXd dx = calcDParams(x);
   _dxTHdx = dx.dot(d2f(x) * dx);
-  rank_j_ = rank_(d2f(x).block(_n - m_c(), 0, m_c(), _n - m_c()));
-  rank_m_ = rank_(d2f(x).block(0, 0, _n - m_c(), _n - m_c()));
-  rank_o_ = rank_(d2f(x).block(_n - m_c(), _n - m_c(), m_c(), m_c()));
+  hessian_ = d2f(x);
+  rank_j_ = rank_(hessian_.block(_n - m_c(), 0, m_c(), _n - m_c()));
+  rank_m_ = rank_(hessian_.block(0, 0, _n - m_c(), _n - m_c()));
+  rank_o_ = rank_(hessian_.block(_n - m_c(), _n - m_c(), m_c(), m_c()));
   return;
 }
 
@@ -374,6 +376,8 @@ int nopt::Optimizer::rank_(const Eigen::MatrixXd& mx) const {
   Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(mx);
   return lu_decomp.rank();
 }
+
+Eigen::MatrixXd nopt::Optimizer::getHessian() const { return hessian_; }
 
 int nopt::Optimizer::getRankJ() const {
   return rank_j_;

@@ -185,6 +185,7 @@ namespace kfbase {
       int getRankJ() const;
       int getRankM() const;
       int getRankO() const;
+      Eigen::MatrixXd getHessian() const;
     private:
       //! A method used to claculate target value
       /*!
@@ -261,6 +262,7 @@ namespace kfbase {
       int rank_j_;
       int rank_m_;
       int rank_o_;
+      Eigen::MatrixXd hessian_;
     };
   }  // namespace newtonian_opt
 } // namespace kfbase
