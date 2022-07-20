@@ -182,6 +182,8 @@ namespace kfbase {
       void optimize();
       void updateValues(const Eigen::VectorXd&);
 
+      int getRankJ() const;
+
     private:
       //! A method used to claculate target value
       /*!
@@ -253,6 +255,9 @@ namespace kfbase {
       std::unordered_map<std::string, Constraint*> _constraints;
       //! An unordered map of constraints
       std::unordered_map<std::string, double> _constants;
+      int rank_(const Eigen::MatrixXd &) const;
+      long m_c() const;
+      int rank_j_;
     };
   }  // namespace newtonian_opt
 } // namespace kfbase

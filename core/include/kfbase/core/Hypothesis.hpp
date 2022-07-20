@@ -182,6 +182,8 @@ namespace kfbase {
           //! A method that starts optimization
           void optimize();
 
+      int getRankJ() const;
+
     protected:
       //! A method that used to add a particle
       /*!

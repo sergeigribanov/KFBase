@@ -257,3 +257,7 @@ const TVector3 &core::Hypothesis::getInitialVertex(const std::string &vertexName
 const TVector3 &core::Hypothesis::getFinalVertex(const std::string& vertexName) const {
   return vertices_.at(vertexName)->getFinalXYZ();
 }
+
+int core::Hypothesis::getRankJ() const {
+  return _opt.getRankJ();
+}

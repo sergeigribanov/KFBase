@@ -343,6 +343,7 @@ void nopt::Optimizer::optimize() {
       } else {
         _errorCode = 2.;
       }
+      rank_j_ = rank_(d2f(x).block(n_ - m_c(), 0, m_c(), n_ - m_c()));
       return;
     }
   }
@@ -350,10 +351,29 @@ void nopt::Optimizer::optimize() {
   _errorCode = 1;
   Eigen::VectorXd dx = calcDParams(x);
   _dxTHdx = dx.dot(d2f(x) * dx);
+  rank_j_ = rank_(d2f(x).block(n_ - m_c(), 0, m_c(), n_ - m_c()));
   return;
 }
 
-void nopt::Optimizer::onFitBegin(const Eigen::VectorXd& x) {
+int nopt::Optimizer::rank_(const Eigen::MatrixXd& mx) const {
+  Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(mx);
+  return lu_decomp.rank();
+}
+
+int nopt::Optimizer::getRankJ() const {
+  return rank_j_; 
+}
+
+long nopt::Optimizer::m_c() const {
+  long result = 0;
+  for (auto el : _constraints)
+    if (el.second->isEnabled())
+      result++;
+  return result;
+}
+
+void
+nopt::Optimizer::onFitBegin(const Eigen::VectorXd &x) {
   for (auto& el : _targets) {
     el.second->onFitBegin(x);
   }
