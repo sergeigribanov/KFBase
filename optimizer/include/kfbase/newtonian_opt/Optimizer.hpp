@@ -258,7 +258,7 @@ namespace kfbase {
       int rank_(const Eigen::MatrixXd &) const;
       long m_c() const;
       int rank_j_;
-      int rank_m_
+      int rank_m_;
     };
   }  // namespace newtonian_opt
 } // namespace kfbase
