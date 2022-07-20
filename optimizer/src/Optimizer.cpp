@@ -343,7 +343,7 @@ void nopt::Optimizer::optimize() {
       } else {
         _errorCode = 2.;
       }
-      rank_j_ = rank_(d2f(x).block(n_ - m_c(), 0, m_c(), n_ - m_c()));
+      rank_j_ = rank_(d2f(x).block(_n - m_c(), 0, m_c(), _n - m_c()));
       return;
     }
   }
@@ -351,7 +351,7 @@ void nopt::Optimizer::optimize() {
   _errorCode = 1;
   Eigen::VectorXd dx = calcDParams(x);
   _dxTHdx = dx.dot(d2f(x) * dx);
-  rank_j_ = rank_(d2f(x).block(n_ - m_c(), 0, m_c(), n_ - m_c()));
+  rank_j_ = rank_(d2f(x).block(_n - m_c(), 0, m_c(), _n - m_c()));
   return;
 }
 
