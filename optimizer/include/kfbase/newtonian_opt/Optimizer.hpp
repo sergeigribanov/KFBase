@@ -64,6 +64,7 @@ namespace kfbase {
        * convergence, and returns false otherwise
        */
       int getErrorCode() const;
+      int getNumOfRequiredIters() const;
       //! A target value getter
       /*!
        * This method returns a total target value calculated
@@ -120,11 +121,11 @@ namespace kfbase {
        */
       double getConstant(const std::string&) const;
       Eigen::VectorXd calcDParams(const Eigen::VectorXd &x) const;
-          //! A method used to add target function to optimizer
-          /*!
-           * @param obj (target function pointer)
-           */
-          void addTarget(TargetFunction *) noexcept(false);
+      //! A method used to add target function to optimizer
+      /*!
+       * @param obj (target function pointer)
+       */
+      void addTarget(TargetFunction *) noexcept(false);
       //! A method used to add constraint to optimizer
       /*!
        * @param obj (constraint pointer)
@@ -246,7 +247,10 @@ namespace kfbase {
       double _targetValue;
       //! An error code is 0 in the case of fit convergence and false otherwise
       int _errorCode;
+      //! Hessian of the Lagrange function over all parameters except the Lagrange multipliers
       double _dxTHdx;
+      //! number of iterations required for fitting
+      int _iters;
       //! An unordered map of target functions
       std::unordered_map<std::string, TargetFunction*> _targets;
       //! An unordered map of constraints

@@ -59,6 +59,8 @@ long nopt::Optimizer::getN() const { return _n; }
 
 int nopt::Optimizer::getErrorCode() const { return _errorCode; }
 
+int nopt::Optimizer::getNumOfRequiredIters() const { return _iters;}
+
 double nopt::Optimizer::getTargetValue() const { return _targetValue; }
 
 double nopt::Optimizer::getTargetValue(const std::string& targetName) const {
@@ -343,9 +345,11 @@ void nopt::Optimizer::optimize() {
       } else {
         _errorCode = 2.;
       }
+      _iters = i + 1;
       return;
     }
   }
+  _iters = _nIter;
   onFitEnd(x);
   _errorCode = 1;
   Eigen::VectorXd dx = calcDParams(x);
