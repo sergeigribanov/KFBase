@@ -51,7 +51,9 @@ core::Hypothesis::~Hypothesis() {
 
 int core::Hypothesis::getErrorCode() const { return _opt.getErrorCode(); }
 
-int core::Hypothesis::getNumOfRequiredIters() const { return _opt.getNumOfRequiredInters(); }
+int core::Hypothesis::getNumOfRequiredIters() const {
+  return _opt.getNumOfRequiredIters();
+}
 
 double core::Hypothesis::getChiSquare() const {
   return _opt.getTargetValue();
