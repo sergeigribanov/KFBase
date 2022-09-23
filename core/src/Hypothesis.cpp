@@ -218,6 +218,10 @@ void core::Hypothesis::addConstraint(nopt::Constraint *constraint) {
   _opt.addConstraint(constraint);
 }
 
+double core::Hypothesis::getConstant(const std::string& name) const {
+  return _opt.getConstant(name);
+}
+
 void core::Hypothesis::addConstant(const std::string& name, double value) {
   _opt.setConstant(name, value);
 }

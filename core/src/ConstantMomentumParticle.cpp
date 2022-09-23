@@ -5,25 +5,31 @@ using namespace kfbase::core;
 ConstantMomentumParticle::ConstantMomentumParticle(const std::string &name,
                                                    double energy,
                                                    const Eigen::Vector3d &p)
-    : Particle(name, 0, 0.), energy_(energy), momentum_(p) {}
+    : Particle(name, 4, 0.) {
+  fixParameter(0, p(0));
+  fixParameter(1, p(1));
+  fixParameter(2, p(2));
+  fixParameter(3, energy);
+}
 
 ConstantMomentumParticle::~ConstantMomentumParticle() {}
 
-double ConstantMomentumParticle::calcOutputMomentumComponent(const Eigen::VectorXd&,
+double ConstantMomentumParticle::calcOutputMomentumComponent(const Eigen::VectorXd& x,
                                                              MOMENT_COMPONENT component) const {
   double result = 0;
+const long bi = getBeginIndex();
   switch (component) {
   case MOMENT_X:
-    result = momentum_(0);
+    result = x(bi);
     break;
   case MOMENT_Y:
-    result = momentum_(1);
+    result = x(bi + 1);
     break;
   case MOMENT_Z:
-    result = momentum_(2);
+    result = x(bi + 2);
     break;
   case MOMENT_E:
-    result = energy_;
+    result = x(bi + 3);
     break;
   }
   return result;

@@ -174,6 +174,7 @@ bool nopt::ParamContainer::isFixedParameter(long index) const {
 void nopt::ParamContainer::fixParameter(long index) {
   if (index >= 0 && index < getN()) {
     _fixedParams.insert(index);
+    setInitialParameters(_xInitial);
   } else {
     // TO DO : exception
   }

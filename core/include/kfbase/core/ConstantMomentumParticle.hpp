@@ -22,9 +22,6 @@ namespace kfbase {
                                                             kfbase::core::MOMENT_COMPONENT) const override final;
       virtual Eigen::MatrixXd calcInputD2MomentumComponent(const Eigen::VectorXd &,
                                                            kfbase::core::MOMENT_COMPONENT) const override final;
-    private:
-      double energy_;
-      Eigen::Vector3d momentum_;
     };
   } // namespace core
 } // namespace kfbase

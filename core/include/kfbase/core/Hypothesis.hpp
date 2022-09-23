@@ -94,6 +94,7 @@ namespace kfbase {
       const Eigen::VectorXd& getVertexInitialParams(const std::string&) const;
       double getInitialLagrangeMultiplier(const std::string &) const;
       double getFinalLagrangeMultiplier(const std::string &) const;
+      double getConstant(const std::string&) const;
       //! A getter for a particle final parameters
       /*!
        * @param particleName (particle name)
@@ -145,6 +146,13 @@ namespace kfbase {
       Vertex* getVertex(const std::string&) const;
       void setMaxNumberOfIterations(long);
       void setTolerance(double);
+      //! A method that used to add a constant
+      /*!
+       * @param name (name of a constant)
+       *
+       * @param value (value of a constant)
+       */
+      void addConstant(const std::string&, double);
       //! A method used to enable constraint by name
       /*!
        * @param name (constraint name)
@@ -195,13 +203,6 @@ namespace kfbase {
        * @param constraint (pointer to a constraint object)
        */
       void addConstraint(kfbase::newtonian_opt::Constraint*);
-      //! A method that used to add a constant
-      /*!
-       * @param name (name of a constant)
-       *
-       * @param value (value of a constant)
-       */
-      void addConstant(const std::string&, double);
       //! A method that used to add a particle to a constaint
       /*!
        * @param particleName (particle name)
