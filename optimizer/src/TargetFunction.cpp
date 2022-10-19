@@ -42,7 +42,8 @@ nopt::TargetFunction::TargetFunction(const std::string &name, long n)
 
 nopt::TargetFunction::~TargetFunction() {}
 
-double nopt::TargetFunction::getTargetValue() const { return f(_xFinal, true); }
+// !!!!!!!! was true
+double nopt::TargetFunction::getTargetValue() const { return f(_xFinal, false); }
 
 double nopt::TargetFunction::getTargetValue(const Eigen::VectorXd& x) const {
   return f(x.segment(getBeginIndex(), getN()));
