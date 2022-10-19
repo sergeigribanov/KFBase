@@ -37,9 +37,8 @@ namespace core = kfbase::core;
 
 core::ParticleMassLessThetaPhiE::ParticleMassLessThetaPhiE(const std::string& name) :
   core::Particle(name, 3, 0) {
-  setPeriod(1, 0, 2 * TMath::Pi()); // !!!
-  setLowerLimit(1, -1000 * TMath::Pi()); // !!!
-  setUpperLimit(1, 1000 * TMath::Pi()); // !!!
+  setLowerLimit(1, 0.); // !!!
+  setUpperLimit(1, TMath::Pi()); // !!!
   setPeriod(2, 0, 2 * TMath::Pi());
   setLowerLimit(2, -1000 * TMath::Pi());
   setUpperLimit(2, 1000 * TMath::Pi());
