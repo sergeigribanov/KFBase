@@ -216,15 +216,27 @@ Eigen::VectorXd nopt::Optimizer::df(const Eigen::VectorXd& x) const {
   return result;
 }
 
+// ! temporary method for testing
 Eigen::MatrixXd nopt::Optimizer::calcExtCovMatrix(const Eigen::VectorXd& x) const {
   // ! Take into account that diagonal elements of
-  // fixed parameters are set to 1 (nondiagonal elements are zero)
+  // fixed and non-measurable parameters are set to 0 (nondiagonal elements are zero)
+  std::vector<long> indices;
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(_n, _n);
   for (const auto& el : _targets) {
+    Eigen::MatrixXd tmp = el.second->d2f(x.segment(el.second->getBeginIndex(), el.second->getN()));
+    for (long i = 0; i < el.second->getN(); ++i) {
+      double s1 = tmp.row(i).cwiseAbs().sum();
+      double s2 = tmp.col(i).cwiseAbs().sum();
+      if (s1 < 1.e-12 && s2 < 1.e-12) {
+        result.row(i).setZero();
+        result.col(i).setZero();
+        tmp(i, i) = 1;
+        indices.push_back(el.second->getBeginIndex() + i);
+      }
+    }
     if (el.second->getN() == 0) continue;
     result.block(el.second->getBeginIndex(), el.second->getBeginIndex(),
-                 el.second->getN(), el.second->getN()) +=
-      el.second->d2f(x.segment(el.second->getBeginIndex(), el.second->getN()));
+                 el.second->getN(), el.second->getN()) += tmp;
   }
   for (const auto& el : _targets) {
     for (long index : el.second->getFixedParamIndices()) {
@@ -232,9 +244,16 @@ Eigen::MatrixXd nopt::Optimizer::calcExtCovMatrix(const Eigen::VectorXd& x) cons
       result.row(idx).setZero();
       result.col(idx).setZero();
       result(idx, idx) = 1;
+      indices.push_back(idx);
     }
   }
-  return 2. * result.inverse();
+  result = 2. * result.inverse();
+  for (long i : indices) {
+    result.row(i).setZero();
+    result.col(i).setZero();
+    result(i, i) = 0;
+  }
+  return result;
 }
 
 Eigen::MatrixXd nopt::Optimizer::getExtCovMatrix() const {
