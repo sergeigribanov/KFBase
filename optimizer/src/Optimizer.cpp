@@ -219,7 +219,8 @@ Eigen::VectorXd nopt::Optimizer::df(const Eigen::VectorXd& x) const {
 // ! temporary method for testing
 Eigen::MatrixXd nopt::Optimizer::calcExtCovMatrix(const Eigen::VectorXd& x) const {
   // ! Take into account that diagonal elements of
-  // fixed and non-measurable parameters are set to 0 (nondiagonal elements are zero)
+  // fixed and non-measurable
+  // parameters, lagrange multipliers are set to 0 (nondiagonal elements are zero)
   std::vector<long> indices;
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(_n, _n);
   for (const auto& el : _targets) {
@@ -246,6 +247,14 @@ Eigen::MatrixXd nopt::Optimizer::calcExtCovMatrix(const Eigen::VectorXd& x) cons
       result(idx, idx) = 1;
       indices.push_back(idx);
     }
+  }
+  for (const auto& el : _constraints) {
+    auto lc = dynamic_cast<nopt::LagrangeConstraint*>(el.second);
+    long ind = lc->getLambdaIndex();
+    result.row(ind).setZero();
+    result.col(ind).setZero();
+    result(ind, ind) = 1;
+    indices.push_back(ind);
   }
   result = 2. * result.inverse();
   for (long i : indices) {
