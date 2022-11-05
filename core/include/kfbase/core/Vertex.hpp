@@ -24,11 +24,15 @@ namespace kfbase {
                                                        VERTEX_COMPONENT) const = 0;
       virtual Eigen::MatrixXd calcD2CartesianCoordinate(const Eigen::VectorXd &,
                                                         VERTEX_COMPONENT) const = 0;
+      const Eigen::VectorXd& getFinalCartesianCoordGrad(VERTEX_COMPONENT) const;
       virtual void onFitBegin(const Eigen::VectorXd&) override final;
       virtual void onFitEnd(const Eigen::VectorXd&) override final;
       private:
       TVector3 initialXYZ_;
       TVector3 finalXYZ_;
+      Eigen::VectorXd gradX_;
+      Eigen::VectorXd gradY_;
+      Eigen::VectorXd gradZ_;
     };
 
   }

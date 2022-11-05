@@ -22,4 +22,17 @@ void Vertex::onFitEnd(const Eigen::VectorXd &x) {
     finalXYZ_[i] =
       calcCartesianCoordinate(x, static_cast<VERTEX_COMPONENT>(i));
   }
+  gradX_ = calcDCartesianCoordinate(x, VERTEX_X);
+  gradY_ = calcDCartesianCoordinate(x, VERTEX_Y);
+  gradZ_ = calcDCartesianCoordinate(x, VERTEX_Z);
+}
+
+const Eigen::VectorXd& Vertex::getFinalCartesianCoordGrad(VERTEX_COMPONENT component) const {
+  if (component == VERTEX_X) {
+    return gradX_;
+  }
+  if (component == VERTEX_Y) {
+    return gradY_;
+  }
+  return gradZ_;
 }

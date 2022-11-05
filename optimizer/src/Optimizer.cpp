@@ -216,6 +216,31 @@ Eigen::VectorXd nopt::Optimizer::df(const Eigen::VectorXd& x) const {
   return result;
 }
 
+Eigen::MatrixXd nopt::Optimizer::calcExtCovMatrix(const Eigen::VectorXd& x) const {
+  // ! Take into account that diagonal elements of
+  // fixed parameters are set to 1 (nondiagonal elements are zero)
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(_n, _n);
+  for (const auto& el : _targets) {
+    if (el.second->getN() == 0) continue;
+    result.block(el.second->getBeginIndex(), el.second->getBeginIndex(),
+                 el.second->getN(), el.second->getN()) +=
+      el.second->d2f(x.segment(el.second->getBeginIndex(), el.second->getN()));
+  }
+  for (const auto& el : _targets) {
+    for (long index : el.second->getFixedParamIndices()) {
+      long idx = el.second->getBeginIndex() + index;
+      result.row(idx).setZero();
+      result.col(idx).setZero();
+      result(idx, idx) = 1;
+    }
+  }
+  return 2. * result.inverse();
+}
+
+Eigen::MatrixXd nopt::Optimizer::getExtCovMatrix() const {
+  return _extCovMatrix;
+}
+
 Eigen::MatrixXd nopt::Optimizer::d2f(const Eigen::VectorXd& x) const {
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(_n, _n);
   for (const auto& el : _targets) {
@@ -340,6 +365,7 @@ void nopt::Optimizer::optimize() {
       onFitEnd(x);
       Eigen::VectorXd dx = calcDParams(x);
       _dxTHdx = dx.dot(d2f(x) * dx);
+      _extCovMatrix = calcExtCovMatrix(x);
       if (_dxTHdx > 0.) {
         _errorCode = 0;
       } else {
@@ -354,6 +380,7 @@ void nopt::Optimizer::optimize() {
   _errorCode = 1;
   Eigen::VectorXd dx = calcDParams(x);
   _dxTHdx = dx.dot(d2f(x) * dx);
+  _extCovMatrix = calcExtCovMatrix(x);
   return;
 }
 
