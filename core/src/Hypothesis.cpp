@@ -59,8 +59,8 @@ double core::Hypothesis::getChiSquare() const {
   return _opt.getTargetValue();
 }
 
-Eigen::MatrixXd core::Hypothesis::getExtCovMatrix() const {
-  return _opt.getExtCovMatrix();
+Eigen::MatrixXd core::Hypothesis::getExtInvCovMatrix() const {
+  return _opt.getExtInvCovMatrix();
 }
 
 double core::Hypothesis::getdxTHdx() const {return _opt.getdxTHdx();}
@@ -85,7 +85,7 @@ core::Hypothesis::getVertexInitialParams(const std::string &vertexName) const {
 
 double core::Hypothesis::getVertexCov(const std::string& vertexName, core::VERTEX_COMPONENT component) const {
   const Eigen::VectorXd grad = vertices_.at(vertexName)->getFinalCartesianCoordGrad(component);
-  return grad.dot(getExtCovMatrix() * grad);
+  return grad.dot(getExtInvCovMatrix().partialPivLu().solve(grad));
 }
 
 const Eigen::VectorXd &core::Hypothesis::getParticleFinalParams(const std::string &particleName) const {

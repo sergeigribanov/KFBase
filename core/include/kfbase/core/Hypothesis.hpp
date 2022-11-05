@@ -71,7 +71,7 @@ namespace kfbase {
        * This method returns a total chi-square value.
        */
       double getChiSquare() const;
-      Eigen::MatrixXd getExtCovMatrix() const;
+      Eigen::MatrixXd getExtInvCovMatrix() const;
       double getdxTHdx() const;
       //! A particle / vertex chi-square getter
       /*!

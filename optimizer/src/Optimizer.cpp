@@ -216,13 +216,9 @@ Eigen::VectorXd nopt::Optimizer::df(const Eigen::VectorXd& x) const {
   return result;
 }
 
-// ! temporary method for testing
-Eigen::MatrixXd nopt::Optimizer::calcExtCovMatrix(const Eigen::VectorXd& x) const {
-  return 2. * d2f(x).inverse();
-}
 
-Eigen::MatrixXd nopt::Optimizer::getExtCovMatrix() const {
-  return _extCovMatrix;
+Eigen::MatrixXd nopt::Optimizer::getExtInvCovMatrix() const {
+  return _extInvCovMatrix;
 }
 
 Eigen::MatrixXd nopt::Optimizer::d2f(const Eigen::VectorXd& x) const {
@@ -349,7 +345,7 @@ void nopt::Optimizer::optimize() {
       onFitEnd(x);
       Eigen::VectorXd dx = calcDParams(x);
       _dxTHdx = dx.dot(d2f(x) * dx);
-      _extCovMatrix = calcExtCovMatrix(x);
+      _extInvCovMatrix = 0.5 * d2f(x);
       if (_dxTHdx > 0.) {
         _errorCode = 0;
       } else {
@@ -364,7 +360,7 @@ void nopt::Optimizer::optimize() {
   _errorCode = 1;
   Eigen::VectorXd dx = calcDParams(x);
   _dxTHdx = dx.dot(d2f(x) * dx);
-  _extCovMatrix = calcExtCovMatrix(x);
+  _extInvCovMatrix = 0.5 * d2f(x);
   return;
 }
 
