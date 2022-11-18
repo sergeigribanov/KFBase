@@ -71,7 +71,6 @@ namespace kfbase {
        * This method returns a total chi-square value.
        */
       double getChiSquare() const;
-      Eigen::MatrixXd getExtInvCovMatrix() const;
       double getdxTHdx() const;
       //! A particle / vertex chi-square getter
       /*!
@@ -93,7 +92,6 @@ namespace kfbase {
        */
       const Eigen::VectorXd& getParticleInitialParams(const std::string&) const;
       const Eigen::VectorXd& getVertexInitialParams(const std::string&) const;
-      double getVertexCov(const std::string&, VERTEX_COMPONENT) const;
       double getInitialLagrangeMultiplier(const std::string &) const;
       double getFinalLagrangeMultiplier(const std::string &) const;
       double getConstant(const std::string&) const;

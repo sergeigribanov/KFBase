@@ -120,8 +120,7 @@ namespace kfbase {
        * @param name (constant name)
        */
       double getConstant(const std::string&) const;
-      Eigen::VectorXd calcDParams(const Eigen::VectorXd &) const;
-      Eigen::MatrixXd getExtInvCovMatrix() const;
+      Eigen::VectorXd calcDParams(const Eigen::VectorXd &x) const;
       //! A method used to add target function to optimizer
       /*!
        * @param obj (target function pointer)
@@ -250,8 +249,6 @@ namespace kfbase {
       int _errorCode;
       //! Hessian of the Lagrange function over all parameters except the Lagrange multipliers
       double _dxTHdx;
-      //! Full covariance matrix ([!] diagonal elements of fixed parameters are set to 1)
-      Eigen::MatrixXd _extInvCovMatrix;
       //! number of iterations required for fitting
       int _iters;
       //! An unordered map of target functions
