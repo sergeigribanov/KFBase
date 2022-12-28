@@ -267,3 +267,7 @@ const TVector3 &core::Hypothesis::getInitialVertex(const std::string &vertexName
 const TVector3 &core::Hypothesis::getFinalVertex(const std::string& vertexName) const {
   return vertices_.at(vertexName)->getFinalXYZ();
 }
+
+const Eigen::MatrixXd &core::Hypothesis::getInvHessian() const {
+  return _opt.getInvHessian();
+}
