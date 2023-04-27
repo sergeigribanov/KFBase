@@ -103,8 +103,7 @@ namespace kfbase {
                                  VERTEX_COMPONENT component) const = 0;
       virtual void onFitBegin(const Eigen::VectorXd&) override;
       virtual void onFitEnd(const Eigen::VectorXd&) override;
-
-    protected:
+     protected:
       //! An initial vertex of a particle
       TVector3 _initialOutputVertex;
       //! A final vertex of a particle

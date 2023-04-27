@@ -34,8 +34,8 @@
 namespace nopt = kfbase::newtonian_opt;
 namespace core = kfbase::core;
 
-core::VertexParticle::VertexParticle(const std::string& name, long n,
-                                       double mass, double charge)
+core::VertexParticle::VertexParticle(const std::string &name, long n,
+                                     double mass, double charge)
     : core::Particle(name, n, mass, charge) {}
 
 core::VertexParticle::~VertexParticle() {}
@@ -93,3 +93,4 @@ void core::VertexParticle::onFitEnd(const Eigen::VectorXd& x) {
         calcInputVertexComponent(x, static_cast<core::VERTEX_COMPONENT>(i));
   }
 }
+

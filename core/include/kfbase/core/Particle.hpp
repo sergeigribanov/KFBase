@@ -113,6 +113,10 @@ class Particle : public kfbase::newtonian_opt::TargetFunction {
   virtual Eigen::MatrixXd
   calcInputD2MomentumComponent(const Eigen::VectorXd &x,
                              MOMENT_COMPONENT component) const = 0;
+
+  Eigen::Matrix3d evalPxPyPzInvCovMatrix(const Eigen::VectorXd&,
+                                         const Eigen::MatrixXd&) const;
+
   virtual void onFitBegin(const Eigen::VectorXd&) override;
   virtual void onFitEnd(const Eigen::VectorXd&) override;
 

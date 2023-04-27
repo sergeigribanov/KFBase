@@ -32,6 +32,7 @@
 #ifndef __CCGO_OPTIMIZER_HPP__
 #define __CCGO_OPTIMIZER_HPP__
 #include <set>
+#include <vector>
 #include "kfbase/newtonian_opt/Constraint.hpp"
 #include "kfbase/newtonian_opt/TargetFunction.hpp"
 
@@ -121,6 +122,10 @@ namespace kfbase {
        */
       double getConstant(const std::string&) const;
       Eigen::VectorXd calcDParams(const Eigen::VectorXd &x) const;
+
+      const Eigen::VectorXd& getFinalParameters() const;
+      const Eigen::MatrixXd& getFinalHessian() const;
+
       //! A method used to add target function to optimizer
       /*!
        * @param obj (target function pointer)
@@ -257,6 +262,9 @@ namespace kfbase {
       std::unordered_map<std::string, Constraint*> _constraints;
       //! An unordered map of constraints
       std::unordered_map<std::string, double> _constants;
+      //! Final Parameters
+      Eigen::VectorXd _finalParams;
+      Eigen::MatrixXd _finalHessian;
     };
   }  // namespace newtonian_opt
 } // namespace kfbase

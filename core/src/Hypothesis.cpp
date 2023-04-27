@@ -267,3 +267,10 @@ const TVector3 &core::Hypothesis::getInitialVertex(const std::string &vertexName
 const TVector3 &core::Hypothesis::getFinalVertex(const std::string& vertexName) const {
   return vertices_.at(vertexName)->getFinalXYZ();
 }
+
+Eigen::Matrix3d core::Hypothesis::evalParticleInvCovMatrixPxPyPz(
+    const std::string &particleName) const {
+  Eigen::MatrixXd totalInvCovM = 0.5 * _opt.getFinalHessian();
+  return _particles.at(particleName)->evalPxPyPzInvCovMatrix(
+      _opt.getFinalParameters(), totalInvCovM);
+}

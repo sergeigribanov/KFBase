@@ -144,6 +144,7 @@ namespace kfbase {
       double getTolerance() const;
       Particle *getParticle(const std::string &) const;
       Vertex* getVertex(const std::string&) const;
+      Eigen::Matrix3d evalParticleInvCovMatrixPxPyPz(const std::string&) const;
       void setMaxNumberOfIterations(long);
       void setTolerance(double);
       //! A method that used to add a constant

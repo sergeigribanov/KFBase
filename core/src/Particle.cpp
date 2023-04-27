@@ -30,6 +30,7 @@
  */
 
 #include "kfbase/core/Particle.hpp"
+#include <unsupported/Eigen/KroneckerProduct>
 
 namespace nopt = kfbase::newtonian_opt;
 namespace core = kfbase::core;
@@ -84,4 +85,25 @@ void core::Particle::onFitEnd(const Eigen::VectorXd& x) {
     _finalInputMomentum[i] =
       calcInputMomentumComponent(x, static_cast<core::MOMENT_COMPONENT>(i));
   }
+}
+
+Eigen::Matrix3d
+core::Particle::evalPxPyPzInvCovMatrix(const Eigen::VectorXd &x,
+                                       const Eigen::MatrixXd &totalInvCovM) const {
+  const long bi = getBeginIndex();
+  const long n = getN();
+  Eigen::MatrixXd pJ(n, 3);
+  pJ.col(0) = calcOutputDMomentumComponent(x, kfbase::core::MOMENT_X)
+                  .block(bi, 0, n, 1);
+  pJ.col(1) = calcOutputDMomentumComponent(x, kfbase::core::MOMENT_Y)
+                  .block(bi, 0, n, 1);
+  pJ.col(2) = calcOutputDMomentumComponent(x, kfbase::core::MOMENT_Z)
+                  .block(bi, 0, n, 1);
+  Eigen::MatrixXd pJxpJ = Eigen::KroneckerProduct(pJ, pJ).eval();
+  Eigen::MatrixXd invCovM = totalInvCovM.block(bi, bi, n, n);
+  Eigen::Map<const Eigen::VectorXd> invCovV(invCovM.data(), n * n);
+  Eigen::VectorXd invPxPyPzCovV =
+      pJxpJ.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(invCovV);
+  Eigen::Map<Eigen::MatrixXd> invPxPyPzCovM(invPxPyPzCovV.data(), 3, 3);
+  return invPxPyPzCovM;
 }

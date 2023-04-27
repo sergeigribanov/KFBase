@@ -377,6 +377,8 @@ void nopt::Optimizer::onFitEnd(const Eigen::VectorXd& x) {
     }
   }
   _targetValue = calcTargetValue(x);
+  _finalParams = x;
+  _finalHessian = d2f(x);
 }
 
 void nopt::Optimizer::decIndicies(long index, long n) {
@@ -461,7 +463,6 @@ void nopt::Optimizer::prepare() {
   }
 }
 
-
 void nopt::Optimizer::updateValues(const Eigen::VectorXd& x) {
   for (const auto& el : _targets) {
     el.second->updateValue(x.segment(el.second->getBeginIndex(), el.second->getN()));
@@ -471,4 +472,12 @@ void nopt::Optimizer::updateValues(const Eigen::VectorXd& x) {
       el.second->updateValue(x);
     }
   }
+}
+
+const Eigen::VectorXd &nopt::Optimizer::getFinalParameters() const {
+  return _finalParams;
+}
+
+const Eigen::MatrixXd &nopt::Optimizer::getFinalHessian() const {
+  return _finalHessian;
 }
