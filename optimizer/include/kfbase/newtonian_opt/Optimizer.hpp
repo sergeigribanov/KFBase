@@ -66,6 +66,7 @@ namespace kfbase {
        */
       int getErrorCode() const;
       int getNumOfRequiredIters() const;
+      const Eigen::MatrixXd& getInvHessian() const;
       //! A target value getter
       /*!
        * This method returns a total target value calculated
@@ -256,6 +257,8 @@ namespace kfbase {
       double _dxTHdx;
       //! number of iterations required for fitting
       int _iters;
+      //! inverse hessian
+      Eigen::MatrixXd _invHessian;
       //! An unordered map of target functions
       std::unordered_map<std::string, TargetFunction*> _targets;
       //! An unordered map of constraints

@@ -59,9 +59,15 @@ long nopt::Optimizer::getN() const { return _n; }
 
 int nopt::Optimizer::getErrorCode() const { return _errorCode; }
 
-int nopt::Optimizer::getNumOfRequiredIters() const { return _iters;}
+int nopt::Optimizer::getNumOfRequiredIters() const { return _iters; }
 
-double nopt::Optimizer::getTargetValue() const { return _targetValue; }
+const Eigen::MatrixXd &nopt::Optimizer::getInvHessian() const {
+  return _invHessian;
+}
+
+double nopt::Optimizer::getTargetValue() const {
+  return _targetValue;
+}
 
 double nopt::Optimizer::getTargetValue(const std::string& targetName) const {
   return _targets.at(targetName)->getTargetValue();
@@ -340,9 +346,9 @@ void nopt::Optimizer::optimize() {
       onFitEnd(x);
       Eigen::VectorXd dx = calcDParams(x);
       _dxTHdx = dx.dot(d2f(x) * dx);
-      if (_dxTHdx > 0.) {
-        _errorCode = 0;
-      } else {
+      _invHessian = d2f(x).inverse();
+      if (_dxTHdx > 0.) { _errorCode = 0; }
+      else {
         _errorCode = 2.;
       }
       _iters = i + 1;
@@ -354,6 +360,7 @@ void nopt::Optimizer::optimize() {
   _errorCode = 1;
   Eigen::VectorXd dx = calcDParams(x);
   _dxTHdx = dx.dot(d2f(x) * dx);
+  _invHessian = d2f(x).inverse();
   return;
 }
 

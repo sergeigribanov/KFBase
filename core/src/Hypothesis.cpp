@@ -274,3 +274,7 @@ Eigen::Matrix3d core::Hypothesis::evalParticleInvCovMatrixPxPyPz(
   return _particles.at(particleName)->evalPxPyPzInvCovMatrix(
       _opt.getFinalParameters(), totalInvCovM);
 }
+  
+const Eigen::MatrixXd &core::Hypothesis::getInvHessian() const {
+  return _opt.getInvHessian();
+}

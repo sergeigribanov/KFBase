@@ -66,6 +66,7 @@ namespace kfbase {
        */
       int getErrorCode() const;
       int getNumOfRequiredIters() const;
+      const Eigen::MatrixXd& getInvHessian() const;
       //! A total chi-squate getter
       /*!
        * This method returns a total chi-square value.
